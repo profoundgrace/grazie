@@ -1,0 +1,17 @@
+.toolbar {
+  background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-4));
+  border-radius: '2px 2px 0 0';
+  padding: '4px 4px';
+}
+
+.content {
+  border-radius: '0 0 4px 4px';
+}
+
+.control {
+  color: light-dark(var(--mantine-color-dark-7), var(--mantine-color-gray-0));
+}
+
+.control:hover {
+    background-color: light-dark(var(--mantine-color-blue-4), var(--mantine-color-blue-9));
+}

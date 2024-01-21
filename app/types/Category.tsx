@@ -1,0 +1,24 @@
+import { Post } from '~/types/Post';
+
+export type Category = {
+  id?: number;
+  parentId?: number;
+  postsCount?: number;
+  name?: string;
+  slug?: string;
+  path?: string;
+  description?: string;
+  posts?: Post[];
+  children?: Category[];
+  parent?: Category;
+};
+
+export type CategoryInput = {
+  id?: number;
+  parentId?: number;
+  postsCount?: number;
+  name?: string;
+  slug?: string;
+  path?: string;
+  description?: string;
+};

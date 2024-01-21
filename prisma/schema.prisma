@@ -1,0 +1,236 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  banned      Boolean   @default(false)
+  verified    Boolean   @default(false)
+  email       String
+  displayName String
+  username    String
+  password    String
+  avatar      String?
+  location    String?
+  profile     String?
+  createdAt   Int  
+  bannedAt    Int? 
+  lastLoginAt Int  
+  updatedAt   Int  
+  verifiedAt  Int?
+  comment     Comment[]
+  notes       Note[]
+  pages       Page[]
+  posts       Post[]
+  roles       RoleUser[]
+
+  @@unique([email], map: "unq_user_email")
+  @@unique([username], map: "unq_user_username")
+  @@index([banned], map: "idx_user_banned")
+  @@index([bannedAt], map: "idx_user_bannedAt")
+  @@index([createdAt], map: "idx_user_createdAt")
+  @@index([lastLoginAt], map: "idx_user_lastLogin")
+  @@index([updatedAt], map: "idx_user_updated")
+  @@index([verified], map: "idx_user_verified")
+  @@index([verifiedAt], map: "idx_user_verifiedAt")
+}
+
+model Post {
+  id            Int       @id @default(autoincrement())
+  published     Boolean   @default(true)
+  authorId      Int
+  commentsCount Int       @default(0)
+  createdAt     Int
+  publishedAt   Int?
+  updatedAt     Int
+  viewsCount    Int       @default(0)
+  title         String
+  body          String
+  slug          String?
+  search        String?
+  meta          String?
+  author        User      @relation(fields: [authorId], references: [id])
+  categories    CategoryPost[]
+  comments      Comments[]
+
+  @@unique([slug], map: "unq_post_slug")
+  @@index([authorId], map: "idx_post_author")
+  @@index([commentsCount], map: "idx_post_comments_count")
+  @@index([createdAt], map: "idx_post_created")
+  @@index([published], map: "idx_post_published")
+  @@index([publishedAt], map: "idx_post_publishedAt")
+  @@index([updatedAt], map: "idx_post_updated")
+  @@index([viewsCount], map: "idx_post_views_count")
+  @@index([search], map: "idx_post_search")
+}
+
+model Page {
+  id          Int       @id @default(autoincrement())
+  published   Boolean   @default(true)
+  authorId    Int
+  createdAt   Int
+  publishedAt Int?
+  updatedAt   Int
+  title       String
+  body        String
+  slug        String
+  summary     String?
+  search      String?
+  meta        String?
+  author      User     @relation(fields: [authorId], references: [id])
+
+  @@unique([slug], map: "unq_page_slug")
+  @@index([authorId], map: "idx_page_author")
+  @@index([createdAt], map: "idx_page_created")
+  @@index([published], map: "idx_page_published")
+  @@index([publishedAt], map: "idx_page_publishedAt")
+  @@index([updatedAt], map: "idx_page_updated")
+  @@index([search], map: "idx_page_search")
+  @@index([summary], map: "idx_page_summary")
+}
+
+model Role {
+  id          Int        @id @default(autoincrement())
+  active      Boolean    @default(true)
+  name        String
+  description String
+  users       RoleUser[]
+
+  @@unique([name], map: "unq_role_name")
+  @@index([active], map: "idx_role_active")
+}
+
+model RoleUser {
+  id        Int     @id @default(autoincrement())
+  active    Boolean @default(true)
+  roleId    Int
+  userId    Int
+  createdAt Int
+  updatedAt Int
+  role      Role     @relation(fields: [roleId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([roleId, userId], map: "unq_user_role")
+  @@index([active], map: "idx_user_role_active")
+  @@index([userId], map: "idx_user_role_user")
+  @@index([createdAt], map: "idx_user_role_created")
+  @@index([updatedAt], map: "idx_user_role_updated")
+}
+
+model Category {
+  id          Int            @id @default(autoincrement())
+  parentId    Int?
+  postsCount  Int            @default(0)
+  name        String
+  slug        String
+  path        String
+  description String?
+  parent      Category?       @relation("CategoryToCategory", fields: [parentId], references: [id])
+  children    Category[]     @relation("CategoryToCategory")
+  posts       CategoryPost[]
+
+  @@unique([name], map: "unq_category_name")
+  @@unique([slug], map: "unq_category_slug")
+  @@unique([path], map: "unq_category_path")
+  @@index([parentId], map: "idx_category_parent")
+  @@index([postsCount], map: "idx_category_posts")
+  @@index([description], map: "idx_category_description")
+}
+
+model CategoryPost {
+  id       Int      @id @default(autoincrement())
+  catId    Int
+  postId   Int
+  category Category @relation(fields: [catId], references: [id])
+  post     Post     @relation(fields: [postId], references: [id])
+
+  @@unique([catId, postId], map: "unq_category_post")
+  @@index([catId], map: "idx_category_post_cat")
+  @@index([postId], map: "idx_category_post")
+}
+
+model Comment {
+  id             Int       @id @default(autoincrement())
+  locked         Boolean   @default(false)
+  pinned         Boolean   @default(false)
+  authorId       Int
+  createdAt      Int
+  updatedAt      Int
+  lastActivityAt Int?
+  parentId       Int?
+  postId         Int
+  repliesCount   Int       @default(0)
+  path           String
+  body           String
+  search         String?
+  meta           String?
+  author         User      @relation(fields: [authorId], references: [id])
+  parent         Comment   @relation(fields: [parentId], references: [id])
+  post           Post      @relation(fields: [postId], references: [id])
+  replies        Comment[]
+
+  @@index([authorId], map: "idx_comment_author")
+  @@index([createdAt], map: "idx_comment_created")
+  @@index([updatedAt], map: "idx_comment_updated")
+  @@index([lastActivityAt], map: "idx_comment_last_activity")
+  @@index([locked], map: "idx_comment_locked")
+  @@index([pinned], map: "idx_comment_pinned")
+  @@index([parentId], map: "idx_comment_parent")
+  @@index([postId], map: "idx_comment_post")
+  @@index([repliesCount], map: "idx_comment_replies_count")
+  @@index([path], map: "idx_comment_path")
+  @@index([search], map: "idx_comment_search")
+}
+
+model Note {
+  id        Int     @id @default(autoincrement())
+  pinned    Int     @default(false)
+  authorId  Int
+  createdAt Int
+  updatedAt Int
+  body      String
+  search    String?
+  meta      String?
+  author    User    @relation(fields: [authorId], references: [id])
+  labels    NoteLabel[]
+
+  @@index([authorId], map: "idx_note_author")
+  @@index([createdAt], map: "idx_note_created")
+  @@index([updatedAt], map: "idx_note_updated")
+  @@index([pinned], map: "idx_note_pinned")
+  @@index([search], map: "idx_note_search")
+}
+
+model Label {
+  id        Int       @id @default(autoincrement())
+  createdAt Int
+  updatedAt Int
+  name      String
+  slug      String?
+  notes     NoteLabel[]
+
+  @@index([createdAt], map: "idx_label_created")
+  @@index([updatedAt], map: "idx_label_updated")
+  @@index([name], map: "idx_label_name")
+  @@index([slug], map: "idx_label_slug")
+}
+
+model NoteLabel {
+  id      Int       @id @default(autoincrement())
+  noteId  Int
+  labelId Int
+  note    Note      @relation(fields: [noteId], references: [id])
+  label   Label @relation(fields: [labelId], references: [id])
+
+  @@unique([noteId, labelId], map: "unq_note_label")
+  @@index([noteId], map: "idx_note_label_noteId")
+  @@index([labelId], map: "idx_note_label_labelId")
+}
