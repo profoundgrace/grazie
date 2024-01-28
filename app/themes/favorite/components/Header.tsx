@@ -37,7 +37,8 @@ import {
   IconSettings,
   IconStar,
   IconSwitchHorizontal,
-  IconUserPlus
+  IconUserPlus,
+  IconDashboard
 } from '@tabler/icons-react';
 import cx from 'clsx';
 import { useState } from 'react';
@@ -251,7 +252,7 @@ export function Header() {
                   <Menu.Divider />
                   <Menu.Label>Settings</Menu.Label>
                   <Menu.Item
-                    leftSection={<IconSettings size={14} stroke={1.5} />}
+                    leftSection={<IconDashboard size={14} stroke={1.5} />}
                     onClick={() => navigate('/dashboard')}
                   >
                     Dashboard
