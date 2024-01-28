@@ -9,13 +9,20 @@ import { Underline } from '@tiptap/extension-underline';
 import { generateHTML } from '@tiptap/html';
 
 export default function HTMLContent({
-  content
+  content,
+  classes
 }: {
   content: { type?: string; content?: JSONContent[] | undefined };
+  classes?: any;
 }) {
   return (
-    <TypographyStylesProvider pl={0} mb={0}>
+    <TypographyStylesProvider
+      pl={0}
+      mb={0}
+      className={classes?.body ? classes.body : undefined}
+    >
       <div
+        className={classes?.content ? classes.content : undefined}
         dangerouslySetInnerHTML={{
           __html: generateHTML(content, [
             StarterKit,
