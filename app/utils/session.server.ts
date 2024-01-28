@@ -1,7 +1,7 @@
 import { createCookieSessionStorage, redirect } from '@remix-run/node';
 import { session as config } from '~/utils/config.server';
 import type { User } from '~/types/User';
-import { getUserById } from '~/lib/user.server';
+import { getUserAccount } from '~/lib/user.server';
 
 const { name, maxAge, secrets, secure } = config;
 
@@ -46,7 +46,7 @@ export async function getUser(request: Request) {
   const userId = await getUserId(request);
   if (userId === undefined) return null;
 
-  const user = await getUserById(userId);
+  const user = await getUserAccount(userId);
 
   if (user) return user;
 

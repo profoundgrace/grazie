@@ -4,6 +4,7 @@ import { avatarURL } from '~/utils/config.server';
 import { prisma } from '~/utils/prisma.server';
 import { timeStamp } from '~/utils/generic.server';
 import type { User, UserLogin, UserSystem } from '~/types/User';
+import { getUserId } from '~/utils/session.server';
 
 const log = getLogger('User');
 
@@ -160,13 +161,17 @@ export async function getUserAccount(id: User['id']) {
       throw new Error('User ID was not Found!');
     }
 
+    account.isLoggedIn = true;
+
     return {
       ...account,
-      avatar: {
-        sm: `${avatarURL}sm/${account?.avatar}`,
-        md: `${avatarURL}md/${account?.avatar}`,
-        lg: `${avatarURL}lg/${account?.avatar}`
-      }
+      avatar: account?.avatar
+        ? {
+            sm: `${avatarURL}sm/${account?.avatar}`,
+            md: `${avatarURL}md/${account?.avatar}`,
+            lg: `${avatarURL}lg/${account?.avatar}`
+          }
+        : null
     };
   } catch (err: any) {
     log.error(err.message);
@@ -235,22 +240,14 @@ export async function getUser({
   }
 }
 
-export async function getUsers() {
+export async function getUsers({ select }) {
   try {
-    const data = await db.query(
-      aql`
-    FOR user IN ${users}
-      SORT user.username ASC
-      RETURN {
-        "id" : user._key,
-        "username" : user.username,
-        "createdAt" : user.createdAt,
-        "updatedAt" : user.updatedAt,
-        "avatar" : user.avatar
-      }`
-    );
+    const data = await prisma.user.findMany({
+      select,
+      orderBy: { id: 'asc' }
+    });
 
-    return { nodes: await data.all(), storage: avatarURL };
+    return { nodes: data, storage: avatarURL };
   } catch (error: any) {
     log.error(error.message);
     log.error(error.stack);
