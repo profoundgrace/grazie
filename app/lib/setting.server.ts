@@ -82,7 +82,13 @@ function outputSetting({ value, type }: { value: any; type: string }) {
  * @param { name, value, type }
  * @returns value as type
  */
-export async function setting({ id, name, value, type }: SettingInput) {
+export async function setting({
+  id,
+  name,
+  value,
+  type,
+  defaultValue
+}: SettingInput) {
   try {
     if (name && !value) {
       const cache = DataCache.get(`setting.${name}`);
@@ -132,6 +138,15 @@ export async function setting({ id, name, value, type }: SettingInput) {
           name
         }
       });
+      if (!setting) {
+        if (defaultValue) {
+          setting = { value: defaultValue };
+        } else {
+          throw new Error(
+            `Setting ${name} doesn't exist and no default (defaultValue: ${defaultValue}) was provided`
+          );
+        }
+      }
       type = setting?.type;
     }
     log.info(`Cached setting ${name}`);

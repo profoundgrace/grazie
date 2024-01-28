@@ -14,4 +14,5 @@ export type UserSettingInput = {
   name: string;
   value: string;
   type?: string;
+  default?: string | number | object;
 };
