@@ -10,6 +10,7 @@ import {
   Switch,
   TagsInput,
   TextInput,
+  Textarea,
   Title
 } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
@@ -27,7 +28,7 @@ interface Editor {
   id?: number | null;
   createdAt?: string | null;
   published?: boolean;
-  publishedAt?: string | null;
+  publishedAt?: number | null;
   status?: string;
   summary?: string;
   body?: { type?: string; content?: JSONContent[] | undefined };
@@ -58,7 +59,7 @@ const ArticleEditor = ({
       id,
       createdAt,
       published,
-      publishedAt,
+      publishedAt: publishedAt ? new Date(publishedAt * 1000) : null,
       status,
       summary,
       body: typeof body === 'string' ? JSON.parse(body) : body,
@@ -73,20 +74,19 @@ const ArticleEditor = ({
   });
 
   const loaderData = useLoaderData();
-  const { categories: categoriesList } = loaderData;
 
   const [catSearchValue, setCatSearchValue] = useState('');
 
   const [errorMsg, setErrorMsg] = useState('');
 
-  const route = !id ? '/post/create' : '/post/update';
+  const route = !id ? '/page/create' : '/page/update';
 
   const submit = useSubmit();
 
   const navigate = useNavigate();
 
   const DiscardBtn = () => (
-    <Button color="red" onClick={() => navigate('posts')} variant="light">
+    <Button color="red" onClick={() => navigate('pages')} variant="light">
       Discard
     </Button>
   );
@@ -94,7 +94,7 @@ const ArticleEditor = ({
   const CancelBtn = ({ slug }: { slug: string }) => (
     <Button
       color="yellow"
-      onClick={() => navigate(`/post/${slug}`)}
+      onClick={() => navigate(`/page/${slug}`)}
       variant="light"
     >
       Cancel
@@ -114,7 +114,7 @@ const ArticleEditor = ({
       <Grid.Col span={{ base: 12, md: 6 }}>
         <Card withBorder>
           <Card.Section p={10}>
-            <Title order={3}>Post Editor</Title>
+            <Title order={3}>Page Editor</Title>
           </Card.Section>
           <Card.Section p={10}>
             {errorMsg ? (
@@ -135,6 +135,12 @@ const ArticleEditor = ({
                   type="text"
                   placeholder="Title"
                   {...form.getInputProps('title')}
+                />
+                <Textarea
+                  label="Summary"
+                  name="summary"
+                  placeholder="Summary"
+                  {...form.getInputProps('summary')}
                 />
                 <MantineEditor name="body" form={form} />
                 <input
@@ -216,28 +222,6 @@ const ArticleEditor = ({
                   type="hidden"
                   name="slug"
                   {...form.getInputProps('slug')}
-                />
-                <TagsInput
-                  data={
-                    categoriesList?.nodes?.length > 0
-                      ? categoriesList?.nodes?.map(
-                          (cat: {
-                            name: string;
-                            slug: string;
-                            parent: { name: string };
-                          }) => ({
-                            value: cat.slug,
-                            label: cat.name
-                          })
-                        )
-                      : []
-                  }
-                  label="Categories"
-                  name="categories"
-                  onSearchChange={setCatSearchValue}
-                  placeholder="Categories"
-                  searchValue={catSearchValue}
-                  {...form.getInputProps('categories')}
                 />
               </Stack>
               <Group align="center" mt="md">

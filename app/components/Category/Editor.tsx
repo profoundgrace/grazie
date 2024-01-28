@@ -15,6 +15,8 @@ import '@mantine/tiptap/styles.layer.css';
 import { Form, useLoaderData, useSubmit } from '@remix-run/react';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
+import { Debug } from '../Debug';
+import { DebugCollapse } from '../DebugCollapse';
 
 interface Editor {
   id?: number | null;
@@ -34,7 +36,7 @@ const CategoryEditor = ({
   const form = useForm({
     initialValues: {
       id,
-      parentId,
+      parentId: `${parentId}`,
       name,
       description
     }
@@ -84,7 +86,7 @@ const CategoryEditor = ({
                   data={
                     categories?.totalCount > 0
                       ? categories?.nodes?.map(
-                          (cat: { id: number; name: string }) => ({
+                          (cat: { id: string; name: string }) => ({
                             value: `${cat.id}`,
                             label: cat.name
                           })
@@ -105,7 +107,7 @@ const CategoryEditor = ({
                 <Button onClick={() => closeEditor('')}>Cancel</Button>
               </Group>
             </Form>
-            <pre>{JSON.stringify(form.values, null, 2)}</pre>
+            <DebugCollapse data={form.values} />
           </Card.Section>
         </Card>
       </Grid.Col>
