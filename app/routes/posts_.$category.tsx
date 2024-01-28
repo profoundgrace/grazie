@@ -15,7 +15,6 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const posts = await getPosts({ filter: { category: params.category } });
 
   const data = { posts };
-  console.log(JSON.stringify(posts, null, 2));
 
   return json(data);
 }
@@ -49,7 +48,7 @@ export default function PostsCategory() {
         <Title order={2}>Posts</Title>
         <Tabs defaultValue="browse" keepMounted={false}>
           <Tabs.List>
-            <Tabs.Tab value="create" onClick={() => navigate('/posts/create')}>
+            <Tabs.Tab value="create" onClick={() => navigate('/post/create')}>
               Create
             </Tabs.Tab>
             <Tabs.Tab value="browse">Browse</Tabs.Tab>

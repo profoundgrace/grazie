@@ -53,7 +53,7 @@ export default function Index() {
       <Grid.Col span={12}>
         <Tabs defaultValue="browse" keepMounted={false}>
           <Tabs.List>
-            <Tabs.Tab value="create" onClick={() => navigate('/posts/create')}>
+            <Tabs.Tab value="create" onClick={() => navigate('/post/create')}>
               Create
             </Tabs.Tab>
             <Tabs.Tab value="browse">Browse</Tabs.Tab>

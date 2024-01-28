@@ -7,15 +7,18 @@ import PostCard from '~/components/Post/PostCard';
 import { getPost } from '~/lib/post.server';
 import { site } from '@/grazie';
 
-export function meta() {
-  return [{ title: `Posts${site?.separator}${site?.name}` }];
+export function meta({
+  data: {
+    post: { title }
+  }
+}) {
+  return [{ title: `${title}${site?.separator}${site?.name}` }];
 }
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   const post = await getPost({ slug: params?.slug });
 
   const data = { post };
-  console.log(post);
   return json(data);
 }
 
