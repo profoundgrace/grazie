@@ -3,10 +3,9 @@ import { getLogger } from '~/utils/logger.server';
 import { formatSlug } from '~/utils/formatSlug';
 import { dateString, timeStamp, timeString } from '~/utils/generic.server';
 import { prisma } from '~/utils/prisma.server';
-import type { PostInput } from '~/types/Post';
-import { getCategory } from './category.server';
+import type { PageInput } from '~/types/Page';
 
-const log = getLogger('Posts Query');
+const log = getLogger('Pages Query');
 
 async function slugCheck(slug: string, id = undefined) {
   let where = { slug };
@@ -22,12 +21,12 @@ async function slugCheck(slug: string, id = undefined) {
       ]
     };
   }
-  const slugs = await prisma.post.count({
+  const slugs = await prisma.page.count({
     where
   });
 
   if (slugs > 0) {
-    const slugs = await prisma.post.count({
+    const slugs = await prisma.page.count({
       where: {
         slug: {
           startsWith: slug
@@ -40,15 +39,16 @@ async function slugCheck(slug: string, id = undefined) {
   return slug;
 }
 
-export async function createPost({
+export async function createPage({
   title,
+  summary,
   body,
   published,
   publishedAt,
   slugFormat = 'date-title',
   slug,
   authorId
-}: PostInput) {
+}: PageInput) {
   try {
     const date = timeStamp();
     if (published && !publishedAt) {
@@ -57,6 +57,7 @@ export async function createPost({
     const data = {
       body: body?.type ? (JSON.stringify(body) as string) : (body as string),
       title,
+      summary,
       createdAt: date,
       published,
       publishedAt,
@@ -65,24 +66,24 @@ export async function createPost({
       slug: `${timeString()}_${title}`
     };
 
-    const post = await prisma.post.create({
+    const page = await prisma.page.create({
       data
     });
 
     slug = formatSlug({
       format: slugFormat,
-      id: post.id,
+      id: page.id,
       title,
-      date: post?.publishedAt
-        ? dateString({ timestamp: post.publishedAt })
-        : dateString({ timestamp: post?.createdAt }),
+      date: page?.publishedAt
+        ? dateString({ timestamp: page.publishedAt })
+        : dateString({ timestamp: page?.createdAt }),
       slug
     });
 
     slug = await slugCheck(slug);
 
-    const update = await prisma.post.update({
-      where: { id: post.id },
+    const update = await prisma.page.update({
+      where: { id: page.id },
       data: {
         slug
       },
@@ -91,9 +92,9 @@ export async function createPost({
       }
     });
 
-    post.slug = update.slug;
+    page.slug = update.slug;
 
-    return post;
+    return page;
   } catch (error: any) {
     log.error(error.message);
     log.error(error.stack);
@@ -101,23 +102,25 @@ export async function createPost({
   }
 }
 
-export async function updatePost({
+export async function updatePage({
   id,
   published,
   publishedAt,
   body,
   title,
+  summary,
   slugFormat,
   slug
-}: PostInput) {
+}: PageInput) {
   try {
     if (!id && !slug) {
-      throw new Error('Post Update requires either id or slug');
+      throw new Error('Page Update requires either id or slug');
     }
     const date = timeStamp();
     const data = {
       body: body?.type ? (JSON.stringify(body) as string) : (body as string),
       title,
+      summary,
       published,
       publishedAt,
       updatedAt: date,
@@ -134,7 +137,7 @@ export async function updatePost({
       where.slug = slug;
     }
 
-    const prevStatus = await prisma.post.findUnique({
+    const prevStatus = await prisma.page.findUnique({
       where: {
         id
       },
@@ -167,14 +170,14 @@ export async function updatePost({
       data.slug = await slugCheck(slug);
     }
 
-    const post = await prisma.post.update({
+    const page = await prisma.page.update({
       where: {
         id
       },
       data
     });
 
-    return post;
+    return page;
   } catch (error: any) {
     log.error(error.message);
     log.error(error.stack);
@@ -182,7 +185,7 @@ export async function updatePost({
   }
 }
 
-export async function getPost({ id, slug, select }) {
+export async function getPage({ id, slug, select }) {
   try {
     const where = {} as { id?: number; slug?: string };
 
@@ -191,13 +194,14 @@ export async function getPost({ id, slug, select }) {
     } else if (slug) {
       where.slug = slug;
     } else {
-      throw new Error(`Either Post slug or id is required`);
+      throw new Error(`Either Page slug or id is required`);
     }
-    const post = await prisma.post.findUnique({
+    const page = await prisma.page.findUnique({
       where,
       select: select ?? {
         id: true,
         title: true,
+        summary: true,
         body: true,
         authorId: true,
         createdAt: true,
@@ -209,21 +213,10 @@ export async function getPost({ id, slug, select }) {
           select: {
             displayName: true
           }
-        },
-        categories: {
-          select: {
-            catId: true,
-            category: {
-              select: {
-                name: true,
-                slug: true
-              }
-            }
-          }
         }
       }
     });
-    return post;
+    return page;
   } catch (error: any) {
     log.error(error.message);
     log.error(error.stack);
@@ -231,7 +224,7 @@ export async function getPost({ id, slug, select }) {
   }
 }
 
-export async function getPosts({
+export async function getPages({
   filter = {}
 }: {
   filter?: { username?: string; category?: string };
@@ -243,23 +236,7 @@ export async function getPosts({
       where.authorId = await getUserByUsername(filter.username);
     }
 
-    if (filter?.category) {
-      const category = await getCategory({
-        slug: filter.category,
-        select: { id: true }
-      });
-      if (category) {
-        where.categories = {
-          some: {
-            catId: category.id
-          }
-        };
-      } else {
-        throw new Error(`Category ${filter.category} was not found`);
-      }
-    }
-
-    const articles = await prisma.post.findMany({
+    const articles = await prisma.page.findMany({
       where,
       select: {
         id: true,
@@ -269,6 +246,7 @@ export async function getPosts({
         publishedAt: true,
         updatedAt: true,
         title: true,
+        summary: true,
         body: true,
         slug: true,
         search: true,
@@ -278,17 +256,6 @@ export async function getPosts({
             displayName: true,
             username: true
           }
-        },
-        categories: {
-          select: {
-            catId: true,
-            category: {
-              select: {
-                name: true,
-                slug: true
-              }
-            }
-          }
         }
       },
       orderBy: { createdAt: 'desc' }
@@ -296,7 +263,7 @@ export async function getPosts({
 
     return {
       count: articles.length,
-      totalCount: await prisma.post.count({ where }),
+      totalCount: await prisma.page.count({ where }),
       nodes: articles
     };
   } catch (error: any) {

@@ -130,6 +130,14 @@ export async function postCategory({ name, slug, postId }: CategoryPostInput) {
       });
     }
 
+    const assignCategory = async () =>
+      await prisma.categoryPost.create({
+        data: {
+          postId,
+          catId: category.id
+        }
+      });
+
     if (!category) {
       const data = {
         name: name?.trim()
@@ -145,14 +153,18 @@ export async function postCategory({ name, slug, postId }: CategoryPostInput) {
       category = await prisma.category.create({
         data
       });
-    }
 
-    await prisma.categoryPost.create({
-      data: {
-        postId,
-        catId: category.id
+      await assignCategory();
+    } else {
+      const assignedCategory = await prisma.categoryPost.findUnique({
+        where: {
+          catId_postId: { catId: category.id, postId }
+        }
+      });
+      if (!assignedCategory) {
+        await assignCategory();
       }
-    });
+    }
 
     const postsCount = await prisma.categoryPost.count({
       where: {
@@ -177,10 +189,17 @@ export async function postCategory({ name, slug, postId }: CategoryPostInput) {
   }
 }
 
+export async function purgePostCategories({ postId }: { postId: number }) {
+  return await prisma.categoryPost.deleteMany({
+    where: {
+      postId
+    }
+  });
+}
+
 export async function updateCategory({
   id,
-  slug,
-  parentId,
+  parentId = null,
   name,
   description
 }: CategoryInput) {
@@ -188,29 +207,61 @@ export async function updateCategory({
     const date = timeStamp();
     const data = {
       parentId,
-      name,
+      name: name?.trim(),
       description
     };
 
-    if (!slug && !id) {
-      throw new Error('Either slug or id is required to Update a Category');
+    if (!id) {
+      throw new Error('id is required to Update a Category');
     }
 
     const prevStatus = await prisma.category.findUnique({
       where: {
-        [slug ?? id]: slug ?? id
+        id
       },
       select: {
-        slug: true
+        name: true,
+        parentId: true,
+        path: true
       }
     });
 
-    if (prevStatus?.slug !== slug) {
+    if (prevStatus?.name !== data.name) {
+      if (await nameCheck(name?.trim())) {
+        throw new Error('Category Name Already Exists');
+      }
       const _slug = formatSlug({
         format: 'custom',
-        slug
+        slug: data.name
       });
       data.slug = await slugCheck(_slug);
+    }
+
+    if (prevStatus?.name !== data.name || prevStatus?.parentId !== parentId) {
+      data.path = await pathGenerator(data.name, parentId);
+      const children = await prisma.category.findMany({
+        where: {
+          path: {
+            startsWith: prevStatus.path
+          }
+        },
+        select: {
+          id: true,
+          path: true
+        }
+      });
+      if (children?.length) {
+        for (const child of children) {
+          await prisma.category.updateMany({
+            where: {
+              id: child.id
+            },
+            data: {
+              path: child.path.replace(prevStatus?.path, data.path)
+            }
+          });
+        }
+      }
     }
 
     const category = await prisma.category.update({

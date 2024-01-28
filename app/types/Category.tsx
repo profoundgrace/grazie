@@ -15,7 +15,7 @@ export type Category = {
 
 export type CategoryInput = {
   id?: number;
-  parentId?: number;
+  parentId?: number | null;
   postsCount?: number;
   name?: string;
   slug?: string;
