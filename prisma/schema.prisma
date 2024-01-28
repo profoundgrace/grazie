@@ -31,6 +31,7 @@ model User {
   pages       Page[]
   posts       Post[]
   roles       RoleUser[]
+  settings    UserSetting[]
 
   @@unique([email], map: "unq_user_email")
   @@unique([username], map: "unq_user_username")
@@ -59,7 +60,7 @@ model Post {
   meta          String?
   author        User      @relation(fields: [authorId], references: [id])
   categories    CategoryPost[]
-  comments      Comments[]
+  comments      Comment[]
 
   @@unique([slug], map: "unq_post_slug")
   @@index([authorId], map: "idx_post_author")
@@ -173,9 +174,9 @@ model Comment {
   search         String?
   meta           String?
   author         User      @relation(fields: [authorId], references: [id])
-  parent         Comment   @relation(fields: [parentId], references: [id])
+  parent         Comment?   @relation("CommentToComment", fields: [parentId], references: [id])
   post           Post      @relation(fields: [postId], references: [id])
-  replies        Comment[]
+  replies        Comment[] @relation("CommentToComment")
 
   @@index([authorId], map: "idx_comment_author")
   @@index([createdAt], map: "idx_comment_created")
@@ -192,14 +193,14 @@ model Comment {
 
 model Note {
   id        Int     @id @default(autoincrement())
-  pinned    Int     @default(false)
+  pinned    Boolean     @default(false)
   authorId  Int
   createdAt Int
   updatedAt Int
   body      String
   search    String?
   meta      String?
-  author    User    @relation(fields: [authorId], references: [id])
+  author    User        @relation(fields: [authorId], references: [id])
   labels    NoteLabel[]
 
   @@index([authorId], map: "idx_note_author")
@@ -210,7 +211,7 @@ model Note {
 }
 
 model Label {
-  id        Int       @id @default(autoincrement())
+  id        Int         @id @default(autoincrement())
   createdAt Int
   updatedAt Int
   name      String
@@ -224,13 +225,37 @@ model Label {
 }
 
 model NoteLabel {
-  id      Int       @id @default(autoincrement())
+  id      Int   @id @default(autoincrement())
   noteId  Int
   labelId Int
-  note    Note      @relation(fields: [noteId], references: [id])
+  note    Note  @relation(fields: [noteId], references: [id])
   label   Label @relation(fields: [labelId], references: [id])
 
   @@unique([noteId, labelId], map: "unq_note_label")
   @@index([noteId], map: "idx_note_label_noteId")
   @@index([labelId], map: "idx_note_label_labelId")
+}
+
+model Setting {
+  id      Int    @id @default(autoincrement())
+  name    String
+  value   String
+  type    String @default("string")
+
+  @@unique([name], map: "unq_setting_name")
+  @@index([type], map: "idx_setting_type")
+}
+
+model UserSetting {
+  id     Int    @id @default(autoincrement())
+  userId Int?  
+  name   String
+  value  String
+  type   String @default("string")
+  user   User?  @relation(fields: [userId], references: [id])
+
+  @@unique([userId, name], map: "unq_user_setting_name")
+  @@index([userId], map: "idx_user_setting_user")
+  @@index([name], map: "idx_user_setting_name")
+  @@index([type], map: "idx_user_setting_type")
 }
