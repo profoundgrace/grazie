@@ -6,7 +6,8 @@ import {
   IconUsers,
   IconLogout,
   IconCategory2,
-  IconNews
+  IconNews,
+  IconDashboard
 } from '@tabler/icons-react';
 import classes from '~/components/Dashboard/Navbar.module.css';
 import { Link, useMatches, useNavigate } from '@remix-run/react';
@@ -17,6 +18,12 @@ const tabs = {
     { link: '/dashboard/settings', label: 'Settings', icon: IconSettings }
   ],
   system: [
+    {
+      link: '/dashboard/admin',
+      label: 'Overview',
+      icon: IconDashboard,
+      links: []
+    },
     {
       link: '/dashboard/admin/categories',
       label: 'Categories',
