@@ -44,6 +44,8 @@ import { useState } from 'react';
 import { site } from '@/grazie';
 import useUser from '~/hooks/useUser';
 import classes from '~/themes/favorite/styles/Header.module.css';
+import { setting } from '~/lib/setting.server';
+import { useTheme } from '~/hooks/useTheme';
 
 const mockdata = [
   {
@@ -117,27 +119,7 @@ export function Header() {
   const isLoggedIn = user?.isLoggedIn ?? false;
   const username = user?.username ?? 'Guest';
   const theme = useMantineTheme();
-
-  const links = mockdata.map((item) => (
-    <UnstyledButton className={classes.subLink} key={item.title}>
-      <Group wrap="nowrap" align="flex-start">
-        <ThemeIcon size={34} variant="default" radius="md">
-          <item.icon
-            style={{ width: rem(22), height: rem(22) }}
-            color={theme.colors.blue[6]}
-          />
-        </ThemeIcon>
-        <div>
-          <Text size="sm" fw={500}>
-            {item.title}
-          </Text>
-          <Text size="xs" c="dimmed">
-            {item.description}
-          </Text>
-        </div>
-      </Group>
-    </UnstyledButton>
-  ));
+  const { data } = useTheme();
 
   const userLinks = userMenuData.map((item) => (
     <UnstyledButton
@@ -180,62 +162,16 @@ export function Header() {
             <Link to="/" className={classes.link}>
               Home
             </Link>
-            <HoverCard
-              width={600}
-              position="bottom"
-              radius="md"
-              shadow="md"
-              withinPortal
-            >
-              <HoverCard.Target>
-                <a href="#" className={classes.link}>
-                  <Center inline>
-                    <Box component="span" mr={5}>
-                      Features
-                    </Box>
-                    <IconChevronDown
-                      style={{ width: rem(16), height: rem(16) }}
-                      color={theme.colors.blue[6]}
-                    />
-                  </Center>
-                </a>
-              </HoverCard.Target>
 
-              <HoverCard.Dropdown style={{ overflow: 'hidden' }}>
-                <Group justify="space-between" px="md">
-                  <Text fw={500}>Features</Text>
-                  <Anchor href="#" fz="xs">
-                    View all
-                  </Anchor>
-                </Group>
-
-                <Divider my="sm" />
-
-                <SimpleGrid cols={2} spacing={0}>
-                  {links}
-                </SimpleGrid>
-
-                <div className={classes.dropdownFooter}>
-                  <Group justify="space-between">
-                    <div>
-                      <Text fw={500} fz="sm">
-                        Get started
-                      </Text>
-                      <Text size="xs" c="dimmed">
-                        Their food sources have decreased, and their numbers
-                      </Text>
-                    </div>
-                    <Button variant="default">Get started</Button>
-                  </Group>
-                </div>
-              </HoverCard.Dropdown>
-            </HoverCard>
-            <a href="#" className={classes.link}>
-              Learn
-            </a>
-            <a href="#" className={classes.link}>
-              Academy
-            </a>
+            {data?.navbar?.links?.map((navlink, index) => (
+              <Link
+                key={`navlink-${index}`}
+                to={navlink.to}
+                className={classes.link}
+              >
+                {navlink.label}
+              </Link>
+            ))}
           </Group>
           <Menu
             width={260}
@@ -316,6 +252,12 @@ export function Header() {
                   <Menu.Label>Settings</Menu.Label>
                   <Menu.Item
                     leftSection={<IconSettings size={14} stroke={1.5} />}
+                    onClick={() => navigate('/dashboard')}
+                  >
+                    Dashboard
+                  </Menu.Item>
+                  <Menu.Item
+                    leftSection={<IconSettings size={14} stroke={1.5} />}
                     onClick={() => navigate('/account')}
                   >
                     Account settings
@@ -387,7 +329,7 @@ export function Header() {
               />
             </Center>
           </UnstyledButton>
-          <Collapse in={linksOpened}>{links}</Collapse>
+
           <a href="#" className={classes.link}>
             Learn
           </a>
