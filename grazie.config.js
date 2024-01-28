@@ -15,5 +15,6 @@ export const site = {
 export const metaSettings = {};
 
 export const Pages = {
-  root: 'Page'
+  root: 'Page',
+  dashboard: 'Dashboard'
 };
