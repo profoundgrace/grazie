@@ -27,7 +27,7 @@ interface Editor {
   id?: number | null;
   createdAt?: string | null;
   published?: boolean;
-  publishedAt?: string | null;
+  publishedAt?: number | null;
   status?: string;
   summary?: string;
   body?: { type?: string; content?: JSONContent[] | undefined };
@@ -58,7 +58,7 @@ const ArticleEditor = ({
       id,
       createdAt,
       published,
-      publishedAt,
+      publishedAt: publishedAt && new Date(publishedAt * 1000),
       status,
       summary,
       body: typeof body === 'string' ? JSON.parse(body) : body,
