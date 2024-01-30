@@ -80,6 +80,7 @@ model Page {
   createdAt   Int
   publishedAt Int?
   updatedAt   Int
+  viewsCount  Int       @default(0)
   title       String
   body        String
   slug        String
@@ -96,6 +97,7 @@ model Page {
   @@index([updatedAt], map: "idx_page_updated")
   @@index([search], map: "idx_page_search")
   @@index([summary], map: "idx_page_summary")
+  @@index([viewsCount], map: "idx_page_views_count")
 }
 
 model Role {
@@ -104,6 +106,7 @@ model Role {
   name        String
   description String
   users       RoleUser[]
+  privileges  RolePrivilege[]
 
   @@unique([name], map: "unq_role_name")
   @@index([active], map: "idx_role_active")
@@ -258,4 +261,31 @@ model UserSetting {
   @@index([userId], map: "idx_user_setting_user")
   @@index([name], map: "idx_user_setting_name")
   @@index([type], map: "idx_user_setting_type")
+}
+
+model Privilege {
+  id      Int    @id @default(autoincrement())
+  subject String  
+  action  String
+  roles   RolePrivilege[]
+
+  @@unique([subject, action], map: "unq_privilege")
+  @@index([subject], map: "idx_privilege_subject")
+  @@index([action], map: "idx_privilege_action")
+}
+
+model RolePrivilege {
+  id          Int       @id @default(autoincrement())
+  roleId      Int  
+  privilegeId Int
+  inverted    Boolean   @default(false)
+  conditions  String?
+  description String?
+  role        Role      @relation(fields: [roleId], references: [id])
+  privilege   Privilege @relation(fields: [privilegeId], references: [id])
+
+  @@index([roleId], map: "idx_role_privilege_role")
+  @@index([privilegeId], map: "idx_role_privilege")
+  @@index([inverted], map: "idx_role_privilege_inverted")
+  @@index([description], map: "idx_role_privilege_description")
 }
