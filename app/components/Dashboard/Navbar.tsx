@@ -7,7 +7,9 @@ import {
   IconLogout,
   IconCategory2,
   IconNews,
-  IconDashboard
+  IconDashboard,
+  IconShieldStar,
+  IconStar
 } from '@tabler/icons-react';
 import classes from '~/components/Dashboard/Navbar.module.css';
 import { Link, useMatches, useNavigate } from '@remix-run/react';
@@ -43,6 +45,18 @@ const tabs = {
       links: []
     },
     {
+      link: '/dashboard/admin/roles',
+      label: 'Roles',
+      icon: IconShieldStar,
+      links: []
+    },
+    {
+      link: '/dashboard/admin/privileges',
+      label: 'Privileges',
+      icon: IconStar,
+      links: []
+    },
+    {
       link: '/dashboard/admin/users',
       label: 'Users',
       icon: IconUsers,
@@ -58,10 +72,13 @@ const tabs = {
 };
 
 export default function Navbar() {
-  const [section, setSection] = useState<'account' | 'system'>('account');
-  const [active, setActive] = useState('Billing');
   const matches = useMatches();
   const { id } = matches[matches.length - 1];
+  const [section, setSection] = useState<'account' | 'system'>(
+    id.includes('dashboard.admin') ? 'system' : 'account'
+  );
+  const [active, setActive] = useState('Billing');
+
   const user = useUser();
   const navigate = useNavigate();
 
@@ -73,15 +90,6 @@ export default function Navbar() {
       setSection('account');
     }
   }, [id]);
-
-  useEffect(() => {
-    if (section === 'system') {
-      navigate('/dashboard/admin');
-    }
-    if (section === 'account') {
-      navigate('/dashboard');
-    }
-  }, [navigate, section]);
 
   const links = tabs[section].map((item) => (
     <Link
@@ -112,7 +120,15 @@ export default function Navbar() {
 
         <SegmentedControl
           value={section}
-          onChange={(value: any) => setSection(value)}
+          onChange={(value: any) => {
+            setSection(value);
+            if (value === 'system') {
+              navigate('/dashboard/admin');
+            }
+            if (value === 'account') {
+              navigate('/dashboard');
+            }
+          }}
           transitionTimingFunction="ease"
           fullWidth
           data={[
