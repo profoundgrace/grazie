@@ -2,14 +2,18 @@ import {
   ActionIcon,
   Box,
   Button,
-  Stack,
+  Group,
   Table,
   Text,
   Title
 } from '@mantine/core';
 import { LoaderFunctionArgs, json } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
-import { IconEdit, IconSquarePlus } from '@tabler/icons-react';
+import { useLoaderData, useNavigate } from '@remix-run/react';
+import {
+  IconArrowUpRight,
+  IconEdit,
+  IconSquarePlus
+} from '@tabler/icons-react';
 import { Fragment, useState } from 'react';
 import classes from '~/components/Dashboard/AdminPost.module.css';
 import DateTime from '~/components/DateTime';
@@ -26,6 +30,7 @@ export default function PostAdmin() {
   const { posts } = useLoaderData();
   const [openEditor, setOpenEditor] = useState(false);
   const [postEditor, setPostEditor] = useState(null);
+  const navigate = useNavigate();
 
   const rows =
     posts.nodes.length > 0 ? (
@@ -49,7 +54,7 @@ export default function PostAdmin() {
             </Table.Td>
             <Table.Td>{row.slug}</Table.Td>
             <Table.Td>
-              <Stack>
+              <Group>
                 <ActionIcon
                   variant="subtle"
                   radius="md"
@@ -61,7 +66,19 @@ export default function PostAdmin() {
                     stroke={1.5}
                   />
                 </ActionIcon>
-              </Stack>
+                <ActionIcon
+                  color="green"
+                  variant="subtle"
+                  radius="md"
+                  aria-label="View"
+                  onClick={() => navigate(`/post/${row.slug}`)}
+                >
+                  <IconArrowUpRight
+                    style={{ width: '70%', height: '70%' }}
+                    stroke={1.5}
+                  />
+                </ActionIcon>
+              </Group>
             </Table.Td>
           </Table.Tr>
           {postEditor === row.id && (
@@ -98,7 +115,7 @@ export default function PostAdmin() {
           <PostEditor closeEditor={setOpenEditor} />
         </Box>
       )}
-      <Table stickyHeader stickyHeaderOffset={60} miw={700}>
+      <Table stickyHeader striped stickyHeaderOffset={60} miw={700}>
         <Table.Thead className={classes.header}>
           <Table.Tr>
             <Table.Th>ID</Table.Th>

@@ -7,16 +7,7 @@ function formatToGb(value: number) {
 export async function system() {
   const cpu = await currentLoad();
   const memory = await mem();
-  console.log({
-    cpu: Math.round(cpu.currentLoad),
-    memory: {
-      total: formatToGb(memory.total),
-      used: formatToGb(memory.used),
-      active: formatToGb(memory.active),
-      available: formatToGb(memory.available)
-    },
-    os: await osInfo()
-  });
+
   return {
     cpu: Math.round(cpu.currentLoad),
     memory: {

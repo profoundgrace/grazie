@@ -39,7 +39,7 @@ export default function UserAdmin() {
   return (
     <>
       <Title>Users</Title>
-      <Table stickyHeader stickyHeaderOffset={60} miw={700}>
+      <Table stickyHeader striped stickyHeaderOffset={60} miw={700}>
         <Table.Thead className={classes.header}>
           <Table.Tr>
             <Table.Th>ID</Table.Th>

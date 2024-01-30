@@ -1,7 +1,11 @@
-import { ActionIcon, Box, Button, Stack, Table, Title } from '@mantine/core';
+import { ActionIcon, Box, Button, Group, Table, Title } from '@mantine/core';
 import { LoaderFunctionArgs, json } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
-import { IconEdit, IconSquarePlus } from '@tabler/icons-react';
+import { useLoaderData, useNavigate } from '@remix-run/react';
+import {
+  IconArrowUpRight,
+  IconEdit,
+  IconSquarePlus
+} from '@tabler/icons-react';
 import { Fragment, useState } from 'react';
 import classes from '~/components/Dashboard/AdminPost.module.css';
 import DateTime from '~/components/DateTime';
@@ -18,6 +22,7 @@ export default function PageAdmin() {
   const { pages } = useLoaderData();
   const [openEditor, setOpenEditor] = useState(false);
   const [pageEditor, setPageEditor] = useState(null);
+  const navigate = useNavigate();
 
   const rows =
     pages?.nodes?.length > 0 ? (
@@ -33,11 +38,11 @@ export default function PageAdmin() {
             </Table.Td>
             <Table.Td>{row.slug}</Table.Td>
             <Table.Td>
-              <Stack>
+              <Group>
                 <ActionIcon
                   variant="subtle"
                   radius="md"
-                  aria-label="Pages"
+                  aria-label="Edit Page"
                   onClick={() => setPageEditor(row.id)}
                 >
                   <IconEdit
@@ -45,7 +50,19 @@ export default function PageAdmin() {
                     stroke={1.5}
                   />
                 </ActionIcon>
-              </Stack>
+                <ActionIcon
+                  color="green"
+                  variant="subtle"
+                  radius="md"
+                  aria-label="View"
+                  onClick={() => navigate(`/page/${row.slug}`)}
+                >
+                  <IconArrowUpRight
+                    style={{ width: '70%', height: '70%' }}
+                    stroke={1.5}
+                  />
+                </ActionIcon>
+              </Group>
             </Table.Td>
           </Table.Tr>
           {pageEditor === row.id && (
@@ -82,7 +99,7 @@ export default function PageAdmin() {
           <PageEditor closeEditor={setOpenEditor} />
         </Box>
       )}
-      <Table stickyHeader stickyHeaderOffset={60} miw={700}>
+      <Table stickyHeader striped stickyHeaderOffset={60} miw={700}>
         <Table.Thead className={classes.header}>
           <Table.Tr>
             <Table.Th>ID</Table.Th>

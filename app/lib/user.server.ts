@@ -240,14 +240,36 @@ export async function getUser({
   }
 }
 
-export async function getUsers({ select }) {
+export async function getUsers({ filter, select }) {
   try {
+    const where = {};
+    if (filter) {
+      if (filter?.not) {
+        if (filter?.not?.roleId) {
+          where.roles = {
+            none: {
+              roleId: filter.not.roleId
+            }
+          };
+        }
+      }
+    }
+    if (!select) {
+      select = {
+        id: true,
+        displayName: true,
+        username: true
+      };
+    }
     const data = await prisma.user.findMany({
+      where,
       select,
       orderBy: { id: 'asc' }
     });
 
-    return { nodes: data, storage: avatarURL };
+    const totalCount = await prisma.user.count({ where });
+
+    return { count: data.length, totalCount, nodes: data, storage: avatarURL };
   } catch (error: any) {
     log.error(error.message);
     log.error(error.stack);
