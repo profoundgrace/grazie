@@ -1,6 +1,7 @@
 .card {
   position: relative;
-  background-color: var(--mantine-color-body);
+  background-color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-8));
+  border: rem(1px) solid light-dark(var(--mantine-color-gray-5), var(--mantine-color-dark-6));
 }
 
 .header {

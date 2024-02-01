@@ -76,8 +76,13 @@ export default function PostCard({
         </Group>
       </Card.Section>
       {title ? (
-        <Text fw={700} className={classes.title}>
-          <Link to={`/post/${slug}`}>{title}</Link>
+        <Text
+          fw={700}
+          className={classes.title}
+          component={Link}
+          to={`/post/${slug}`}
+        >
+          {title}
         </Text>
       ) : null}
 
@@ -104,7 +109,7 @@ export default function PostCard({
               </Text>
             </div>
           </Group>
-          <Group>
+          <Group gap={0}>
             <ActionIcon variant="subtle" color="gray">
               <IconHeart size={22} color={theme.colors.red[6]} stroke={1.5} />
             </ActionIcon>

@@ -1,11 +1,12 @@
 .card {
   position: relative;
-  background-color: var(--mantine-color-body);
+  background-color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-8));
+  border: rem(1px) solid light-dark(var(--mantine-color-gray-5), var(--mantine-color-dark-6));
 }
 
 .header {
   padding: rem(4px) rem(4px);
-  border-bottom: rem(1px) solid light-dark(var(--mantine-color-gray-5), var(--mantine-color-dark-6));
+  
 }
 
 .rating {
@@ -20,7 +21,7 @@
   font-weight: 900;
   line-height: 1.2;
   font-size: rem(20px);
-  margin-top: var(--mantine-spacing-xs);
+  margin-top: rem(3px);
   margin-bottom: rem(5px);
 }
 
@@ -34,5 +35,5 @@
 
 .footer {
   padding: rem(4px) rem(4px);
-  border-top: rem(1px) solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-5));
+  border-top: rem(1px) solid light-dark(var(--mantine-color-gray-5), var(--mantine-color-dark-6));
 }
