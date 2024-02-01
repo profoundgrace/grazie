@@ -9,11 +9,13 @@ import {
   IconNews,
   IconDashboard,
   IconShieldStar,
-  IconStar
+  IconStar,
+  IconShield
 } from '@tabler/icons-react';
 import classes from '~/components/Dashboard/Navbar.module.css';
 import { Link, useMatches, useNavigate } from '@remix-run/react';
 import useUser from '~/hooks/useUser';
+import { Can } from '~/components/Can';
 
 const tabs = {
   account: [
@@ -47,7 +49,7 @@ const tabs = {
     {
       link: '/dashboard/admin/roles',
       label: 'Roles',
-      icon: IconShieldStar,
+      icon: IconShield,
       links: []
     },
     {
@@ -117,25 +119,26 @@ export default function Navbar() {
         >
           {user.email}
         </Text>
-
-        <SegmentedControl
-          value={section}
-          onChange={(value: any) => {
-            setSection(value);
-            if (value === 'system') {
-              navigate('/dashboard/admin');
-            }
-            if (value === 'account') {
-              navigate('/dashboard');
-            }
-          }}
-          transitionTimingFunction="ease"
-          fullWidth
-          data={[
-            { label: 'Account', value: 'account' },
-            { label: 'System', value: 'system' }
-          ]}
-        />
+        <Can I="manage" a="Dashboard">
+          <SegmentedControl
+            value={section}
+            onChange={(value: any) => {
+              setSection(value);
+              if (value === 'system') {
+                navigate('/dashboard/admin');
+              }
+              if (value === 'account') {
+                navigate('/dashboard');
+              }
+            }}
+            transitionTimingFunction="ease"
+            fullWidth
+            data={[
+              { label: 'Account', value: 'account' },
+              { label: 'System', value: 'system' }
+            ]}
+          />
+        </Can>
       </div>
 
       <div className={classes.navbarMain}>{links}</div>
