@@ -240,6 +240,44 @@ export async function getUser({
   }
 }
 
+export async function getUserRoles({ userId = null }: { userId: User['id'] }) {
+  try {
+    return await prisma.roleUser.findMany({
+      where: {
+        userId,
+        active: true,
+        role: {
+          active: true
+        }
+      },
+      select: {
+        role: {
+          select: {
+            id: true,
+            name: true,
+            privileges: {
+              select: {
+                inverted: true,
+                conditions: true,
+                privilege: {
+                  select: {
+                    subject: true,
+                    action: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+  } catch (error: any) {
+    log.error(error.message);
+    log.error(error.stack);
+    throw error;
+  }
+}
+
 export async function getUsers({ filter, select }) {
   try {
     const where = {};

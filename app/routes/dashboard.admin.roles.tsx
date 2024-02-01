@@ -4,6 +4,7 @@ import { useLoaderData } from '@remix-run/react';
 import {
   IconCheck,
   IconEdit,
+  IconShieldStar,
   IconSquarePlus,
   IconUserShield,
   IconX
@@ -11,22 +12,28 @@ import {
 import { Fragment, useState } from 'react';
 import classes from '~/components/Dashboard/AdminPost.module.css';
 import RoleEditor from '~/components/Role/Editor';
+import RolePrivilegesWrapper from '~/components/RolePrivilege/RolePrivilegesFetcherWrapper';
 import RoleUsersWrapper from '~/components/RoleUser/RoleUsersFetcherWrapper';
 import { getRoles } from '~/lib/role.server';
+import { unifiedStyles } from '~/utils/unify';
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const roles = await getRoles({});
   return json({ _page: 'dashboard', roles });
 }
 
+const actionIconStyle = unifiedStyles.icons.action.style;
+const actionIconStroke = unifiedStyles.icons.action.stroke;
+
 export default function UserAdmin() {
   const { roles } = useLoaderData();
   const [openEditor, setOpenEditor] = useState(false);
   const [roleEditor, setRoleEditor] = useState(null);
+  const [rolePrivileges, setRolePrivileges] = useState(null);
   const [roleUsers, setRoleUsers] = useState(null);
 
   const rows = roles.nodes.map((row) => (
-    <Fragment key={row.slug}>
+    <Fragment key={`role-${row.name}-${row.id}`}>
       <Table.Tr
         bg={
           roleEditor === row.id || roleUsers === row.id
@@ -48,7 +55,19 @@ export default function UserAdmin() {
               aria-label="Role Editor"
               onClick={() => setRoleEditor(row.id)}
             >
-              <IconEdit style={{ width: '70%', height: '70%' }} stroke={1.5} />
+              <IconEdit style={actionIconStyle} stroke={actionIconStroke} />
+            </ActionIcon>
+            <ActionIcon
+              color="violet"
+              variant="subtle"
+              radius="md"
+              aria-label="Role Privileges"
+              onClick={() => setRolePrivileges(row.id)}
+            >
+              <IconShieldStar
+                style={actionIconStyle}
+                stroke={actionIconStroke}
+              />
             </ActionIcon>
             <ActionIcon
               color="gold"
@@ -58,8 +77,8 @@ export default function UserAdmin() {
               onClick={() => setRoleUsers(row.id)}
             >
               <IconUserShield
-                style={{ width: '70%', height: '70%' }}
-                stroke={1.5}
+                style={actionIconStyle}
+                stroke={actionIconStroke}
               />
             </ActionIcon>
           </Group>
@@ -69,6 +88,13 @@ export default function UserAdmin() {
         <Table.Tr bg={'var(--mantine-color-dark-5)'}>
           <Table.Td colSpan={5}>
             <RoleEditor closeEditor={setRoleEditor} {...row} />
+          </Table.Td>
+        </Table.Tr>
+      )}
+      {rolePrivileges === row.id && (
+        <Table.Tr bg={'var(--mantine-color-dark-5)'}>
+          <Table.Td colSpan={5}>
+            <RolePrivilegesWrapper role={row} />
           </Table.Td>
         </Table.Tr>
       )}

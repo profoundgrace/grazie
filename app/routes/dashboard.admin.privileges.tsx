@@ -24,7 +24,7 @@ export default function UserAdmin() {
   const [privilegeEditor, setPrivilegeEditor] = useState(null);
 
   const rows = privileges.nodes.map((row) => (
-    <Fragment key={row.slug}>
+    <Fragment key={`priv-${row.subject}-${row.action}-${row.id}`}>
       <Table.Tr
         bg={
           privilegeEditor === row.id ? 'var(--mantine-color-dark-9)' : undefined

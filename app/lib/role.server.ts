@@ -45,8 +45,6 @@ export async function createRole({ active, name, description }: RoleInput) {
 
 export async function updateRole({ id, active, name, description }: RoleInput) {
   try {
-    console.log(id);
-    console.log(name);
     if (await roleCheck(name, id)) {
       throw new Error(`Role name ${name} already exists`);
     }

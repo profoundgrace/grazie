@@ -6,7 +6,6 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const users = await getRoleUsers({
     roleId: Number(params.roleId)
   });
-  console.log(users);
   return json({ _page: 'dashboard', users });
 }
 

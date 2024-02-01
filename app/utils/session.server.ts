@@ -1,7 +1,9 @@
 import { createCookieSessionStorage, redirect } from '@remix-run/node';
 import { session as config } from '~/utils/config.server';
 import type { User } from '~/types/User';
-import { getUserAccount } from '~/lib/user.server';
+import { getUserAccount, getUserRoles } from '~/lib/user.server';
+import { abilityBuilder } from './abilities.server';
+import { createMongoAbility } from '@casl/ability';
 
 const { name, maxAge, secrets, secure } = config;
 
@@ -38,15 +40,23 @@ const { getSession, commitSession, destroySession } =
 export async function getUserId(request: Request): Promise<User['id']> {
   const session = await getSession(request.headers.get('Cookie'));
   const userId = session.get('userId');
-
   return userId;
+}
+
+export async function createAbility(request) {
+  const userId = await getUserId(request);
+  const userRoles = await getUserRoles({ userId });
+  const abilities = await abilityBuilder({ userRoles, userId });
+  if (!request.ability) {
+    request.ability = createMongoAbility(abilities);
+  }
+  return abilities;
 }
 
 export async function getUser(request: Request) {
   const userId = await getUserId(request);
-  if (userId === undefined) return null;
-
-  const user = await getUserAccount(userId);
+  const user = userId ? await getUserAccount(userId) : {};
+  user.abilities = await createAbility(request);
 
   if (user) return user;
 

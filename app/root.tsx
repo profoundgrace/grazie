@@ -3,6 +3,16 @@
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import '@mantine/tiptap/styles.css';
+import { createMongoAbility } from '@casl/ability';
+import {
+  Button,
+  ColorSchemeScript,
+  Container,
+  Group,
+  MantineProvider,
+  Title,
+  Text
+} from '@mantine/core';
 import { cssBundleHref } from '@remix-run/css-bundle';
 import {
   json,
@@ -19,27 +29,21 @@ import {
   ScrollRestoration,
   useRouteError
 } from '@remix-run/react';
-import {
-  Button,
-  ColorSchemeScript,
-  Container,
-  Group,
-  MantineProvider,
-  Title,
-  Text
-} from '@mantine/core';
-import { getUser } from '~/utils/session.server';
-import { ThemeProvider } from '~/theme';
-import classes from '~/styles/NotFound.module.css';
+import { AbilityProvider } from './components/AbilityProvider';
+import { ThemeProvider } from '~/components/ThemeProvider';
 import { setting } from './lib/setting.server';
+import classes from '~/styles/NotFound.module.css';
+import { getUser } from '~/utils/session.server';
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : [])
 ];
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const user = await getUser(request);
+
   return json({
-    user: await getUser(request),
+    user,
     theme: { navbar: { links: await setting({ name: 'navbar.links' }) } }
   });
 };
@@ -55,14 +59,16 @@ export default function App() {
         <ColorSchemeScript />
       </head>
       <body>
-        <MantineProvider defaultColorScheme="auto">
-          <ThemeProvider>
-            <Outlet />
-            <ScrollRestoration />
-            <Scripts />
-            <LiveReload />
-          </ThemeProvider>
-        </MantineProvider>
+        <AbilityProvider>
+          <MantineProvider defaultColorScheme="auto">
+            <ThemeProvider>
+              <Outlet />
+              <ScrollRestoration />
+              <Scripts />
+              <LiveReload />
+            </ThemeProvider>
+          </MantineProvider>
+        </AbilityProvider>
       </body>
     </html>
   );

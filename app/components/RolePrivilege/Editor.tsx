@@ -28,50 +28,55 @@ import { DebugCollapse } from '../DebugCollapse';
 interface Editor {
   id?: number | null;
   roleId: number;
-  userId?: number;
-  active?: boolean;
-
+  privilegeId?: number;
+  inverted?: boolean;
+  conditions?: string | null;
+  description?: string | null;
   closeEditor?: Dispatch<SetStateAction<boolean | number | string | null>>;
 }
 
 const SettingEditor = ({
   id = null,
   roleId,
-  userId,
-  active = true,
+  privilegeId,
+  inverted = false,
+  conditions,
+  description,
   closeEditor = () => null
 }: Editor) => {
   const form = useForm({
     initialValues: {
       id,
       roleId,
-      userId,
-      active
+      privilegeId: privilegeId ?? null,
+      inverted,
+      conditions: conditions ?? '',
+      description: description ?? ''
     }
   });
 
   const [errorMsg, setErrorMsg] = useState('');
 
   const route = !id
-    ? `/role/${roleId}/user/create`
-    : `/role/${roleId}/user/update`;
+    ? `/role/${roleId}/privilege/create`
+    : `/role/${roleId}/privilege/update`;
 
   const submit = useSubmit();
 
   const fetcher = useFetcher();
 
   useEffect(() => {
-    if (!userId && fetcher.state === 'idle' && !fetcher.data) {
-      fetcher.load(`/role/${roleId}/user/create`);
+    if (!privilegeId && fetcher.state === 'idle' && !fetcher.data) {
+      fetcher.load(`/role/${roleId}/privilege/create`);
     }
-  }, [fetcher, roleId, userId]);
+  }, [fetcher, roleId, privilegeId]);
   return (
     <Grid>
       <Grid.Col span={{ base: 12, md: 6 }}>
         <Card withBorder>
           <Card.Section p={10}>
             <Title order={3}>
-              {userId ? 'Role User Editor' : 'New Role Users'}
+              {privilegeId ? 'Role Privilege Editor' : 'New Role Privilege'}
             </Title>
           </Card.Section>
           <Card.Section p={10}>
@@ -85,39 +90,66 @@ const SettingEditor = ({
               action={route}
               onSubmit={form.onSubmit((_v, e) => submit(e.currentTarget))}
             >
-              {fetcher?.data?.users?.totalCount !== 0 ? (
+              {fetcher?.data?.privileges?.totalCount !== 0 ? (
                 <>
                   <Stack>
                     {id && <input type="hidden" name="id" value={id} />}
                     <input type="hidden" name="roleId" value={roleId} />
-                    {!userId && (
-                      <MultiSelect
-                        name="userId"
+                    {!privilegeId && (
+                      <Select
+                        name="privilegeId"
                         label="Users"
-                        placeholder="Select Role Users"
-                        {...form.getInputProps('userId')}
+                        placeholder="Select a Privilege"
+                        {...form.getInputProps('privilegeId')}
                         data={
-                          fetcher?.data?.users
-                            ? fetcher?.data?.users?.nodes?.map((user) => ({
-                                value: `${user.id}`,
-                                label: user.username
-                              }))
+                          fetcher?.data?.privileges
+                            ? fetcher?.data?.privileges?.nodes?.map(
+                                (privilege) => ({
+                                  value: `${privilege.id}`,
+                                  label: `${privilege.subject} ${privilege.action}`
+                                })
+                              )
                             : []
                         }
                       />
                     )}
                     <Switch
-                      name="active"
-                      checked={form?.values?.active}
-                      size="lg"
-                      onLabel="Active"
-                      offLabel="Inactive"
+                      checked={form?.values?.inverted}
+                      color="red"
+                      name="inverted"
+                      onLabel="Cannot"
+                      offLabel="Can"
                       onChange={(event) =>
                         form.setFieldValue(
-                          'active',
+                          'inverted',
                           event.currentTarget.checked
                         )
                       }
+                      size="lg"
+                    />
+                    <JsonInput
+                      label="Conditions"
+                      leftSection={
+                        <IconJson
+                          style={{
+                            width: rem(24),
+                            height: rem(24)
+                          }}
+                        />
+                      }
+                      name="conditions"
+                      placeholder="Conditions"
+                      validationError="Invalid JSON"
+                      formatOnBlur
+                      autosize
+                      minRows={4}
+                      {...form.getInputProps('conditions')}
+                    />
+                    <Textarea
+                      label="Description"
+                      name="description"
+                      placeholder="Description"
+                      {...form.getInputProps('description')}
                     />
                   </Stack>
                   <Group align="center" mt="md">
@@ -135,7 +167,7 @@ const SettingEditor = ({
                 </>
               ) : (
                 <>
-                  <Text>All users already assigned</Text>
+                  <Text>All privileges already assigned</Text>
                   <Button
                     color="red"
                     onClick={() => closeEditor(false)}

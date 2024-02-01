@@ -50,9 +50,9 @@ function formatSetting({ value, type }: { value: any; type: string }) {
         return value as string;
       }
     case 'number':
-      return Number(value);
+      return value as string;
     case 'boolean':
-      return Number(Boolean(value));
+      return value as string;
     case 'string':
     default:
       return value as string;

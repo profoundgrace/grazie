@@ -1,5 +1,4 @@
 import { Box, Button, Table, Title } from '@mantine/core';
-import { User } from '~/types/User';
 import DateTime from '~/components/DateTime';
 import classes from '~/components/Dashboard/AdminPost.module.css';
 import RoleUserEditor from '~/components/RoleUser/Editor';

@@ -116,11 +116,11 @@ model RoleUser {
   id        Int     @id @default(autoincrement())
   active    Boolean @default(true)
   roleId    Int
-  userId    Int
+  userId    Int?
   createdAt Int
   updatedAt Int
   role      Role     @relation(fields: [roleId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+  user      User?     @relation(fields: [userId], references: [id])
 
   @@unique([roleId, userId], map: "unq_user_role")
   @@index([active], map: "idx_user_role_active")
