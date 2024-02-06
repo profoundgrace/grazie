@@ -33,12 +33,12 @@ export class DataCacheService {
     return this._cached?.[name];
   }
 
-  update(name, value) {
+  update(name, key, value) {
     this._cached = {
       ...this._cached,
       [name]: {
         ...this._cached?.[name],
-        value
+        [key]: value
       }
     };
     return this._cached[name];
