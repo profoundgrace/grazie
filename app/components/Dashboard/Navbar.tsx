@@ -10,7 +10,8 @@ import {
   IconDashboard,
   IconShieldStar,
   IconStar,
-  IconShield
+  IconShield,
+  IconUserCog
 } from '@tabler/icons-react';
 import classes from '~/components/Dashboard/Navbar.module.css';
 import { Link, useMatches, useNavigate } from '@remix-run/react';
@@ -19,6 +20,7 @@ import { Can } from '~/components/Can';
 
 const tabs = {
   account: [
+    { link: '/dashboard/account', label: 'Account', icon: IconUserCog },
     { link: '/dashboard/settings', label: 'Settings', icon: IconSettings }
   ],
   system: [

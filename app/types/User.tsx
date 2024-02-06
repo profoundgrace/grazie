@@ -22,8 +22,16 @@ export type UserLogin = {
 };
 
 export type UserSystem = {
+  id?: number;
   displayName?: string;
   username?: string;
   email?: string;
   password?: string;
+  colorScheme?: string;
+  avatar?: {
+    mime: string;
+    base64: string;
+    name: string;
+    deleteFile?: string | null;
+  };
 };

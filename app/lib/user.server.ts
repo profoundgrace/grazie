@@ -5,6 +5,7 @@ import { prisma } from '~/utils/prisma.server';
 import { timeStamp } from '~/utils/generic.server';
 import type { User, UserLogin, UserSystem } from '~/types/User';
 import { getUserId } from '~/utils/session.server';
+import { processAvatar } from '~/utils/image.server';
 
 const log = getLogger('User');
 
@@ -42,6 +43,134 @@ export async function createUser({
         lastLoginAt: date
       }
     });
+
+    await prisma.userSetting.create({
+      data: {
+        userId: user.id,
+        name: 'colorScheme',
+        value: 'auto',
+        type: 'string'
+      }
+    });
+
+    return user;
+  } catch (err: any) {
+    log.error(err.message);
+    log.error(err.stack);
+    throw err;
+  }
+}
+
+export async function updateUser({
+  id,
+  username,
+  displayName,
+  email,
+  currentPassword,
+  newPassword,
+  avatar,
+  colorScheme
+}: UserSystem) {
+  try {
+    const date = timeStamp();
+    const prevUser = await prisma.user.findUnique({
+      where: {
+        id
+      }
+    });
+    const data = {
+      displayName,
+      updatedAt: date,
+      avatar: avatar ? '' : undefined
+    };
+    if (username) {
+      const usernameCheck = await prisma.user.findMany({
+        where: {
+          AND: [
+            {
+              id: {
+                not: id
+              }
+            },
+            { username }
+          ]
+        },
+        select: {
+          id: true
+        }
+      });
+      if (usernameCheck.length > 0) {
+        throw new Error('Username is already in use');
+      }
+      data.username = username;
+    }
+    if (avatar) {
+      avatar.name = `${username || prevUser.username}_${id}_${Date.now()}.webp`;
+      avatar.deleteFile = prevUser?.avatar;
+      await processAvatar({ file: avatar });
+      data.avatar = avatar?.name;
+    }
+    if (email) {
+      const emailCheck = await prisma.user.findMany({
+        where: {
+          AND: [
+            {
+              id: {
+                not: id
+              }
+            },
+            { email }
+          ]
+        },
+        select: {
+          id: true
+        }
+      });
+      if (emailCheck.length > 0) {
+        throw new Error('Email address is already in use');
+      }
+      // Add email verification
+      data.email = email;
+    }
+    if (currentPassword && newPassword) {
+      const verification = await bcrypt.compare(
+        currentPassword,
+        prevUser.password
+      );
+
+      if (!verification) {
+        throw new Error('Incorrect Password');
+      }
+
+      data.password = newPassword;
+    }
+
+    const user = await prisma.user.update({
+      where: {
+        id
+      },
+      data
+    });
+
+    if (colorScheme) {
+      await prisma.userSetting.upsert({
+        where: {
+          userId_name: { userId: id, name: 'colorScheme' }
+        },
+        create: {
+          userId: id,
+          name: 'colorScheme',
+          value: colorScheme,
+          type: 'string'
+        },
+        update: {
+          userId: id,
+          name: 'colorScheme',
+          value: colorScheme,
+          type: 'string'
+        }
+      });
+    }
 
     return user;
   } catch (err: any) {
@@ -153,7 +282,13 @@ export async function getUserAccount(id: User['id']) {
         displayName: true,
         username: true,
         email: true,
-        avatar: true
+        avatar: true,
+        settings: {
+          select: {
+            name: true,
+            value: true
+          }
+        }
       }
     });
 
@@ -162,6 +297,18 @@ export async function getUserAccount(id: User['id']) {
     }
 
     account.isLoggedIn = true;
+    if (account?.settings) {
+      for (const setting of account?.settings) {
+        account.settings[setting.name] = setting.value;
+      }
+    }
+
+    if (!account?.settings?.colorScheme) {
+      account.settings = {
+        ...account.settings,
+        colorScheme: 'auto'
+      };
+    }
 
     return {
       ...account,
