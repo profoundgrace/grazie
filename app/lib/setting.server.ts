@@ -87,6 +87,7 @@ export async function setting({
   name,
   value,
   type,
+  group,
   defaultValue
 }: SettingInput) {
   try {
@@ -132,12 +133,52 @@ export async function setting({
           create: data
         });
       }
-    } else {
-      setting = await prisma.setting.findUnique({
-        where: {
-          name
+      const nameArray = name.split('.');
+      if (nameArray.length > 1) {
+        const nameKey = nameArray.pop();
+        const groupCache = DataCache.get(`setting.${nameArray}`);
+
+        log.info(`Updated ${nameArray} cache`);
+        if (groupCache) {
+          DataCache.update(`setting.${nameArray}`, nameKey, setting.value);
         }
-      });
+      }
+    } else {
+      if (group) {
+        const settings = await prisma.setting.findMany({
+          where: {
+            name: {
+              startsWith: `${name}.`
+            }
+          }
+        });
+        if (!settings) {
+          if (defaultValue) {
+            setting = { value: defaultValue };
+          } else {
+            throw new Error(
+              `Setting ${name} doesn't exist and no default (defaultValue: ${defaultValue}) was provided`
+            );
+          }
+        }
+        setting = {};
+        for (const set of settings) {
+          const setName = set.name.replace(`${name}.`, '');
+          setting = {
+            ...setting,
+            [setName]: outputSetting({ value: set?.value, type: set.type })
+          };
+        }
+        log.info(`Cached setting ${name}`);
+        return DataCache.set(`setting.${name}`, setting);
+      } else {
+        setting = await prisma.setting.findUnique({
+          where: {
+            name
+          }
+        });
+      }
+
       if (!setting) {
         if (defaultValue) {
           setting = { value: defaultValue };

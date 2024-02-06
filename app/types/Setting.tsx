@@ -10,5 +10,6 @@ export type SettingInput = {
   name: string;
   value?: string | number | object | boolean;
   type?: string;
+  group?: boolean;
   defaultValue?: string | number | object | boolean;
 };
