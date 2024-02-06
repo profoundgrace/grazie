@@ -27,7 +27,7 @@ export type CommentInput = {
   locked?: boolean;
   pinned?: boolean;
   authorId?: number;
-  parentId?: number;
+  parentId?: number | null;
   postId?: number;
   body?: string;
 };

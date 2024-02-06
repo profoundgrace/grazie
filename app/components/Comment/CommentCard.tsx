@@ -3,18 +3,19 @@ import classes from '~/components/Comment/CommentCard.module.css';
 import { TimeSince } from '~/components/DateTime';
 import HTMLContent from '~/components/Tiptap/HTMLContent';
 
-export function CommentHtml({
-  comment: {
-    author: { displayName },
+export function CommentCard({
+  data: {
+    author: { displayName, avatar },
     body,
     createdAt
-  }
+  },
+  avatarURL
 }) {
   return (
     <Paper withBorder radius="md" className={classes.comment}>
       <Group>
         <Avatar
-          src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-2.png"
+          src={`${avatarURL}md/${avatar}`}
           alt="Jacob Warnhalter"
           radius="xl"
         />
@@ -26,7 +27,7 @@ export function CommentHtml({
         </div>
       </Group>
       <HTMLContent
-        content={body}
+        content={JSON.parse(body)}
         classes={{ classes: { body: classes.body, content: classes.content } }}
       />
     </Paper>
