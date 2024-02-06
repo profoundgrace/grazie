@@ -3,7 +3,6 @@
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import '@mantine/tiptap/styles.css';
-import { createMongoAbility } from '@casl/ability';
 import {
   Button,
   ColorSchemeScript,
@@ -34,6 +33,7 @@ import { ThemeProvider } from '~/components/ThemeProvider';
 import { setting } from './lib/setting.server';
 import classes from '~/styles/NotFound.module.css';
 import { getUser } from '~/utils/session.server';
+import { site } from '@/grazie';
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : [])
@@ -44,7 +44,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   return json({
     user,
-    theme: { navbar: { links: await setting({ name: 'navbar.links' }) } }
+    theme: { navbar: { links: await setting({ name: 'navbar.links' }) } },
+    site: await setting({ name: 'site', group: true, defaultValue: site })
   });
 };
 
@@ -56,7 +57,7 @@ export default function App() {
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <Meta />
         <Links />
-        <ColorSchemeScript />
+        <ColorSchemeScript defaultColorScheme="auto" />
       </head>
       <body>
         <AbilityProvider>
