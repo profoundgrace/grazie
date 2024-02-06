@@ -240,12 +240,14 @@ model NoteLabel {
 }
 
 model Setting {
-  id      Int    @id @default(autoincrement())
-  name    String
-  value   String
-  type    String @default("string")
+  id          Int     @id @default(autoincrement())
+  name        String
+  value       String
+  description String?
+  type        String  @default("string")
 
   @@unique([name], map: "unq_setting_name")
+  @@index([description], map: "idx_setting_description")
   @@index([type], map: "idx_setting_type")
 }
 
