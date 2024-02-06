@@ -3,7 +3,8 @@ import { getPosts } from '~/lib/post.server';
 import { site, metaSettings } from '@/grazie';
 import { useLoaderData, useNavigate } from '@remix-run/react';
 import PostCard from '~/components/Post/PostCard';
-import { Grid, Tabs } from '@mantine/core';
+import { Grid, SimpleGrid, Tabs } from '@mantine/core';
+import { setting } from '~/lib/setting.server';
 
 export const meta: MetaFunction = () => {
   return [
@@ -20,7 +21,10 @@ export const meta: MetaFunction = () => {
 export async function loader({ request }: LoaderFunctionArgs) {
   const posts = await getPosts({});
 
-  const data = { posts };
+  const data = {
+    posts,
+    settings: { columns: await setting({ name: 'page.home.columns' }) }
+  };
 
   return json(data);
 }
@@ -39,7 +43,7 @@ export default function Index() {
             author: {
               name: post?.author?.displayName,
               description: '',
-              image: ''
+              image: `${data?.posts?.avatarURL}sm/${post?.author?.avatar}`
             }
           }}
         />
@@ -59,7 +63,9 @@ export default function Index() {
             <Tabs.Tab value="browse">Browse</Tabs.Tab>
           </Tabs.List>
           <Tabs.Panel value="browse" py={10}>
-            {posts}
+            <SimpleGrid cols={{ base: 1, sm: data?.settings?.columns ?? 2 }}>
+              {posts}
+            </SimpleGrid>
           </Tabs.Panel>
         </Tabs>
       </Grid.Col>
