@@ -42,10 +42,8 @@ import {
 } from '@tabler/icons-react';
 import cx from 'clsx';
 import { useState } from 'react';
-import { site } from '@/grazie';
 import useUser from '~/hooks/useUser';
 import classes from '~/themes/favorite/styles/Header.module.css';
-import { setting } from '~/lib/setting.server';
 import { useTheme } from '~/hooks/useTheme';
 
 const mockdata = [
@@ -120,7 +118,9 @@ export function Header() {
   const isLoggedIn = user?.isLoggedIn ?? false;
   const username = user?.username ?? 'Guest';
   const theme = useMantineTheme();
-  const { data } = useTheme();
+  const {
+    data: { navbar, site }
+  } = useTheme();
 
   const userLinks = userMenuData.map((item) => (
     <UnstyledButton
@@ -164,7 +164,7 @@ export function Header() {
               Home
             </Link>
 
-            {data?.navbar?.links?.map((navlink, index) => (
+            {navbar?.links?.map((navlink, index) => (
               <Link
                 key={`navlink-${index}`}
                 to={navlink.to}
@@ -259,7 +259,7 @@ export function Header() {
                   </Menu.Item>
                   <Menu.Item
                     leftSection={<IconSettings size={14} stroke={1.5} />}
-                    onClick={() => navigate('/account')}
+                    onClick={() => navigate('/dashboard/account')}
                   >
                     Account settings
                   </Menu.Item>

@@ -1,4 +1,5 @@
 import { getUserByUsername } from '~/lib/user.server';
+import { avatarURL } from '~/utils/config.server';
 import { getLogger } from '~/utils/logger.server';
 import { formatSlug } from '~/utils/formatSlug';
 import { dateString, timeStamp, timeString } from '~/utils/generic.server';
@@ -276,11 +277,13 @@ export async function getPosts({
         author: {
           select: {
             displayName: true,
-            username: true
+            username: true,
+            avatar: true
           }
         },
         categories: {
           select: {
+            id: true,
             catId: true,
             category: {
               select: {
@@ -295,6 +298,7 @@ export async function getPosts({
     });
 
     return {
+      avatarURL,
       count: articles.length,
       totalCount: await prisma.post.count({ where }),
       nodes: articles

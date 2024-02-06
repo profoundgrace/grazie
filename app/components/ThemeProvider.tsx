@@ -14,7 +14,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setPage(loader._page);
   }
   const Page = Theme?.[Pages?.[_page] ?? Theme?.[Pages?.[_page]] ?? page];
-  const { theme: data } = useMatchesData('root');
+  const { theme: themeData, site } = useMatchesData('root');
+  const data = { ...themeData, site };
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme, page, setPage, data }}>

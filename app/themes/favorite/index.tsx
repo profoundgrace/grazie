@@ -3,10 +3,9 @@ import { useDisclosure } from '@mantine/hooks';
 import { Link } from '@remix-run/react';
 import type { ReactNode } from 'react';
 import Navbar from '~/components/Dashboard/Navbar';
-import { site } from '@/grazie';
-
 import { Footer } from '~/themes/favorite/components/Footer';
 import { Header } from '~/themes/favorite/components/Header';
+import { useTheme } from '~/hooks/useTheme';
 
 export function Page({ children }: { children: ReactNode }) {
   return (
@@ -20,6 +19,9 @@ export function Page({ children }: { children: ReactNode }) {
 
 export function Dashboard({ children }: { children: ReactNode }) {
   const [opened, { toggle }] = useDisclosure();
+  const {
+    data: { site }
+  } = useTheme();
 
   return (
     <AppShell

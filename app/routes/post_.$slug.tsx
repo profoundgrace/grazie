@@ -6,6 +6,9 @@ import type { Post } from '~/types/Post';
 import PostCard from '~/components/Post/PostCard';
 import { getPost } from '~/lib/post.server';
 import { site } from '@/grazie';
+import { getComments } from '~/lib/comment.server';
+import { CommentCard } from '~/components/Comment/CommentCard';
+import { CommentList } from '~/components/Comment/CommentList';
 
 export function meta({
   data: {
@@ -18,20 +21,22 @@ export function meta({
 export async function loader({ params, request }: LoaderFunctionArgs) {
   const post = await getPost({ slug: params?.slug });
 
-  const data = { post };
+  const data = {
+    post,
+    comments: await getComments({ filter: { postId: post.id } })
+  };
   return json(data);
 }
 
 export default function Post() {
   const data = useLoaderData<typeof loader>();
   const navigate = useNavigate();
-  const { post } = data;
+  const { post, comments } = data;
 
   return (
     <Grid>
       <Grid.Col span={12}>
         <PostCard
-          key={post.id}
           data={{
             ...post,
             body: JSON.parse(post.body),
@@ -42,6 +47,9 @@ export default function Post() {
             }
           }}
         />
+      </Grid.Col>
+      <Grid.Col span={12}>
+        <CommentList postId={post.id} data={comments} />
       </Grid.Col>
     </Grid>
   );

@@ -6,6 +6,7 @@ import {
 } from '@tabler/icons-react';
 import { site } from '@/grazie';
 import classes from '~/themes/favorite/styles/Footer.module.css';
+import { useTheme } from '~/hooks/useTheme';
 
 const links = [
   { link: '#', label: 'Contact' },
@@ -16,6 +17,9 @@ const links = [
 ];
 
 export function Footer() {
+  const {
+    data: { site }
+  } = useTheme();
   const items = links.map((link) => (
     <Anchor
       c="dimmed"

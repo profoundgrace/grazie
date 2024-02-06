@@ -6,8 +6,11 @@ import { getUnixTime } from 'date-fns';
 import Editor from '~/components/Editor';
 import { getCategories, postCategory } from '~/lib/category.server';
 import { getPost } from '~/lib/post.server';
-import { getSession } from '~/utils/session.server';
+import { createAbility, getSession } from '~/utils/session.server';
 import { site } from '@/grazie';
+import { useAbility } from '~/hooks/useAbility';
+import { subject } from '@casl/ability';
+import { sentry } from '~/lib/sentry.server';
 
 export function meta({
   data: {
@@ -22,13 +25,18 @@ export function meta({
 export async function loader({ params, request }: LoaderFunctionArgs) {
   const categories = await getCategories({});
   const post = await getPost({ slug: params.slug });
-  const data = { categories, post };
 
+  if (!request?.ability) {
+    await createAbility(request);
+  }
+
+  await sentry(request, { action: 'read', subject: 'Dashboard', field: post });
+  const data = { categories, post, _page: 'post' };
   return json(data);
 }
 
 export default function ArticlesCreate() {
-  const data = useLoaderData<typeof loader>();
+  const ability = useAbility();
   const navigate = useNavigate();
 
   return (
@@ -37,9 +45,12 @@ export default function ArticlesCreate() {
         <Title order={2}>Posts</Title>
         <Tabs defaultValue="editor" keepMounted={false}>
           <Tabs.List>
-            <Tabs.Tab value="create" onClick={() => navigate('/post/create')}>
-              Create
-            </Tabs.Tab>
+            {ability.can('create', subject('Post', {})) && (
+              <Tabs.Tab value="create" onClick={() => navigate('/post/create')}>
+                Create
+              </Tabs.Tab>
+            )}
+
             <Tabs.Tab value="browse" onClick={() => navigate('/posts')}>
               Browse
             </Tabs.Tab>

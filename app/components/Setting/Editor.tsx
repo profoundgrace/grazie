@@ -2,7 +2,6 @@ import {
   Alert,
   Button,
   Card,
-  Fieldset,
   Grid,
   Group,
   JsonInput,
@@ -10,7 +9,6 @@ import {
   rem,
   Select,
   Stack,
-  Textarea,
   TextInput,
   Title
 } from '@mantine/core';
@@ -20,12 +18,10 @@ import { Form, useSubmit } from '@remix-run/react';
 import { IconJson } from '@tabler/icons-react';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
-import { Debug } from '../Debug';
 import { DebugCollapse } from '../DebugCollapse';
 
 interface Editor {
   id?: number | null;
-
   name?: string | null;
   value?: string | number | null;
   type?: string | null;

@@ -1,8 +1,7 @@
 import { subject as Subject } from '@casl/ability';
-import { getUser } from '~/lib/user.server';
 
 export async function sentry(
-  request,
+  request: Request,
   {
     action,
     subject,

@@ -6,6 +6,9 @@ import type { Page } from '~/types/Page';
 import PageCard from '~/components/Page/PageCard';
 import { getPages } from '~/lib/page.server';
 import { site } from '@/grazie';
+import { Can } from '~/components/Can';
+import { useAbility } from '~/hooks/useAbility';
+import { subject } from '@casl/ability';
 
 export function meta() {
   return [{ title: `Pages${site?.separator}${site?.name}` }];
@@ -22,6 +25,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function Articles() {
   const data = useLoaderData<typeof loader>();
   const navigate = useNavigate();
+  const ability = useAbility();
+
   const pages =
     data?.pages?.nodes?.length > 0 ? (
       data?.pages?.nodes?.map((article) => (
@@ -49,9 +54,11 @@ export default function Articles() {
         <Title order={2}>Pages</Title>
         <Tabs defaultValue="browse" keepMounted={false}>
           <Tabs.List>
-            <Tabs.Tab value="create" onClick={() => navigate('/page/create')}>
-              Create
-            </Tabs.Tab>
+            {ability.can('create', subject('Post', {})) && (
+              <Tabs.Tab value="create" onClick={() => navigate('/page/create')}>
+                Create
+              </Tabs.Tab>
+            )}
             <Tabs.Tab value="browse">Browse</Tabs.Tab>
           </Tabs.List>
           <Tabs.Panel value="browse" py={10}>
