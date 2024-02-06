@@ -24,17 +24,17 @@ export default function Articles() {
   const navigate = useNavigate();
   const posts =
     data?.posts?.nodes?.length > 0 ? (
-      data?.posts?.nodes?.map((article) => (
+      data?.posts?.nodes?.map((post) => (
         <PostCard
-          key={article.id}
+          key={post.id}
           data={{
-            ...article,
-            body: JSON.parse(article.body),
+            ...post,
+            body: JSON.parse(post.body),
             category: null,
             author: {
-              name: article?.author?.displayName,
+              name: post?.author?.displayName,
               description: '',
-              image: ''
+              image: `${data?.posts?.avatarURL}sm/${post?.author?.avatar}`
             }
           }}
         />

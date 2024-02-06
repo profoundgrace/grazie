@@ -70,7 +70,7 @@ export default function PostCard({
               )}
           </Group>
 
-          <Group gap={0}>
+          <Group gap={0} p={4}>
             <TimeSince timestamp={createdAt} pr={4} />
           </Group>
         </Group>
@@ -85,9 +85,9 @@ export default function PostCard({
           {title}
         </Text>
       ) : null}
-
-      <HTMLContent content={body} />
-
+      <Card.Section className={classes.body}>
+        <HTMLContent content={body} />
+      </Card.Section>
       {footer ? (
         <Group mt="xs">
           <Text size="xs" c="dimmed">
