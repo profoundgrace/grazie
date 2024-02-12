@@ -76,9 +76,13 @@ export async function updatePrivilege({ id, subject, action }: PrivilegeInput) {
  * @returns
  */
 export async function getPrivileges({
-  filter = {}
+  filter = {},
+  limit = 25,
+  offset = 0
 }: {
   filter?: { group?: string };
+  limit?: number;
+  offset?: number;
 }) {
   try {
     const where = {};
@@ -101,7 +105,9 @@ export async function getPrivileges({
           }
         }
       },
-      orderBy: [{ subject: 'asc' }, { action: 'asc' }]
+      orderBy: [{ subject: 'asc' }, { action: 'asc' }],
+      take: limit,
+      skip: offset
     });
 
     return {

@@ -328,10 +328,14 @@ export async function getCategory({ id, slug, select }) {
 
 export async function getCategories({
   filter = {},
-  sort = {}
+  sort = {},
+  limit = 25,
+  offset = 0
 }: {
   filter?: { children?: string; parentId?: number };
   sort?: { field?: string; direction?: string };
+  limit?: number;
+  offset?: number;
 }) {
   try {
     const where = {};
@@ -363,7 +367,9 @@ export async function getCategories({
           }
         }
       },
-      orderBy: { name: 'asc' }
+      orderBy: { name: 'asc' },
+      take: limit,
+      skip: offset
     });
 
     return {

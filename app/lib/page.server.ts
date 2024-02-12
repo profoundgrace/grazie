@@ -4,6 +4,7 @@ import { formatSlug } from '~/utils/formatSlug';
 import { dateString, timeStamp, timeString } from '~/utils/generic.server';
 import { prisma } from '~/utils/prisma.server';
 import type { PageInput } from '~/types/Page';
+import { avatarURL } from '~/utils/config.server';
 
 const log = getLogger('Pages Query');
 
@@ -225,9 +226,13 @@ export async function getPage({ id, slug, select }) {
 }
 
 export async function getPages({
-  filter = {}
+  filter = {},
+  limit = 25,
+  offset = 0
 }: {
   filter?: { username?: string; category?: string };
+  imit?: number;
+  offset?: number;
 }) {
   try {
     const where = {} as { authorId?: number; category?: any };
@@ -254,14 +259,18 @@ export async function getPages({
         author: {
           select: {
             displayName: true,
-            username: true
+            username: true,
+            avatar: true
           }
         }
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+      skip: offset
     });
 
     return {
+      avatarURL,
       count: articles.length,
       totalCount: await prisma.page.count({ where }),
       nodes: articles

@@ -233,9 +233,13 @@ export async function getPost({ id, slug, select }) {
 }
 
 export async function getPosts({
-  filter = {}
+  filter = {},
+  limit = 25,
+  offset = 0
 }: {
   filter?: { username?: string; category?: string };
+  limit?: number;
+  offset?: number;
 }) {
   try {
     const where = {} as { authorId?: number; category?: any };
@@ -294,7 +298,9 @@ export async function getPosts({
           }
         }
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+      skip: offset
     });
 
     return {

@@ -69,9 +69,13 @@ export async function updateRole({ id, active, name, description }: RoleInput) {
  * @returns
  */
 export async function getRoles({
-  filter = {}
+  filter = {},
+  limit = 25,
+  offset = 0
 }: {
   filter?: { group?: string };
+  limit?: number;
+  offset?: number;
 }) {
   try {
     const where = {};
@@ -96,7 +100,9 @@ export async function getRoles({
           }
         }
       },
-      orderBy: { name: 'asc' }
+      orderBy: { name: 'asc' },
+      take: limit,
+      skip: offset
     });
 
     return {

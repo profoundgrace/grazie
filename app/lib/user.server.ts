@@ -425,7 +425,7 @@ export async function getUserRoles({ userId = null }: { userId: User['id'] }) {
   }
 }
 
-export async function getUsers({ filter, select }) {
+export async function getUsers({ filter, select, limit = 25, offset = 0 }) {
   try {
     const where = {};
     if (filter) {
@@ -449,7 +449,9 @@ export async function getUsers({ filter, select }) {
     const data = await prisma.user.findMany({
       where,
       select,
-      orderBy: { id: 'asc' }
+      orderBy: { id: 'asc' },
+      take: limit,
+      skip: offset
     });
 
     const totalCount = await prisma.user.count({ where });
