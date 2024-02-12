@@ -49,7 +49,7 @@ export default function UserAdmin() {
       <Table.Tr
         bg={
           roleEditor === row.id || roleUsers === row.id
-            ? 'var(--mantine-color-dark-9)'
+            ? 'light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-9)'
             : undefined
         }
       >
@@ -97,21 +97,33 @@ export default function UserAdmin() {
         </Table.Td>
       </Table.Tr>
       {roleEditor === row.id && (
-        <Table.Tr bg={'var(--mantine-color-dark-5)'}>
+        <Table.Tr
+          bg={
+            'light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5)'
+          }
+        >
           <Table.Td colSpan={5}>
             <RoleEditor closeEditor={setRoleEditor} {...row} />
           </Table.Td>
         </Table.Tr>
       )}
       {rolePrivileges === row.id && (
-        <Table.Tr bg={'var(--mantine-color-dark-5)'}>
+        <Table.Tr
+          bg={
+            'light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5)'
+          }
+        >
           <Table.Td colSpan={5}>
             <RolePrivilegesWrapper role={row} />
           </Table.Td>
         </Table.Tr>
       )}
       {roleUsers === row.id && (
-        <Table.Tr bg={'var(--mantine-color-dark-5)'}>
+        <Table.Tr
+          bg={
+            'light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5)'
+          }
+        >
           <Table.Td colSpan={5}>
             <RoleUsersWrapper role={row} />
           </Table.Td>

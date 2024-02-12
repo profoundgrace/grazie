@@ -39,7 +39,9 @@ export default function UserAdmin() {
     <Fragment key={`priv-${row.subject}-${row.action}-${row.id}`}>
       <Table.Tr
         bg={
-          privilegeEditor === row.id ? 'var(--mantine-color-dark-9)' : undefined
+          privilegeEditor === row.id
+            ? 'light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-9)'
+            : undefined
         }
       >
         <Table.Td>{row.id}</Table.Td>
@@ -59,7 +61,11 @@ export default function UserAdmin() {
         </Table.Td>
       </Table.Tr>
       {privilegeEditor === row.id && (
-        <Table.Tr bg={'var(--mantine-color-dark-5)'}>
+        <Table.Tr
+          bg={
+            'light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5)'
+          }
+        >
           <Table.Td colSpan={4}>
             <PrivilegeEditor closeEditor={setPrivilegeEditor} {...row} />
           </Table.Td>
