@@ -1,4 +1,4 @@
-import { Text, Avatar, Group, Paper } from '@mantine/core';
+import { Text, Avatar, Group, Paper, Box } from '@mantine/core';
 import classes from '~/components/Comment/CommentCard.module.css';
 import { TimeSince } from '~/components/DateTime';
 import HTMLContent from '~/components/Tiptap/HTMLContent';
@@ -12,7 +12,7 @@ export function CommentCard({
   avatarURL
 }) {
   return (
-    <Paper withBorder radius="md" className={classes.comment}>
+    <Paper withBorder radius="md" className={classes.comment} mb="sm">
       <Group>
         <Avatar
           src={`${avatarURL}md/${avatar}`}
@@ -26,10 +26,14 @@ export function CommentCard({
           </Text>
         </div>
       </Group>
-      <HTMLContent
-        content={JSON.parse(body)}
-        classes={{ classes: { body: classes.body, content: classes.content } }}
-      />
+      <Box pl={54} pt="sm">
+        <HTMLContent
+          content={JSON.parse(body)}
+          classes={{
+            classes: { body: classes.body, content: classes.content }
+          }}
+        />
+      </Box>
     </Paper>
   );
 }

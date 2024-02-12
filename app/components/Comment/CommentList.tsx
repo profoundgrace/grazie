@@ -4,6 +4,7 @@ import { CommentCard } from '~/components/Comment/CommentCard';
 import { Comment } from '~/types/Comment';
 import CommentEditor from './Editor';
 import { IconSquarePlus } from '@tabler/icons-react';
+import { subject, useAbility } from '~/hooks/useAbility';
 
 export function CommentList({
   postId,
@@ -13,21 +14,22 @@ export function CommentList({
   data: { nodes: Comment[] };
 }) {
   const [openEditor, setOpenEditor] = useState(false);
+  const ability = useAbility();
   return (
     <>
-      <Title>Comments</Title>
-      {!openEditor && (
+      <Title order={2}>Comments</Title>
+      {ability.can('create', subject('Comment', {})) && !openEditor && (
         <Box my={10}>
           <Button
             leftSection={<IconSquarePlus size={14} />}
             onClick={() => setOpenEditor(true)}
             variant="light"
           >
-            New Post
+            New Comment
           </Button>
         </Box>
       )}
-      {openEditor && (
+      {ability.can('create', subject('Comment', {})) && openEditor && (
         <Box my={10}>
           <CommentEditor postId={postId} closeEditor={setOpenEditor} />
         </Box>
