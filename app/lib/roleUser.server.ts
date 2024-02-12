@@ -99,6 +99,19 @@ export async function getRoleUsers({ roleId }: { roleId: number }) {
       },
       orderBy: { user: { username: 'asc' } }
     });
+    // We have a null userId for Guests, this mitigates that possible Role assignment
+    for (const roleUser of roleUsers) {
+      if (!roleUser.userId) {
+        roleUser.user = {
+          id: null,
+          username: 'Guest <System User>',
+          displayName: 'Guest',
+          email: null,
+          createdAt: null,
+          banned: null
+        };
+      }
+    }
 
     return {
       count: roleUsers.length,

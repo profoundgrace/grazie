@@ -15,7 +15,9 @@ export default function RoleUsersTable({
   users: { nodes: RoleUser[] };
 }) {
   const [openEditor, setOpenEditor] = useState(false);
+
   const [roleUserEditor, setRoleUserEditor] = useState(null);
+
   const rows =
     users?.nodes?.length > 0 ? (
       users.nodes.map((row) => (
