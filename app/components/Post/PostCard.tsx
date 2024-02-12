@@ -1,5 +1,6 @@
 import {
   ActionIcon,
+  Anchor,
   Avatar,
   Badge,
   Card,
@@ -65,14 +66,16 @@ export default function PostCard({
                 )
               )
             ) : (
-              <Text
-                fw={700}
+              <Anchor
                 className={classes.title}
                 component={Link}
+                fw={700}
+                gradient={{ from: 'indigo', to: 'blue', deg: 90 }}
                 to={`/post/${slug}`}
+                variant="gradient"
               >
                 {title}
-              </Text>
+              </Anchor>
             )}
           </Group>
 
@@ -83,17 +86,23 @@ export default function PostCard({
       </Card.Section>
       {title && categories?.length > 0 ? (
         <Card.Section className={classes.header}>
-          <Text
-            fw={700}
+          <Anchor
             className={classes.title}
             component={Link}
+            fw={700}
+            gradient={{ from: 'indigo', to: 'blue', deg: 90 }}
+            pl={4}
             to={`/post/${slug}`}
+            variant="gradient"
           >
             {title}
-          </Text>
+          </Anchor>
         </Card.Section>
       ) : null}
-      <Card.Section className={classes.body}>
+      <Card.Section
+        className={classes.body}
+        pt={categories?.length > 0 ? 10 : undefined}
+      >
         <HTMLContent content={body} />
       </Card.Section>
       {footer ? (
@@ -105,14 +114,14 @@ export default function PostCard({
       ) : null}
 
       <Card.Section className={classes.footer}>
-        <Group justify="space-between">
-          <Group>
+        <Group gap={0} justify="space-between">
+          <Group gap={0}>
             <Avatar src={author.image} radius="sm" />
             <div>
-              <Text size="sm" fw={500} pl={3}>
+              <Text size="sm" fw={500} pl="xs">
                 {author.name}
               </Text>
-              <Text size="xs" c="dimmed" pl={3}>
+              <Text size="xs" c="dimmed" pl="sm">
                 {author.description}
               </Text>
             </div>
