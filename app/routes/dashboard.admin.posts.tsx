@@ -17,13 +17,25 @@ import {
 import { Fragment, useState } from 'react';
 import classes from '~/components/Dashboard/AdminPost.module.css';
 import DateTime from '~/components/DateTime';
+import Pager from '~/components/Pager/Pager';
 import PostEditor from '~/components/Post/Editor';
 import { getPosts } from '~/lib/post.server';
 import { Post } from '~/types/Post';
+import { pagerParams } from '~/utils/searchParams.server';
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const posts = await getPosts({});
-  return json({ _page: 'dashboard', posts });
+  const { count, page, pagerLoader } = pagerParams(request, 25);
+
+  const query = {
+    limit: count,
+    offset: page ? (page - 1) * count : 0
+  };
+  const posts = await getPosts(query);
+  return json({
+    _page: 'dashboard',
+    posts,
+    pager: pagerLoader(posts.totalCount)
+  });
 }
 
 export default function PostAdmin() {
@@ -115,6 +127,7 @@ export default function PostAdmin() {
           <PostEditor closeEditor={setOpenEditor} />
         </Box>
       )}
+      <Pager />
       <Table stickyHeader striped stickyHeaderOffset={60} miw={700}>
         <Table.Thead className={classes.header}>
           <Table.Tr>
@@ -129,6 +142,7 @@ export default function PostAdmin() {
         </Table.Thead>
         <Table.Tbody>{rows}</Table.Tbody>
       </Table>
+      <Pager />
     </>
   );
 }

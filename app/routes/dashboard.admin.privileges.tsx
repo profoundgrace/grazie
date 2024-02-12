@@ -10,12 +10,24 @@ import {
 } from '@tabler/icons-react';
 import { Fragment, useState } from 'react';
 import classes from '~/components/Dashboard/AdminPost.module.css';
+import Pager from '~/components/Pager/Pager';
 import PrivilegeEditor from '~/components/Privilege/Editor';
 import { getPrivileges } from '~/lib/privilege.server';
+import { pagerParams } from '~/utils/searchParams.server';
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const privileges = await getPrivileges({});
-  return json({ _page: 'dashboard', privileges });
+  const { count, page, pagerLoader } = pagerParams(request, 25);
+
+  const query = {
+    limit: count,
+    offset: page ? (page - 1) * count : 0
+  };
+  const privileges = await getPrivileges(query);
+  return json({
+    _page: 'dashboard',
+    privileges,
+    pager: pagerLoader(privileges.totalCount)
+  });
 }
 
 export default function UserAdmin() {
@@ -75,7 +87,7 @@ export default function UserAdmin() {
           <PrivilegeEditor closeEditor={setOpenEditor} />
         </Box>
       )}
-
+      <Pager />
       <Table stickyHeader striped stickyHeaderOffset={60} miw={700}>
         <Table.Thead className={classes.header}>
           <Table.Tr>
@@ -87,6 +99,7 @@ export default function UserAdmin() {
         </Table.Thead>
         <Table.Tbody>{rows}</Table.Tbody>
       </Table>
+      <Pager />
     </>
   );
 }

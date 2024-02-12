@@ -10,12 +10,24 @@ import { Fragment, useState } from 'react';
 import classes from '~/components/Dashboard/AdminPost.module.css';
 import DateTime from '~/components/DateTime';
 import PageEditor from '~/components/Page/Editor';
+import Pager from '~/components/Pager/Pager';
 import { getPages } from '~/lib/page.server';
 import { Page } from '~/types/Page';
+import { pagerParams } from '~/utils/searchParams.server';
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const pages = await getPages({});
-  return json({ _page: 'dashboard', pages });
+  const { count, page, pagerLoader } = pagerParams(request, 25);
+
+  const query = {
+    limit: count,
+    offset: page ? (page - 1) * count : 0
+  };
+  const pages = await getPages(query);
+  return json({
+    _page: 'dashboard',
+    pages,
+    pager: pagerLoader(pages.totalCount)
+  });
 }
 
 export default function PageAdmin() {
@@ -99,6 +111,7 @@ export default function PageAdmin() {
           <PageEditor closeEditor={setOpenEditor} />
         </Box>
       )}
+      <Pager />
       <Table stickyHeader striped stickyHeaderOffset={60} miw={700}>
         <Table.Thead className={classes.header}>
           <Table.Tr>
@@ -112,6 +125,7 @@ export default function PageAdmin() {
         </Table.Thead>
         <Table.Tbody>{rows}</Table.Tbody>
       </Table>
+      <Pager />
     </>
   );
 }

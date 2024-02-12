@@ -8,10 +8,22 @@ import DateTime from '~/components/DateTime';
 import CategoryEditor from '~/components/Category/Editor';
 import { getCategories } from '~/lib/category.server';
 import { Category } from '~/types/Category';
+import { pagerParams } from '~/utils/searchParams.server';
+import Pager from '~/components/Pager/Pager';
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const categories = await getCategories({});
-  return json({ _page: 'dashboard', categories });
+  const { count, page, pagerLoader } = pagerParams(request, 25);
+
+  const query = {
+    limit: count,
+    offset: page ? (page - 1) * count : 0
+  };
+  const categories = await getCategories(query);
+  return json({
+    _page: 'dashboard',
+    categories,
+    pager: pagerLoader(categories.totalCount)
+  });
 }
 
 export default function CategoryAdmin() {
@@ -79,6 +91,7 @@ export default function CategoryAdmin() {
           <CategoryEditor closeEditor={setOpenEditor} />
         </Box>
       )}
+      <Pager />
       <Table stickyHeader striped stickyHeaderOffset={60} miw={700}>
         <Table.Thead className={classes.header}>
           <Table.Tr>
@@ -92,6 +105,7 @@ export default function CategoryAdmin() {
         </Table.Thead>
         <Table.Tbody>{rows}</Table.Tbody>
       </Table>
+      <Pager />
     </>
   );
 }

@@ -4,14 +4,20 @@ import { json, redirect } from '@remix-run/node'; // or cloudflare/deno
 import { useLoaderData, useNavigate } from '@remix-run/react';
 import Editor from '~/components/Editor';
 import { createCategory, getCategories } from '~/lib/category.server';
-import { getSession } from '~/utils/session.server';
+import { createAbility, getSession } from '~/utils/session.server';
 import { site } from '@/grazie';
+import { sentry } from '~/lib/sentry.server';
 
 export function meta() {
   return [{ title: `Create Category${site?.separator}${site?.name}` }];
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
+  if (!request?.ability) {
+    await createAbility(request);
+  }
+
+  await sentry(request, { action: 'create', subject: 'Category' });
   const categories = await getCategories({});
   const data = { categories };
 
@@ -19,6 +25,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
+  if (!request?.ability) {
+    await createAbility(request);
+  }
+
+  await sentry(request, { action: 'create', subject: 'Category' });
   const form = await request.formData();
   const session = await getSession(request.headers.get('Cookie'));
   const name = form.get('name') as string;

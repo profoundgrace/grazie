@@ -2,19 +2,27 @@ import { Title, Grid, Tabs } from '@mantine/core';
 import type { LoaderFunctionArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { useLoaderData, useNavigate } from '@remix-run/react';
-import type { Post } from '~/types/Post';
 import PostCard from '~/components/Post/PostCard';
 import { getPosts } from '~/lib/post.server';
 import { site } from '@/grazie';
+import { pagerParams } from '~/utils/searchParams.server';
+import Pager from '~/components/Pager/Pager';
+import { subject, useAbility } from '~/hooks/useAbility';
 
 export function meta() {
   return [{ title: `Posts${site?.separator}${site?.name}` }];
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const posts = await getPosts({});
+  const { count, page, pagerLoader } = pagerParams(request, 25);
 
-  const data = { posts };
+  const query = {
+    limit: count,
+    offset: page ? (page - 1) * count : 0
+  };
+  const posts = await getPosts(query);
+
+  const data = { posts, pager: pagerLoader(posts.totalCount) };
 
   return json(data);
 }
@@ -22,6 +30,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function Articles() {
   const data = useLoaderData<typeof loader>();
   const navigate = useNavigate();
+  const ability = useAbility();
+
   const posts =
     data?.posts?.nodes?.length > 0 ? (
       data?.posts?.nodes?.map((post) => (
@@ -49,14 +59,18 @@ export default function Articles() {
         <Title order={2}>Posts</Title>
         <Tabs defaultValue="browse" keepMounted={false}>
           <Tabs.List>
-            <Tabs.Tab value="create" onClick={() => navigate('/post/create')}>
-              Create
-            </Tabs.Tab>
+            {ability.can('create', subject('Post', {})) && (
+              <Tabs.Tab value="create" onClick={() => navigate('/post/create')}>
+                Create
+              </Tabs.Tab>
+            )}
             <Tabs.Tab value="browse">Browse</Tabs.Tab>
           </Tabs.List>
+          <Pager />
           <Tabs.Panel value="browse" py={10}>
             {posts}
           </Tabs.Panel>
+          <Pager />
         </Tabs>
       </Grid.Col>
     </Grid>

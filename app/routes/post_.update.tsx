@@ -2,15 +2,21 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'; /
 import { json, redirect } from '@remix-run/node'; // or cloudflare/deno
 import { getUnixTime } from 'date-fns';
 import { postCategory, purgePostCategories } from '~/lib/category.server';
-import { updatePost } from '~/lib/post.server';
-import { getSession } from '~/utils/session.server';
+import { getPost, updatePost } from '~/lib/post.server';
+import { createAbility, getSession } from '~/utils/session.server';
 import { site } from '@/grazie';
+import { sentry } from '~/lib/sentry.server';
 
 export function meta() {
   return [{ title: `Update Post${site?.separator}${site?.name}` }];
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
+  if (!request?.ability) {
+    await createAbility(request);
+  }
+
+  await sentry(request, { action: 'update', subject: 'Post' });
   const data = {};
 
   return json(data);
@@ -24,6 +30,18 @@ export async function action({ request }: ActionFunctionArgs) {
   const publishedAt = form.get('publishedAt') as string;
   const slugFormat = form.get('slugFormat') as string;
   const slug = form.get('slug') as string;
+
+  const postCheck = getPost({ id, slug });
+
+  if (!request?.ability) {
+    await createAbility(request);
+  }
+
+  await sentry(request, {
+    action: 'update',
+    subject: 'Post',
+    field: postCheck
+  });
 
   const post = await updatePost({
     id,

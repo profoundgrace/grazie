@@ -3,10 +3,14 @@ import { LoaderFunctionArgs, json } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import classes from '~/components/Dashboard/AdminPost.module.css';
 import DateTime from '~/components/DateTime';
+import Pager from '~/components/Pager/Pager';
 import { getUsers } from '~/lib/user.server';
+import { pagerParams } from '~/utils/searchParams.server';
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const users = await getUsers({
+  const { count, page, pagerLoader } = pagerParams(request, 25);
+
+  const query = {
     select: {
       id: true,
       username: true,
@@ -14,9 +18,16 @@ export async function loader({ request }: LoaderFunctionArgs) {
       email: true,
       createdAt: true,
       banned: true
-    }
+    },
+    limit: count,
+    offset: page ? (page - 1) * count : 0
+  };
+  const users = await getUsers(query);
+  return json({
+    _page: 'dashboard',
+    users,
+    pager: pagerLoader(users.totalCount)
   });
-  return json({ _page: 'dashboard', users });
 }
 
 export default function UserAdmin() {
@@ -39,6 +50,7 @@ export default function UserAdmin() {
   return (
     <>
       <Title>Users</Title>
+      <Pager />
       <Table stickyHeader striped stickyHeaderOffset={60} miw={700}>
         <Table.Thead className={classes.header}>
           <Table.Tr>
@@ -52,6 +64,7 @@ export default function UserAdmin() {
         </Table.Thead>
         <Table.Tbody>{rows}</Table.Tbody>
       </Table>
+      <Pager />
     </>
   );
 }

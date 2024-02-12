@@ -1,10 +1,13 @@
-import { json, LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
-import { getPosts } from '~/lib/post.server';
-import { site, metaSettings } from '@/grazie';
-import { useLoaderData, useNavigate } from '@remix-run/react';
-import PostCard from '~/components/Post/PostCard';
 import { Grid, SimpleGrid, Tabs } from '@mantine/core';
+import { json, LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
+import { useLoaderData, useNavigate } from '@remix-run/react';
+import Pager from '~/components/Pager/Pager';
+import PostCard from '~/components/Post/PostCard';
+import { subject, useAbility } from '~/hooks/useAbility';
+import { getPosts } from '~/lib/post.server';
 import { setting } from '~/lib/setting.server';
+import { pagerParams } from '~/utils/searchParams.server';
+import { site, metaSettings } from '@/grazie';
 
 export const meta: MetaFunction = () => {
   return [
@@ -19,11 +22,18 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const posts = await getPosts({});
+  const { count, page, pagerLoader } = pagerParams(request, 25);
+
+  const query = {
+    limit: count,
+    offset: page ? (page - 1) * count : 0
+  };
+  const posts = await getPosts(query);
 
   const data = {
     posts,
-    settings: { columns: await setting({ name: 'page.home.columns' }) }
+    settings: { columns: await setting({ name: 'page.home.columns' }) },
+    pager: pagerLoader(posts.totalCount)
   };
 
   return json(data);
@@ -31,10 +41,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function Index() {
   const data = useLoaderData<typeof loader>();
+  const ability = useAbility();
+  const {
+    posts: { nodes },
+    settings
+  } = data;
   const navigate = useNavigate();
   const posts =
-    data?.posts?.nodes?.length > 0 ? (
-      data?.posts?.nodes?.map((post) => (
+    nodes?.length > 0 ? (
+      nodes?.map((post) => (
         <PostCard
           key={post.id}
           data={{
@@ -57,16 +72,20 @@ export default function Index() {
       <Grid.Col span={12}>
         <Tabs defaultValue="browse" keepMounted={false}>
           <Tabs.List>
-            <Tabs.Tab value="create" onClick={() => navigate('/post/create')}>
-              Create
-            </Tabs.Tab>
+            {ability.can('create', subject('Post', {})) && (
+              <Tabs.Tab value="create" onClick={() => navigate('/post/create')}>
+                Create
+              </Tabs.Tab>
+            )}
             <Tabs.Tab value="browse">Browse</Tabs.Tab>
           </Tabs.List>
+          <Pager />
           <Tabs.Panel value="browse" py={10}>
-            <SimpleGrid cols={{ base: 1, sm: data?.settings?.columns ?? 2 }}>
+            <SimpleGrid cols={{ base: 1, sm: settings?.columns ?? 2 }}>
               {posts}
             </SimpleGrid>
           </Tabs.Panel>
+          <Pager />
         </Tabs>
       </Grid.Col>
     </Grid>

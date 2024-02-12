@@ -6,14 +6,20 @@ import { getUnixTime } from 'date-fns';
 import Editor from '~/components/Editor';
 import { getCategories, postCategory } from '~/lib/category.server';
 import { createPost } from '~/lib/post.server';
-import { getSession } from '~/utils/session.server';
+import { createAbility, getSession } from '~/utils/session.server';
 import { site } from '@/grazie';
+import { sentry } from '~/lib/sentry.server';
 
 export function meta() {
   return [{ title: `Create Post${site?.separator}${site?.name}` }];
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
+  if (!request?.ability) {
+    await createAbility(request);
+  }
+
+  await sentry(request, { action: 'create', subject: 'Post' });
   const categories = await getCategories({});
   const data = { categories };
 
@@ -21,6 +27,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
+  if (!request?.ability) {
+    await createAbility(request);
+  }
+
+  await sentry(request, { action: 'create', subject: 'Post' });
   const form = await request.formData();
   const session = await getSession(request.headers.get('Cookie'));
   const authorId = session.get('userId') as number;

@@ -11,15 +11,27 @@ import {
 } from '@tabler/icons-react';
 import { Fragment, useState } from 'react';
 import classes from '~/components/Dashboard/AdminPost.module.css';
+import Pager from '~/components/Pager/Pager';
 import RoleEditor from '~/components/Role/Editor';
 import RolePrivilegesWrapper from '~/components/RolePrivilege/RolePrivilegesFetcherWrapper';
 import RoleUsersWrapper from '~/components/RoleUser/RoleUsersFetcherWrapper';
 import { getRoles } from '~/lib/role.server';
+import { pagerParams } from '~/utils/searchParams.server';
 import { unifiedStyles } from '~/utils/unify';
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const roles = await getRoles({});
-  return json({ _page: 'dashboard', roles });
+  const { count, page, pagerLoader } = pagerParams(request, 25);
+
+  const query = {
+    limit: count,
+    offset: page ? (page - 1) * count : 0
+  };
+  const roles = await getRoles(query);
+  return json({
+    _page: 'dashboard',
+    roles,
+    pager: pagerLoader(roles.totalCount)
+  });
 }
 
 const actionIconStyle = unifiedStyles.icons.action.style;
@@ -127,7 +139,7 @@ export default function UserAdmin() {
           <RoleEditor closeEditor={setOpenEditor} />
         </Box>
       )}
-
+      <Pager />
       <Table stickyHeader striped stickyHeaderOffset={60} miw={700}>
         <Table.Thead className={classes.header}>
           <Table.Tr>
@@ -140,6 +152,7 @@ export default function UserAdmin() {
         </Table.Thead>
         <Table.Tbody>{rows}</Table.Tbody>
       </Table>
+      <Pager />
     </>
   );
 }

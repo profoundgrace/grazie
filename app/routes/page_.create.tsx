@@ -5,20 +5,31 @@ import { useLoaderData, useNavigate } from '@remix-run/react';
 import { getUnixTime } from 'date-fns';
 import Editor from '~/components/Editor';
 import { createPage } from '~/lib/page.server';
-import { getSession } from '~/utils/session.server';
+import { createAbility, getSession } from '~/utils/session.server';
 import { site } from '@/grazie';
+import { sentry } from '~/lib/sentry.server';
 
 export function meta() {
   return [{ title: `Create Page${site?.separator}${site?.name}` }];
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
+  if (!request?.ability) {
+    await createAbility(request);
+  }
+
+  await sentry(request, { action: 'create', subject: 'Page' });
   const data = {};
 
   return json(data);
 }
 
 export async function action({ request }: ActionFunctionArgs) {
+  if (!request?.ability) {
+    await createAbility(request);
+  }
+
+  await sentry(request, { action: 'create', subject: 'Page' });
   const form = await request.formData();
   const session = await getSession(request.headers.get('Cookie'));
   const authorId = session.get('userId') as number;
