@@ -51,23 +51,29 @@ export default function PostCard({
       <Card.Section className={classes.header}>
         <Group justify="space-between">
           <Group gap={0} p={4}>
-            {categories?.length > 0 &&
+            {categories?.length > 0 ? (
               categories.map(
                 ({
                   category: { name: categoryName, slug: catSlug },
                   id: catPostId
                 }) => (
-                  <Badge
-                    key={`${catPostId}`}
-                    mr={4}
-                    radius="md"
-                    size="md"
-                    variant="light"
-                  >
-                    <Link to={`/posts/${catSlug}`}>{categoryName}</Link>
-                  </Badge>
+                  <Link key={`${catPostId}`} to={`/posts/${catSlug}`}>
+                    <Badge mr={4} radius="md" size="md" variant="light">
+                      {categoryName}
+                    </Badge>
+                  </Link>
                 )
-              )}
+              )
+            ) : (
+              <Text
+                fw={700}
+                className={classes.title}
+                component={Link}
+                to={`/post/${slug}`}
+              >
+                {title}
+              </Text>
+            )}
           </Group>
 
           <Group gap={0} p={4}>
@@ -75,15 +81,17 @@ export default function PostCard({
           </Group>
         </Group>
       </Card.Section>
-      {title ? (
-        <Text
-          fw={700}
-          className={classes.title}
-          component={Link}
-          to={`/post/${slug}`}
-        >
-          {title}
-        </Text>
+      {title && categories?.length > 0 ? (
+        <Card.Section className={classes.header}>
+          <Text
+            fw={700}
+            className={classes.title}
+            component={Link}
+            to={`/post/${slug}`}
+          >
+            {title}
+          </Text>
+        </Card.Section>
       ) : null}
       <Card.Section className={classes.body}>
         <HTMLContent content={body} />

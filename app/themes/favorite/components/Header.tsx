@@ -1,4 +1,5 @@
 import {
+  Accordion,
   Anchor,
   Avatar,
   Box,
@@ -38,7 +39,8 @@ import {
   IconStar,
   IconSwitchHorizontal,
   IconUserPlus,
-  IconDashboard
+  IconDashboard,
+  IconPhoto
 } from '@tabler/icons-react';
 import cx from 'clsx';
 import { useState } from 'react';

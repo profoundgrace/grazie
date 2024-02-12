@@ -41,4 +41,5 @@
 .footer {
   padding: rem(4px) rem(4px);
   border-top: rem(1px) solid light-dark(var(--mantine-color-gray-5), var(--mantine-color-dark-6));
+  margin-top: auto
 }
