@@ -30,7 +30,7 @@ interface Editor {
   parentId?: string | number;
   postId?: string | number;
   body?: { type?: string; content?: JSONContent[] | undefined };
-  closeEditor?: Dispatch<SetStateAction<string | null>>;
+  closeEditor?: Dispatch<SetStateAction<boolean>>;
 }
 
 const CommentEditor = ({
@@ -67,7 +67,7 @@ const CommentEditor = ({
 
   const CloseBtn = () => {
     return closeEditor ? (
-      <Button color="yellow" onClick={() => closeEditor('')} variant="light">
+      <Button color="yellow" onClick={() => closeEditor(false)} variant="light">
         Cancel
       </Button>
     ) : null;

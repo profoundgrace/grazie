@@ -54,13 +54,18 @@ export async function createComment({
     let parent, threadPath;
     if (parentId) {
       parent = await prisma.comment.findUnique({
-        where: { id },
+        where: { id: parentId },
         select: {
+          id: true,
           locked: true,
           path: true
         }
       });
-      threadPath = `${parent.path}/${date}`;
+      if (parent?.id) {
+        threadPath = `${parent.path}/${date}`;
+      } else {
+        throw new Error('Parent comment was not found');
+      }
     }
 
     const data = {
@@ -183,9 +188,15 @@ export async function getComment({ id, select }) {
 }
 
 export async function getComments({
-  filter = {}
+  filter = {},
+  sort = { field: 'createdAt', order: 'desc' },
+  limit = 25,
+  offset = 0
 }: {
   filter?: { username?: string; postId?: number };
+  sort?: { field?: string; order?: string };
+  limit?: number;
+  offset?: number;
 }) {
   try {
     const where = {} as { authorId?: number; postId?: number };
@@ -196,8 +207,9 @@ export async function getComments({
     if (filter?.postId) {
       where.postId = filter.postId;
     }
+    const orderBy = { [sort.field]: sort.order };
 
-    const articles = await prisma.comment.findMany({
+    const comments = await prisma.comment.findMany({
       where,
       select: {
         id: true,
@@ -222,14 +234,16 @@ export async function getComments({
           }
         }
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy,
+      take: limit,
+      skip: offset
     });
 
     return {
       avatarURL,
-      count: articles.length,
+      count: comments.length,
       totalCount: await prisma.comment.count({ where }),
-      nodes: articles
+      nodes: comments
     };
   } catch (error: any) {
     log.error(error.message);

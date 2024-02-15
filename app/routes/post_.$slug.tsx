@@ -7,7 +7,6 @@ import PostCard from '~/components/Post/PostCard';
 import { getPost } from '~/lib/post.server';
 import { site } from '@/grazie';
 import { getComments } from '~/lib/comment.server';
-import { CommentCard } from '~/components/Comment/CommentCard';
 import { CommentList } from '~/components/Comment/CommentList';
 
 export function meta({
@@ -23,7 +22,11 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
   const data = {
     post,
-    comments: await getComments({ filter: { postId: post.id } })
+    comments: await getComments({
+      filter: { postId: post.id },
+      sort: { field: 'path', order: 'asc' },
+      limit: 10
+    })
   };
   return json(data);
 }
