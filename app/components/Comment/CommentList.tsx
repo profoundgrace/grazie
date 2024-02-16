@@ -23,7 +23,7 @@ export function CommentList({
   const ability = useAbility();
   const fetcher = useFetcher();
   const { ref, inViewport } = useInViewport();
-  const pages = Math.ceil(totalCount / limit);
+  const pages = Math.ceil(totalCount / count);
   const commentsRef = useRef(commentNodes);
 
   useEffect(() => {
