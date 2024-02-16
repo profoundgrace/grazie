@@ -15,8 +15,6 @@ export function CommentList({
   postId: number;
   data: { nodes: Comment[] };
 }) {
-  console.log(`total: ${totalCount}`);
-  console.log(`count: ${count}`);
   const [openEditor, setOpenEditor] = useState(false);
   const [comments, setComments] = useState(commentNodes);
   const [page, setPage] = useState(1);
@@ -45,7 +43,6 @@ export function CommentList({
   useEffect(() => {
     if (fetcher?.data?.comments?.nodes) {
       setComments((prev) => [...prev, ...fetcher.data.comments.nodes]);
-      console.log(fetcher.data);
     }
   }, [fetcher?.data?.comments?.nodes]);
 
@@ -55,6 +52,7 @@ export function CommentList({
       commentsRef.current !== commentNodes
     ) {
       setComments(commentNodes);
+      setPage(1);
       commentsRef.current = commentNodes;
     }
   }, [commentNodes, comments, totalCount]);

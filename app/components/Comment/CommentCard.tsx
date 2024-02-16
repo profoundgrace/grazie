@@ -42,9 +42,7 @@ export function CommentCard({
         />
         <div>
           <Text fz="sm">{displayName}</Text>
-          <Text fz="xs" c="dimmed">
-            <TimeSince timestamp={createdAt} pr={4} />
-          </Text>
+          <TimeSince timestamp={createdAt} fz="xs" c="dimmed" pr={4} />
         </div>
       </Group>
       <Box pl={54} pt="sm">

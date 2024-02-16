@@ -93,6 +93,27 @@ export async function createComment({
     const prependZeros = `${zero.repeat(3 - 1 - Math.floor(idLength / 10))}`;
     threadPath = `${comment.path}(${prependZeros}${idLength}+${comment.id})`;
 
+    await prisma.post.update({
+      where: {
+        id: postId
+      },
+      data: {
+        commentsCount: await prisma.comment.count({ where: { postId } })
+      }
+    });
+
+    if (parentId) {
+      await prisma.comment.update({
+        where: {
+          id: parentId
+        },
+        data: {
+          repliesCount: await prisma.comment.count({ where: { parentId } }),
+          lastActivityAt: date
+        }
+      });
+    }
+
     return await prisma.comment.update({
       where: { id: comment.id },
       data: {
