@@ -56,9 +56,9 @@ export default function PostCard({
               categories.map(
                 ({
                   category: { name: categoryName, slug: catSlug },
-                  id: catPostId
+                  catId: catPostId
                 }) => (
-                  <Link key={`${catPostId}`} to={`/posts/${catSlug}`}>
+                  <Link key={`catgory-${catPostId}`} to={`/posts/${catSlug}`}>
                     <Badge mr={4} radius="md" size="md" variant="light">
                       {categoryName}
                     </Badge>
