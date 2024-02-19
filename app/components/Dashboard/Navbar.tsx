@@ -21,6 +21,8 @@ import { Can } from '~/components/Can';
 const tabs = {
   account: [
     { link: '/dashboard/account', label: 'Account', icon: IconUserCog },
+    { link: '/dashboard/posts', label: 'Posts', icon: IconNews },
+    { link: '/dashboard/pages', label: 'Pages', icon: IconArticle },
     { link: '/dashboard/settings', label: 'Settings', icon: IconSettings }
   ],
   system: [

@@ -1,3 +1,7 @@
+/**
+ * User Library
+ * @copyright Copyright (c) 2024 David Dyess II
+ */
 import bcrypt from 'bcrypt';
 import { getLogger } from '~/utils/logger.server';
 import { avatarURL } from '~/utils/config.server';
@@ -8,7 +12,11 @@ import { getUserId } from '~/utils/session.server';
 import { processAvatar } from '~/utils/image.server';
 
 const log = getLogger('User');
-
+/**
+ * Create a User
+ * @param user
+ * @returns User object
+ */
 export async function createUser({
   username,
   displayName,
@@ -60,7 +68,11 @@ export async function createUser({
     throw err;
   }
 }
-
+/**
+ * Update a User
+ * @param user
+ * @returns User object
+ */
 export async function updateUser({
   id,
   username,
@@ -179,7 +191,11 @@ export async function updateUser({
     throw err;
   }
 }
-
+/**
+ * User Login
+ * @param User
+ * @returns object User
+ */
 export async function userLogin({ email, password }: UserLogin) {
   try {
     const login = await prisma.user.findUnique({
@@ -214,7 +230,11 @@ export async function userLogin({ email, password }: UserLogin) {
     throw err;
   }
 }
-
+/**
+ * Get User by ID
+ * @param id
+ * @returns object User
+ */
 export async function getUserById(id: User['id']) {
   try {
     const user = (await prisma.user.findUnique({
@@ -242,7 +262,11 @@ export async function getUserById(id: User['id']) {
     throw err;
   }
 }
-
+/**
+ * Get User by Username
+ * @param username
+ * @returns object User
+ */
 export async function getUserByUsername(username: User['username']) {
   try {
     const user = (await prisma.user.findUnique({
@@ -270,7 +294,11 @@ export async function getUserByUsername(username: User['username']) {
     throw err;
   }
 }
-
+/**
+ * Get User Account
+ * @param id
+ * @returns object User
+ */
 export async function getUserAccount(id: User['id']) {
   try {
     const account = await prisma.user.findUnique({
@@ -295,10 +323,12 @@ export async function getUserAccount(id: User['id']) {
     if (!account) {
       throw new Error('User ID was not Found!');
     }
+    // account.settings is an array, we transform it into an object
+    const settings = account?.settings ?? [];
+    account.settings = {};
 
-    account.isLoggedIn = true;
-    if (account?.settings) {
-      for (const setting of account?.settings) {
+    if (settings) {
+      for (const setting of settings) {
         account.settings[setting.name] = setting.value;
       }
     }
@@ -309,6 +339,8 @@ export async function getUserAccount(id: User['id']) {
         colorScheme: 'auto'
       };
     }
+
+    account.isLoggedIn = true;
 
     return {
       ...account,
@@ -326,7 +358,11 @@ export async function getUserAccount(id: User['id']) {
     throw err;
   }
 }
-
+/**
+ * Get User
+ * @param User
+ * @returns object User
+ */
 export async function getUser({
   id,
   username,
@@ -386,7 +422,11 @@ export async function getUser({
     throw error;
   }
 }
-
+/**
+ * Get User Roles
+ * @param User
+ * @returns
+ */
 export async function getUserRoles({ userId = null }: { userId: User['id'] }) {
   try {
     return await prisma.roleUser.findMany({
@@ -424,7 +464,11 @@ export async function getUserRoles({ userId = null }: { userId: User['id'] }) {
     throw error;
   }
 }
-
+/**
+ * Get Users
+ * @param param0
+ * @returns User[]
+ */
 export async function getUsers({ filter, select, limit = 25, offset = 0 }) {
   try {
     const where = {};
@@ -463,3 +507,7 @@ export async function getUsers({ filter, select, limit = 25, offset = 0 }) {
     throw error;
   }
 }
+/**
+ * User Library
+ * @copyright Copyright (c) 2024 David Dyess II
+ */

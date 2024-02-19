@@ -230,7 +230,7 @@ export async function getPages({
   limit = 25,
   offset = 0
 }: {
-  filter?: { username?: string; category?: string };
+  filter?: { authorId?: number; username?: string; category?: string };
   imit?: number;
   offset?: number;
 }) {
@@ -239,6 +239,10 @@ export async function getPages({
 
     if (filter?.username) {
       where.authorId = await getUserByUsername(filter.username);
+    }
+
+    if (filter?.authorId) {
+      where.authorId = filter.authorId;
     }
 
     const articles = await prisma.page.findMany({
