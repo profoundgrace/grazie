@@ -201,8 +201,10 @@ export async function getPost({ id, slug, select }) {
         title: true,
         body: true,
         authorId: true,
+        commentsCount: true,
         createdAt: true,
         updatedAt: true,
+        viewsCount: true,
         published: true,
         publishedAt: true,
         slug: true,
@@ -224,6 +226,16 @@ export async function getPost({ id, slug, select }) {
         }
       }
     });
+    const viewsUpdate = await prisma.post.update({
+      where,
+      data: {
+        viewsCount: post.viewsCount + 1
+      },
+      select: {
+        viewsCount: true
+      }
+    });
+    post.viewsCount = viewsUpdate.viewsCount;
     return post;
   } catch (error: any) {
     log.error(error.message);
@@ -237,7 +249,7 @@ export async function getPosts({
   limit = 25,
   offset = 0
 }: {
-  filter?: { username?: string; category?: string };
+  filter?: { authorId?: number; username?: string; category?: string };
   limit?: number;
   offset?: number;
 }) {
@@ -246,6 +258,10 @@ export async function getPosts({
 
     if (filter?.username) {
       where.authorId = await getUserByUsername(filter.username);
+    }
+
+    if (filter?.authorId) {
+      where.authorId = filter.authorId;
     }
 
     if (filter?.category) {
@@ -270,9 +286,11 @@ export async function getPosts({
         id: true,
         published: true,
         authorId: true,
+        commentsCount: true,
         createdAt: true,
         publishedAt: true,
         updatedAt: true,
+        viewsCount: true,
         title: true,
         body: true,
         slug: true,

@@ -1,3 +1,6 @@
+import { Category } from './Category';
+import { CategoryPost } from './CategoryPost';
+
 export interface PostInput {
   id?: number;
   authorId: number;
@@ -25,4 +28,5 @@ export interface Post {
   search?: string;
   body: object;
   author: { displayName: string };
+  categories?: CategoryPost[];
 }

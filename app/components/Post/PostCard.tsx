@@ -6,10 +6,17 @@ import {
   Card,
   Group,
   Text,
+  rem,
   useMantineTheme
 } from '@mantine/core';
 import { Link } from '@remix-run/react';
-import { IconHeart, IconBookmark, IconShare } from '@tabler/icons-react';
+import {
+  IconHeart,
+  IconBookmark,
+  IconShare,
+  IconMessage,
+  IconEye
+} from '@tabler/icons-react';
 import { TimeSince } from '~/components/DateTime';
 import HTMLContent from '~/components/Tiptap/HTMLContent';
 import classes from '~/components/Post/PostCard.module.css';
@@ -35,6 +42,8 @@ export default function PostCard({
     image = '',
     categories = [],
     createdAt,
+    commentsCount = 0,
+    viewsCount,
     body = {},
     title = '',
     slug,
@@ -125,7 +134,32 @@ export default function PostCard({
                 {author.description}
               </Text>
             </div>
+            <Group gap={10} ml={10}>
+              <Badge
+                variant="default"
+                leftSection={
+                  <IconMessage
+                    stroke={1}
+                    style={{ width: rem(20), height: rem(20) }}
+                  />
+                }
+              >
+                {commentsCount}
+              </Badge>
+              <Badge
+                variant="default"
+                leftSection={
+                  <IconEye
+                    stroke={1}
+                    style={{ width: rem(22), height: rem(22) }}
+                  />
+                }
+              >
+                {viewsCount}
+              </Badge>
+            </Group>
           </Group>
+
           <Group gap={0}>
             <ActionIcon variant="subtle" color="gray">
               <IconHeart size={22} color={theme.colors.red[6]} stroke={1.5} />
