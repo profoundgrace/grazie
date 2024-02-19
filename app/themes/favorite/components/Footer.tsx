@@ -8,27 +8,16 @@ import { site } from '@/grazie';
 import classes from '~/themes/favorite/styles/Footer.module.css';
 import { useTheme } from '~/hooks/useTheme';
 
-const links = [
-  { link: '#', label: 'Contact' },
-  { link: '#', label: 'Privacy' },
-  { link: '#', label: 'Blog' },
-  { link: '#', label: 'Store' },
-  { link: '#', label: 'Careers' }
-];
-
 export function Footer() {
   const {
-    data: { site }
+    data: {
+      footer: { links },
+      site
+    }
   } = useTheme();
+
   const items = links.map((link) => (
-    <Anchor
-      c="dimmed"
-      key={link.label}
-      href={link.link}
-      lh={1}
-      onClick={(event) => event.preventDefault()}
-      size="sm"
-    >
+    <Anchor c="dimmed" key={link.label} href={link.to} lh={1} size="sm">
       {link.label}
     </Anchor>
   ));

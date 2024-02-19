@@ -44,7 +44,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   return json({
     user,
-    theme: { navbar: { links: await setting({ name: 'navbar.links' }) } },
+    theme: {
+      footer: { links: await setting({ name: 'footer.links' }) },
+      navbar: { links: await setting({ name: 'navbar.links' }) }
+    },
     site: await setting({ name: 'site', group: true, defaultValue: site })
   });
 };
