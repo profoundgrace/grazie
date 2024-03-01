@@ -200,6 +200,7 @@ model Note {
   authorId  Int
   createdAt Int
   updatedAt Int
+  title     String?
   body      String
   search    String?
   meta      String?
@@ -210,16 +211,19 @@ model Note {
   @@index([createdAt], map: "idx_note_created")
   @@index([updatedAt], map: "idx_note_updated")
   @@index([pinned], map: "idx_note_pinned")
+  @@index([title], map: "idx_note_title")
   @@index([search], map: "idx_note_search")
 }
 
 model Label {
-  id        Int         @id @default(autoincrement())
-  createdAt Int
-  updatedAt Int
-  name      String
-  slug      String?
-  notes     NoteLabel[]
+  id          Int         @id @default(autoincrement())
+  createdAt   Int
+  updatedAt   Int
+  notesCount  Int         @default(0)
+  name        String
+  slug        String?
+  description String?
+  notes       NoteLabel[]
 
   @@index([createdAt], map: "idx_label_created")
   @@index([updatedAt], map: "idx_label_updated")
