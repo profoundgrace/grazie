@@ -44,6 +44,7 @@ async function slugCheck(slug: string, id = undefined) {
 export async function createPost({
   title,
   body,
+  search,
   published,
   publishedAt,
   slugFormat = 'date-title',
@@ -57,6 +58,7 @@ export async function createPost({
     }
     const data = {
       body: body?.type ? (JSON.stringify(body) as string) : (body as string),
+      search,
       title,
       createdAt: date,
       published,
@@ -107,6 +109,7 @@ export async function updatePost({
   published,
   publishedAt,
   body,
+  search,
   title,
   slugFormat,
   slug
@@ -118,6 +121,7 @@ export async function updatePost({
     const date = timeStamp();
     const data = {
       body: body?.type ? (JSON.stringify(body) as string) : (body as string),
+      search,
       title,
       published,
       publishedAt,
@@ -210,7 +214,9 @@ export async function getPost({ id, slug, select }) {
         slug: true,
         author: {
           select: {
-            displayName: true
+            displayName: true,
+            username: true,
+            avatar: true
           }
         },
         categories: {
@@ -236,6 +242,7 @@ export async function getPost({ id, slug, select }) {
       }
     });
     post.viewsCount = viewsUpdate.viewsCount;
+    post.avatarURL = avatarURL;
     return post;
   } catch (error: any) {
     log.error(error.message);

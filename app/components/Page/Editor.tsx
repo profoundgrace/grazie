@@ -4,11 +4,9 @@ import {
   Card,
   Grid,
   Group,
-  MultiSelect,
   Select,
   Stack,
   Switch,
-  TagsInput,
   TextInput,
   Textarea,
   Title
@@ -21,7 +19,6 @@ import type { JSONContent } from '@tiptap/core';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 import MantineEditor from '~/components/Tiptap/Editor';
-import { Debug } from '../Debug';
 import { DebugCollapse } from '../DebugCollapse';
 
 interface Editor {
@@ -32,6 +29,7 @@ interface Editor {
   status?: string;
   summary?: string;
   body?: { type?: string; content?: JSONContent[] | undefined };
+  search?: string;
   title?: string;
   closeEditor?: Dispatch<SetStateAction<string | null>>;
   stream?: { id: string; name: string };
@@ -48,6 +46,7 @@ const ArticleEditor = ({
   status = '',
   summary = '',
   body = { type: 'doc' },
+  search = '',
   title = '',
   slug,
   slugFormat,
@@ -63,6 +62,7 @@ const ArticleEditor = ({
       status,
       summary,
       body: typeof body === 'string' ? JSON.parse(body) : body,
+      search,
       title,
       slug,
       slugFormat: slug ? null : slugFormat ?? 'title-id',
@@ -142,12 +142,13 @@ const ArticleEditor = ({
                   placeholder="Summary"
                   {...form.getInputProps('summary')}
                 />
-                <MantineEditor name="body" form={form} />
+                <MantineEditor name="body" form={form} withSearch />
                 <input
                   type="hidden"
                   name="body"
                   value={JSON.stringify(form.values.body)}
                 />
+                <input type="hidden" name="search" value={form.values.search} />
                 <Switch
                   name="published"
                   checked={form?.values?.published}

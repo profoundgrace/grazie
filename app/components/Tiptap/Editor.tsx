@@ -50,7 +50,15 @@ const UnderlineIcon = () => (
   <IconUnderline size={iconSize} stroke={iconStroke} />
 );
 
-export default function Default({ name, form }: { name: string; form: any }) {
+export default function Default({
+  name,
+  form,
+  withSearch = false
+}: {
+  name: string;
+  form: any;
+  withSearch: boolean;
+}) {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -64,6 +72,9 @@ export default function Default({ name, form }: { name: string; form: any }) {
     content: form.values[name],
     onUpdate({ editor }) {
       form.setFieldValue(name, editor?.getJSON());
+      if (withSearch) {
+        form.setFieldValue('search', editor?.getText());
+      }
     }
   });
 

@@ -44,7 +44,7 @@ export default function Pages() {
             author: {
               name: article?.author?.displayName,
               description: '',
-              image: ''
+              image: `${data?.pages?.avatarURL}sm/${article?.author?.avatar}`
             }
           }}
         />

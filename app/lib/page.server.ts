@@ -44,6 +44,7 @@ export async function createPage({
   title,
   summary,
   body,
+  search,
   published,
   publishedAt,
   slugFormat = 'date-title',
@@ -57,6 +58,7 @@ export async function createPage({
     }
     const data = {
       body: body?.type ? (JSON.stringify(body) as string) : (body as string),
+      search,
       title,
       summary,
       createdAt: date,
@@ -108,6 +110,7 @@ export async function updatePage({
   published,
   publishedAt,
   body,
+  search,
   title,
   summary,
   slugFormat,
@@ -120,6 +123,7 @@ export async function updatePage({
     const date = timeStamp();
     const data = {
       body: body?.type ? (JSON.stringify(body) as string) : (body as string),
+      search,
       title,
       summary,
       published,
@@ -212,11 +216,14 @@ export async function getPage({ id, slug, select }) {
         slug: true,
         author: {
           select: {
-            displayName: true
+            displayName: true,
+            username: true,
+            avatar: true
           }
         }
       }
     });
+    page.avatarURL = avatarURL;
     return page;
   } catch (error: any) {
     log.error(error.message);

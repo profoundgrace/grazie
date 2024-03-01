@@ -44,6 +44,7 @@ export async function action({ request }: ActionFunctionArgs) {
     published,
     publishedAt: getUnixTime(new Date(publishedAt)),
     body: form.get('body') as string,
+    search: form.get('search') as string,
     title: form.get('title') as string,
     authorId,
     slugFormat,

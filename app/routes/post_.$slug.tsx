@@ -46,7 +46,7 @@ export default function Post() {
             author: {
               name: post?.author?.displayName,
               description: '',
-              image: ''
+              image: `${post?.avatarURL}sm/${post?.author?.avatar}`
             }
           }}
         />

@@ -38,7 +38,7 @@ export default function Page() {
             author: {
               name: page?.author?.displayName,
               description: '',
-              image: ''
+              image: `${page?.avatarURL}sm/${page?.author?.avatar}`
             }
           }}
         />
