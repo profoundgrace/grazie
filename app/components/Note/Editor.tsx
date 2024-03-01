@@ -133,19 +133,17 @@ const SubItemList = ({ focus, form, data, path, parent }) => {
     data,
     atPath,
     at,
-    toPath,
-    to
+    toPath
   }: {
     data: object;
     atPath: string;
     at: number;
     toPath: string;
-    to: number;
   }) => {
     return (
       <Button
         leftSection={<IconIndentDecrease />}
-        onClick={() => moveItem(data, atPath, at, toPath, to)}
+        onClick={() => moveItem(data, atPath, at, toPath)}
         size="compact-sm"
         variant="transparent"
       >
@@ -210,6 +208,23 @@ const SubItemList = ({ focus, form, data, path, parent }) => {
                   {
                     preventDefault: data[key].label?.length === 0
                   }
+                ],
+                [
+                  'tab',
+                  () =>
+                    moveItem(
+                      data[key],
+                      path,
+                      key,
+                      `${path}.${key - 1}.list`,
+                      data[key - 1]?.list.length
+                    ),
+                  { preventDefault: true }
+                ],
+                [
+                  'shift+tab',
+                  () => moveItem(data[key], path, key, parent.path),
+                  { preventDefault: true }
                 ]
               ])}
               rightSection={
@@ -230,22 +245,23 @@ const SubItemList = ({ focus, form, data, path, parent }) => {
           {focus.item === `${path}.${key}` && (
             <AddItemBtn path={path} at={key} />
           )}
-          {focus.item === `${path}.${key}` && key > 0 && (
+          {focus.item === `${path}.${key}` && (
             <>
               <DeIndentItemBtn
                 data={data[key]}
                 at={key}
                 atPath={path}
-                to={data[key + 1]?.list.length}
-                toPath={`${path}.${key + 1}.list`}
+                toPath={parent.path}
               />
-              <IndentItemBtn
-                data={data[key]}
-                at={key}
-                atPath={path}
-                to={data[key - 1]?.list.length}
-                toPath={`${path}.${key - 1}.list`}
-              />
+              {key > 0 && (
+                <IndentItemBtn
+                  data={data[key]}
+                  at={key}
+                  atPath={path}
+                  to={data[key - 1]?.list.length}
+                  toPath={`${path}.${key - 1}.list`}
+                />
+              )}
             </>
           )}
           {data[key]?.list?.length > 0 && (
@@ -418,6 +434,18 @@ const ListEditor = ({ form }: { form: any }) => {
                       preventDefault:
                         form.values.body.list[key].label?.length === 0
                     }
+                  ],
+                  [
+                    'tab',
+                    () =>
+                      moveItem(
+                        form.values.body.list[key],
+                        'body.list',
+                        key,
+                        `body.list.${key - 1}.list`,
+                        form.values.body.list[key - 1]?.list.length
+                      ),
+                    { preventDefault: true }
                   ]
                 ])}
                 rightSection={
@@ -436,9 +464,14 @@ const ListEditor = ({ form }: { form: any }) => {
               />
             </List.Item>
             {focusedItem === `body.list.${key}` &&
-              key !== form.values?.body?.list?.length - 1 && (
+              (key !== form.values?.body?.list?.length - 1 ||
+                (form.values?.body?.list?.length === 1 &&
+                  form.values?.body?.list?.[0]?.list?.length > 0)) && (
                 <AddItemBtn path="body.list" at={key} />
               )}
+            {key !== 0 && key === form.values?.body?.list?.length - 1 && (
+              <AddItemBtn />
+            )}
             {focusedItem === `body.list.${key}` && key > 0 && (
               <IndentItemBtn
                 data={form.values.body.list[key]}
@@ -460,7 +493,9 @@ const ListEditor = ({ form }: { form: any }) => {
           </Fragment>
         ))}
       </List>
-      <AddItemBtn />
+      {(form.values?.body?.list?.length < 2 ||
+        (form.values?.body?.list?.length === 1 &&
+          form.values?.body?.list?.[0]?.list?.length > 0)) && <AddItemBtn />}
     </Box>
   );
 };
