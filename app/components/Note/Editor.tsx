@@ -8,6 +8,7 @@ import {
   Grid,
   Group,
   List,
+  Popover,
   SegmentedControl,
   Select,
   Stack,
@@ -389,98 +390,112 @@ const ListEditor = ({ form }: { form: any }) => {
       >
         {form.values?.body?.list?.map((list: any, key: any) => (
           <Fragment key={`list-${key}`}>
-            <List.Item
-              icon={
-                form.values.body.listType === 'checked-icon' &&
-                (form.values.body?.list[key]?.checked ? (
-                  <ActionIcon
-                    color="green.5"
-                    onClick={() =>
-                      form.setFieldValue(`body.list.${key}.checked`, false)
-                    }
-                    variant="subtle"
-                  >
-                    <IconCircleCheck />
-                  </ActionIcon>
-                ) : (
-                  <ActionIcon
-                    onClick={() =>
-                      form.setFieldValue(`body.list.${key}.checked`, true)
-                    }
-                    variant="subtle"
-                  >
-                    <IconCircleDashed />
-                  </ActionIcon>
-                ))
-              }
+            <Popover
+              width="target"
+              position="bottom"
+              withArrow
+              shadow="md"
+              offset={-12}
+              disabled={key === 0 && form.values?.body?.list?.length === 1}
             >
-              <Textarea
-                placeholder="List Item"
-                {...form.getInputProps(`body.list.${key}.label`)}
-                onChange={({ currentTarget: { value } }) =>
-                  form.setFieldValue(`body.list.${key}.label`, value)
-                }
-                onFocus={() => setFocusedItem(`body.list.${key}`)}
-                onKeyDown={getHotkeyHandler([
-                  ['enter', () => addItem(key), { preventDefault: true }],
-                  [
-                    'backspace',
-                    () => {
-                      if (form.values.body.list[key].label?.length === 0) {
-                        form.removeListItem(`body.list`, key);
-                      }
-                    },
-                    {
-                      preventDefault:
-                        form.values.body.list[key].label?.length === 0
+              <Popover.Target>
+                <List.Item
+                  icon={
+                    form.values.body.listType === 'checked-icon' &&
+                    (form.values.body?.list[key]?.checked ? (
+                      <ActionIcon
+                        color="green.5"
+                        onClick={() =>
+                          form.setFieldValue(`body.list.${key}.checked`, false)
+                        }
+                        variant="subtle"
+                      >
+                        <IconCircleCheck />
+                      </ActionIcon>
+                    ) : (
+                      <ActionIcon
+                        onClick={() =>
+                          form.setFieldValue(`body.list.${key}.checked`, true)
+                        }
+                        variant="subtle"
+                      >
+                        <IconCircleDashed />
+                      </ActionIcon>
+                    ))
+                  }
+                >
+                  <Textarea
+                    placeholder="List Item"
+                    {...form.getInputProps(`body.list.${key}.label`)}
+                    onChange={({ currentTarget: { value } }) =>
+                      form.setFieldValue(`body.list.${key}.label`, value)
                     }
-                  ],
-                  [
-                    'tab',
-                    () =>
-                      moveItem(
-                        form.values.body.list[key],
-                        'body.list',
-                        key,
-                        `body.list.${key - 1}.list`,
-                        form.values.body.list[key - 1]?.list.length
-                      ),
-                    { preventDefault: true }
-                  ]
-                ])}
-                rightSection={
-                  focusedItem === `body.list.${key}` && (
-                    <ActionIcon
-                      onClick={() => form.removeListItem(`body.list`, key)}
-                      variant="subtle"
-                    >
-                      <IconX color="red" />
-                    </ActionIcon>
-                  )
-                }
-                autosize
-                minRows={1}
-                variant="unstyled"
-              />
-            </List.Item>
-            {focusedItem === `body.list.${key}` &&
-              (key !== form.values?.body?.list?.length - 1 ||
-                (form.values?.body?.list?.length === 1 &&
-                  form.values?.body?.list?.[0]?.list?.length > 0)) && (
-                <AddItemBtn path="body.list" at={key} />
-              )}
-            {key !== 0 && key === form.values?.body?.list?.length - 1 && (
-              <AddItemBtn />
-            )}
-            {focusedItem === `body.list.${key}` && key > 0 && (
-              <IndentItemBtn
-                data={form.values.body.list[key]}
-                at={key}
-                atPath={`body.list`}
-                to={form.values.body.list[key - 1]?.list.length}
-                toPath={`body.list.${key - 1}.list`}
-              />
-            )}
+                    onFocus={() => setFocusedItem(`body.list.${key}`)}
+                    onKeyDown={getHotkeyHandler([
+                      ['enter', () => addItem(key), { preventDefault: true }],
+                      [
+                        'backspace',
+                        () => {
+                          if (form.values.body.list[key].label?.length === 0) {
+                            form.removeListItem(`body.list`, key);
+                          }
+                        },
+                        {
+                          preventDefault:
+                            form.values.body.list[key].label?.length === 0
+                        }
+                      ],
+                      [
+                        'tab',
+                        () =>
+                          moveItem(
+                            form.values.body.list[key],
+                            'body.list',
+                            key,
+                            `body.list.${key - 1}.list`,
+                            form.values.body.list[key - 1]?.list.length
+                          ),
+                        { preventDefault: true }
+                      ]
+                    ])}
+                    rightSection={
+                      focusedItem === `body.list.${key}` && (
+                        <ActionIcon
+                          onClick={() => form.removeListItem(`body.list`, key)}
+                          variant="subtle"
+                        >
+                          <IconX color="red" />
+                        </ActionIcon>
+                      )
+                    }
+                    size="md"
+                    autosize
+                    minRows={1}
+                    variant="unstyled"
+                  />
+                </List.Item>
+              </Popover.Target>
+              <Popover.Dropdown>
+                {focusedItem === `body.list.${key}` &&
+                  (key !== form.values?.body?.list?.length - 1 ||
+                    (form.values?.body?.list?.length === 1 &&
+                      form.values?.body?.list?.[0]?.list?.length > 0)) && (
+                    <AddItemBtn path="body.list" at={key} />
+                  )}
+                {key !== 0 && key === form.values?.body?.list?.length - 1 && (
+                  <AddItemBtn />
+                )}
+                {focusedItem === `body.list.${key}` && key > 0 && (
+                  <IndentItemBtn
+                    data={form.values.body.list[key]}
+                    at={key}
+                    atPath={`body.list`}
+                    to={form.values.body.list[key - 1]?.list.length}
+                    toPath={`body.list.${key - 1}.list`}
+                  />
+                )}
+              </Popover.Dropdown>
+            </Popover>
             {form.values?.body?.list[key]?.list?.length > 0 && (
               <SubItemList
                 focus={{ item: focusedItem, set: setFocusedItem }}
@@ -493,9 +508,7 @@ const ListEditor = ({ form }: { form: any }) => {
           </Fragment>
         ))}
       </List>
-      {(form.values?.body?.list?.length < 2 ||
-        (form.values?.body?.list?.length === 1 &&
-          form.values?.body?.list?.[0]?.list?.length > 0)) && <AddItemBtn />}
+      <AddItemBtn />
     </Box>
   );
 };
