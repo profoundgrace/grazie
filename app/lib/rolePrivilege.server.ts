@@ -12,15 +12,15 @@ export async function createRolePrivilege({
   description
 }: RolePrivilegeInput) {
   try {
+    if (typeof conditions === 'string') {
+      conditions = conditions.trim();
+    }
     return await prisma.rolePrivilege.create({
       data: {
         roleId,
         privilegeId,
         inverted,
-        conditions:
-          typeof conditions !== 'string'
-            ? JSON.stringify(conditions)
-            : conditions,
+        conditions: conditions ? JSON.stringify(conditions) : null,
         description
       }
     });
@@ -40,16 +40,16 @@ export async function updateRolePrivilege({
   description
 }: RolePrivilegeInput) {
   try {
+    if (typeof conditions === 'string') {
+      conditions = conditions.trim();
+    }
     return await prisma.rolePrivilege.update({
       where: { id },
       data: {
         roleId,
         privilegeId,
         inverted,
-        conditions:
-          typeof conditions !== 'string'
-            ? JSON.stringify(conditions)
-            : conditions,
+        conditions: conditions ? JSON.stringify(conditions) : null,
         description
       }
     });

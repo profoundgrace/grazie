@@ -6,7 +6,7 @@ export type RolePrivilege = {
   roleId?: number;
   privilegeId?: number;
   inverted?: boolean;
-  conditions?: string | object;
+  conditions?: string | object | null;
   description?: string;
   role?: Role;
   privilege?: Privilege;
@@ -17,6 +17,6 @@ export type RolePrivilegeInput = {
   roleId?: number;
   privilegeId?: number;
   inverted?: boolean;
-  conditions?: string | object;
+  conditions?: string | object | null;
   description?: string;
 };
