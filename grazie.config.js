@@ -1,9 +1,11 @@
+import { Theme } from 'app/themes/favorite';
 export { Theme } from 'app/themes/favorite';
-
-export const theme = 'favorite';
-// Default
-export const page = 'Page';
-
+// Theme name - string
+export const themeName = 'favorite';
+// Default page name - string
+export const pageName = 'Page';
+// Theme Object
+export const theme = Theme.theme;
 export const site = {
   name: 'Grazie!',
   slogan: 'I love this shit',

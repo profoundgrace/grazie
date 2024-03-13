@@ -33,7 +33,7 @@ import { ThemeProvider } from '~/components/ThemeProvider';
 import { setting } from './lib/setting.server';
 import classes from '~/styles/NotFound.module.css';
 import { getUser } from '~/utils/session.server';
-import { site } from '@/grazie';
+import { site, theme } from '@/grazie';
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : [])
@@ -64,7 +64,7 @@ export default function App() {
       </head>
       <body>
         <AbilityProvider>
-          <MantineProvider defaultColorScheme="auto">
+          <MantineProvider defaultColorScheme="auto" theme={theme}>
             <ThemeProvider>
               <Outlet />
               <ScrollRestoration />
