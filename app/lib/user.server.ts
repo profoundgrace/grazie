@@ -218,6 +218,15 @@ export async function userLogin({ email, password }: UserLogin) {
     if (!verification) {
       throw new Error('Incorrect Password');
     }
+    const date = timeStamp();
+    await prisma.user.update({
+      where: {
+        id: login.id
+      },
+      data: {
+        lastLoginAt: date
+      }
+    });
 
     return {
       id: login.id,
