@@ -51,6 +51,7 @@ type Editor = {
   };
   search?: string;
   title?: string;
+  type?: string;
   closeEditor?: Dispatch<SetStateAction<string | null>>;
   labels?: { category: { name: string } }[];
 };
@@ -520,6 +521,7 @@ const NoteEditor = ({
   body = { type: 'doc', content: [], list: [] },
   search = '',
   title = '',
+  type = 'text',
   labels,
   closeEditor
 }: Editor) => {
@@ -531,6 +533,7 @@ const NoteEditor = ({
       body: typeof body === 'string' ? JSON.parse(body) : body,
       search,
       title,
+      type,
       labels:
         labels && labels?.length > 0
           ? labels.map((cat) => cat.category.name)
@@ -593,8 +596,23 @@ const NoteEditor = ({
               action={route}
               onSubmit={form.onSubmit((_v, e) => submit(e.currentTarget))}
             >
+              {form.values?.body?.content?.length === 0 &&
+                form.values?.body?.list?.length === 0 && (
+                  <SegmentedControl
+                    value={form.values?.type ?? 'text'}
+                    onChange={(value) => form.setFieldValue(`type`, value)}
+                    data={[
+                      { label: 'Text', value: 'text' },
+                      { label: 'List', value: 'list' }
+                    ]}
+                    name="type"
+                    {...form.getInputProps('type')}
+                  />
+                )}
+              <input type="hidden" name="type" value={form.values.type} />
               <Stack>
                 {id && <input type="hidden" name="id" value={id} />}
+
                 <TextInput
                   label="Title"
                   name="title"
@@ -602,18 +620,11 @@ const NoteEditor = ({
                   placeholder="Title"
                   {...form.getInputProps('title')}
                 />
-                <Tabs defaultValue="text" keepMounted={false}>
-                  <Tabs.List grow>
-                    <Tabs.Tab value="text">Text</Tabs.Tab>
-                    <Tabs.Tab value="list">List</Tabs.Tab>
-                  </Tabs.List>
-                  <Tabs.Panel value="text" py={10}>
-                    <MantineEditor name="body" form={form} withSearch />
-                  </Tabs.Panel>
-                  <Tabs.Panel value="list" py={10}>
-                    <ListEditor form={form} />
-                  </Tabs.Panel>
-                </Tabs>
+                {form.values.type === 'text' && (
+                  <MantineEditor name="body" form={form} withSearch />
+                )}
+                {form.values.type === 'list' && <ListEditor form={form} />}
+
                 <input
                   type="hidden"
                   name="body"

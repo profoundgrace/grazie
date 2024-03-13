@@ -27,6 +27,7 @@ interface NoteCardProps {
   image?: string;
   labels?: NoteLabel[];
   createdAt: number;
+  title: string;
   body: object;
   footer?: string;
   author: {
@@ -45,6 +46,7 @@ export default function NoteCard({
     labels = [],
     createdAt,
     body = {},
+    title = '',
     footer = '',
     author,
     updatedAt = ''
@@ -59,7 +61,7 @@ export default function NoteCard({
       <Card.Section className={classes.header}>
         <Group justify="space-between">
           <Group gap={0} p={4}>
-            {labels?.length > 0 &&
+            {labels?.length > 0 ? (
               labels.map(
                 ({
                   label: { name: labelName, slug: labelSlug },
@@ -71,7 +73,19 @@ export default function NoteCard({
                     </Badge>
                   </Link>
                 )
-              )}
+              )
+            ) : (
+              <Anchor
+                className={classes.title}
+                component={Link}
+                fw={700}
+                gradient={{ from: 'indigo', to: 'blue', deg: 90 }}
+                to={`/note/${id}`}
+                variant="gradient"
+              >
+                {title}
+              </Anchor>
+            )}
           </Group>
 
           <Group gap={0} p={4}>
@@ -79,6 +93,21 @@ export default function NoteCard({
           </Group>
         </Group>
       </Card.Section>
+      {title && labels?.length > 0 ? (
+        <Card.Section className={classes.header}>
+          <Anchor
+            className={classes.title}
+            component={Link}
+            fw={700}
+            gradient={{ from: 'indigo', to: 'blue', deg: 90 }}
+            pl={4}
+            to={`/note/${id}`}
+            variant="gradient"
+          >
+            {title}
+          </Anchor>
+        </Card.Section>
+      ) : null}
       <Card.Section
         className={classes.body}
         pt={labels?.length > 0 ? 10 : undefined}

@@ -13,6 +13,7 @@ export async function createNote({
   title,
   body,
   search,
+  type,
   authorId
 }: NoteInput) {
   try {
@@ -25,7 +26,8 @@ export async function createNote({
       search,
       createdAt: date,
       updatedAt: date,
-      authorId
+      authorId,
+      type
     };
 
     const note = await prisma.note.create({

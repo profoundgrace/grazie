@@ -34,12 +34,15 @@ export async function action({ request }: ActionFunctionArgs) {
   const form = await request.formData();
   const session = await getSession(request.headers.get('Cookie'));
   const authorId = session.get('userId') as number;
+  const pinned = form.get('published') === 'on' ? true : false;
 
   const note = await createNote({
-    title: form.get('title'),
+    title: form.get('title') as string,
     body: form.get('body') as string,
     search: form.get('search') as string,
-    authorId
+    type: form.get('type') as string,
+    authorId,
+    pinned
   });
 
   const labels = form.get('labels') as string;

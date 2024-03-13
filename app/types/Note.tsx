@@ -10,6 +10,7 @@ export type NoteInput = {
   title?: string;
   body: object | string;
   meta?: object;
+  type: string;
 };
 
 export type Note = {
@@ -21,6 +22,7 @@ export type Note = {
   search?: string;
   title?: string;
   body: object;
+  type: string;
   author: { displayName: string };
   labels?: NoteLabel[];
 };
