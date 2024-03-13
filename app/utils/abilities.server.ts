@@ -62,6 +62,9 @@ export async function abilityBuilder({
     await userRoles.forEach((userRole) => {
       if (userRole?.role?.privileges) {
         userRole.role.privileges.forEach((priv: RolePrivilege) => {
+          if (!priv.conditions) {
+            priv.conditions = null;
+          }
           const rules = {
             action: priv?.privilege?.action,
             subject: priv?.privilege?.subject,
