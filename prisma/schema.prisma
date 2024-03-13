@@ -204,6 +204,7 @@ model Note {
   body      String
   search    String?
   meta      String?
+  type      String
   author    User        @relation(fields: [authorId], references: [id])
   labels    NoteLabel[]
 
@@ -213,6 +214,7 @@ model Note {
   @@index([pinned], map: "idx_note_pinned")
   @@index([title], map: "idx_note_title")
   @@index([search], map: "idx_note_search")
+  @@index([type], map: "idx_note_type")
 }
 
 model Label {
