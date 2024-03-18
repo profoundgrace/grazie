@@ -6,6 +6,8 @@ import type { Page } from '~/types/Page';
 import PageCard from '~/components/Page/PageCard';
 import { getPage } from '~/lib/page.server';
 import { site } from '@/grazie';
+import { createAbility } from '~/utils/session.server';
+import { sentry } from '~/lib/sentry.server';
 
 export function meta({
   data: {
@@ -16,7 +18,14 @@ export function meta({
 }
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
+  if (!request?.ability) {
+    await createAbility(request);
+  }
+
   const page = await getPage({ slug: params?.slug });
+  if (page) {
+    await sentry(request, { action: 'read', subject: 'Page', field: page });
+  }
 
   const data = { page };
   return json(data);
