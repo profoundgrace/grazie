@@ -36,11 +36,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export async function action({ request }: ActionFunctionArgs) {
   const session = await getSession(request.headers.get('Cookie'));
   const form = await request.formData();
+  const displayName = form.get('displayName') as string;
   const username = form.get('username') as string;
   const email = form.get('email') as string;
   const password = form.get('password') as string;
 
-  const user = await createUser({ username, email, password });
+  const user = await createUser({ username, displayName, email, password });
 
   if (user?.id === null) {
     session.flash('error', 'Invalid username/password');
