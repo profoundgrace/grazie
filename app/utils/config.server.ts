@@ -63,6 +63,8 @@ export const session = {
 
 export const theme = process.env.THEME;
 
+export const admins = process.env.ADMINS?.split(',');
+
 export default {
   session,
   aws,
@@ -71,5 +73,6 @@ export default {
   s3Providers,
   storageURL,
   avatarURL,
-  theme
+  theme,
+  admins
 };
