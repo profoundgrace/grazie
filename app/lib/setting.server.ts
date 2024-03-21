@@ -41,7 +41,24 @@ async function slugCheck(slug: string, id = undefined) {
   return slug;
 }
 
-function formatSetting({ value, type }: { value: any; type: string }) {
+function findType(value: any) {
+  if (typeof value === 'object') {
+    return 'object';
+  } else if (Array.isArray(value)) {
+    return 'array';
+  } else if (typeof value === 'number') {
+    return 'number';
+  } else if (typeof value === 'string') {
+    return 'string';
+  } else if (typeof value === 'boolean') {
+    return 'boolean';
+  }
+}
+
+function formatSetting({ value, type }: { value: any; type?: string }) {
+  if (!type) {
+    type = findType(value);
+  }
   switch (type) {
     case 'array' || 'object':
       if (typeof value === 'object' || Array.isArray(value)) {
@@ -58,7 +75,11 @@ function formatSetting({ value, type }: { value: any; type: string }) {
       return value as string;
   }
 }
-function outputSetting({ value, type }: { value: any; type: string }) {
+function outputSetting({ value, type }: { value: any; type?: string }) {
+  if (!type) {
+    type = findType(value);
+  }
+
   switch (type) {
     case 'array' || 'object':
       if (typeof value === 'object' || Array.isArray(value)) {
