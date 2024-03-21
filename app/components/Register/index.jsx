@@ -47,8 +47,15 @@ export function Register({ site }) {
           <TextInput
             label="Username"
             name="username"
-            placeholder="username"
+            placeholder="random_user123"
             {...form.getInputProps('username')}
+            required
+          />
+          <TextInput
+            label="Display Name"
+            name="displayName"
+            placeholder="David D."
+            {...form.getInputProps('displayName')}
             required
           />
           <TextInput
