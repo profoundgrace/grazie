@@ -92,6 +92,7 @@ const CommentEditor = ({
                   closeEditor(false);
                 }
               })}
+              reloadDocument
             >
               <Stack>
                 {id && <input type="hidden" name="id" value={id} />}

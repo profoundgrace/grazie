@@ -1,10 +1,24 @@
-import { Text, Avatar, Group, Paper, Box, Button } from '@mantine/core';
-import { useState } from 'react';
+import {
+  Text,
+  Avatar,
+  Group,
+  Paper,
+  Box,
+  Button,
+  Menu,
+  rem,
+  ActionIcon
+} from '@mantine/core';
+import { useEffect, useState } from 'react';
 import classes from '~/components/Comment/CommentCard.module.css';
 import { TimeSince } from '~/components/DateTime';
 import HTMLContent from '~/components/Tiptap/HTMLContent';
 import CommentEditor from './Editor';
-import { IconArrowBack } from '@tabler/icons-react';
+import { IconArrowBack, IconDotsVertical, IconEdit } from '@tabler/icons-react';
+import { unifiedStyles } from '~/utils/unify';
+
+const actionIconStyle = unifiedStyles.icons.action.style;
+const actionIconStroke = unifiedStyles.icons.action.stroke;
 
 export function CommentCard({
   data: {
@@ -19,8 +33,16 @@ export function CommentCard({
   avatarURL
 }) {
   const [replyEditor, setReplyEditor] = useState(false);
+  const [commentEditor, setCommentEditor] = useState(false);
+  const [actions, setActions] = useState(false);
   const depth = parentId ? path.split('/').length - 1 : 0;
-
+  useEffect(() => {
+    if (replyEditor || commentEditor) {
+      setActions(true);
+    } else if (!replyEditor && !commentEditor) {
+      setActions(false);
+    }
+  }, [replyEditor, commentEditor]);
   return (
     <Paper
       withBorder
@@ -53,22 +75,56 @@ export function CommentCard({
           }}
         />
       </Box>
-      {!replyEditor && (
-        <Button
-          leftSection={<IconArrowBack size="20" />}
-          onClick={() => setReplyEditor(true)}
-          radius="xl"
-          size="compact-sm"
-          variant="light"
-        >
-          Reply
-        </Button>
+      {!actions && (
+        <Group>
+          <Button
+            leftSection={<IconArrowBack size="20" />}
+            onClick={() => setReplyEditor(true)}
+            radius="xl"
+            size="compact-sm"
+            variant="light"
+          >
+            Reply
+          </Button>
+
+          <Menu trigger="click-hover">
+            <Menu.Target>
+              <ActionIcon variant="subtle" radius="md" aria-label="Role Editor">
+                <IconDotsVertical
+                  style={actionIconStyle}
+                  stroke={actionIconStroke}
+                />
+              </ActionIcon>
+            </Menu.Target>
+
+            <Menu.Dropdown>
+              <Menu.Label>Comment</Menu.Label>
+              <Menu.Item
+                leftSection={
+                  <IconEdit style={{ width: rem(14), height: rem(14) }} />
+                }
+                onClick={() => setCommentEditor(true)}
+              >
+                Edit
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        </Group>
       )}
       {replyEditor && (
         <CommentEditor
           postId={postId}
           parentId={id}
           closeEditor={setReplyEditor}
+        />
+      )}
+      {commentEditor && (
+        <CommentEditor
+          id={id}
+          postId={postId}
+          parentId={id}
+          body={body}
+          closeEditor={setCommentEditor}
         />
       )}
     </Paper>
