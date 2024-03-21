@@ -24,6 +24,7 @@ import { IconJson } from '@tabler/icons-react';
 import type { Dispatch, SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
 import { DebugCollapse } from '../DebugCollapse';
+import { Privilege } from '~/types/Privilege';
 
 interface Editor {
   id?: number | null;
@@ -32,6 +33,7 @@ interface Editor {
   inverted?: boolean;
   conditions?: string | null;
   description?: string | null;
+  privilege?: Privilege;
   closeEditor?: Dispatch<SetStateAction<boolean | number | string | null>>;
 }
 
@@ -42,6 +44,7 @@ const SettingEditor = ({
   inverted = false,
   conditions,
   description,
+  privilege,
   closeEditor = () => null
 }: Editor) => {
   const form = useForm({
@@ -95,10 +98,10 @@ const SettingEditor = ({
                   <Stack>
                     {id && <input type="hidden" name="id" value={id} />}
                     <input type="hidden" name="roleId" value={roleId} />
-                    {!privilegeId && (
+                    {!privilegeId ? (
                       <Select
                         name="privilegeId"
-                        label="Users"
+                        label="Privilege"
                         placeholder="Select a Privilege"
                         {...form.getInputProps('privilegeId')}
                         data={
@@ -112,6 +115,10 @@ const SettingEditor = ({
                             : []
                         }
                       />
+                    ) : (
+                      <Title order={4}>
+                        {privilege.subject} {privilege.action}
+                      </Title>
                     )}
                     <Switch
                       checked={form?.values?.inverted}

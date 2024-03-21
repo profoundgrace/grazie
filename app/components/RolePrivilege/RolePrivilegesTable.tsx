@@ -1,12 +1,17 @@
-import { Box, Button, Table, Title } from '@mantine/core';
+import { ActionIcon, Box, Button, Code, Table, Title } from '@mantine/core';
 import { Privilege } from '~/types/Privilege';
 import DateTime from '~/components/DateTime';
 import classes from '~/components/Dashboard/AdminPost.module.css';
 import RolePrivilegeEditor from '~/components/RolePrivilege/Editor';
-import { useState } from 'react';
-import { IconSquarePlus } from '@tabler/icons-react';
+import RolePrivilegeDelete from '~/components/RolePrivilege/Delete';
+import { Fragment, useState } from 'react';
+import { IconEdit, IconSquarePlus, IconTrash } from '@tabler/icons-react';
 import { Role } from '~/types/Role';
 import { RolePrivilege } from '~/types/RolePrivilege';
+import { unifiedStyles } from '~/utils/unify';
+
+const actionIconStyle = unifiedStyles.icons.action.style;
+const actionIconStroke = unifiedStyles.icons.action.stroke;
 
 export default function RolePrivilegesTable({
   role,
@@ -17,13 +22,66 @@ export default function RolePrivilegesTable({
 }) {
   const [openEditor, setOpenEditor] = useState(false);
   const [rolePrivilegeEditor, setRolePrivilegeEditor] = useState(null);
+  const [rolePrivilegeDelete, setRolePrivilegeDelete] = useState(null);
   const rows =
     privileges?.nodes?.length > 0 ? (
       privileges.nodes.map((row) => (
-        <Table.Tr key={`role-privilege-${row.id}`}>
-          <Table.Td>{row.privilege.subject}</Table.Td>
-          <Table.Td>{row.privilege.action}</Table.Td>
-        </Table.Tr>
+        <Fragment key={`role-privilege-${row.id}`}>
+          <Table.Tr>
+            <Table.Td>{row.privilege.subject}</Table.Td>
+            <Table.Td>{row.privilege.action}</Table.Td>
+            <Table.Td>
+              {row?.conditions && <Code block>{row.conditions}</Code>}
+            </Table.Td>
+            <Table.Td>
+              <ActionIcon
+                variant="subtle"
+                radius="md"
+                aria-label="Role Editor"
+                onClick={() => setRolePrivilegeEditor(row.id)}
+              >
+                <IconEdit style={actionIconStyle} stroke={actionIconStroke} />
+              </ActionIcon>
+              <ActionIcon
+                color="red"
+                variant="subtle"
+                radius="md"
+                aria-label="Role Editor"
+                onClick={() => setRolePrivilegeDelete(row.id)}
+              >
+                <IconTrash style={actionIconStyle} stroke={actionIconStroke} />
+              </ActionIcon>
+            </Table.Td>
+          </Table.Tr>
+          {rolePrivilegeEditor === row.id && (
+            <Table.Tr
+              bg={
+                'light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5)'
+              }
+            >
+              <Table.Td colSpan={5}>
+                <RolePrivilegeEditor
+                  closeEditor={setRolePrivilegeEditor}
+                  {...row}
+                />
+              </Table.Td>
+            </Table.Tr>
+          )}
+          {rolePrivilegeDelete === row.id && (
+            <Table.Tr
+              bg={
+                'light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5)'
+              }
+            >
+              <Table.Td colSpan={5}>
+                <RolePrivilegeDelete
+                  closeEditor={setRolePrivilegeDelete}
+                  {...row}
+                />
+              </Table.Td>
+            </Table.Tr>
+          )}
+        </Fragment>
       ))
     ) : (
       <Table.Tr>
@@ -63,6 +121,8 @@ export default function RolePrivilegesTable({
           <Table.Tr>
             <Table.Th>Subject</Table.Th>
             <Table.Th>Action</Table.Th>
+            <Table.Th>Conditions</Table.Th>
+            <Table.Th>Options</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>{rows}</Table.Tbody>
