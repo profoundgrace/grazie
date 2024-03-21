@@ -4,11 +4,12 @@
  */
 import bcrypt from 'bcrypt';
 import { getLogger } from '~/utils/logger.server';
-import { avatarURL } from '~/utils/config.server';
+import { avatarURL, admins } from '~/utils/config.server';
 import { prisma } from '~/utils/prisma.server';
 import { timeStamp } from '~/utils/generic.server';
 import type { User, UserLogin, UserSystem } from '~/types/User';
 import { getUserId } from '~/utils/session.server';
+import { setting } from '~/lib/setting.server';
 import { processAvatar } from '~/utils/image.server';
 
 const log = getLogger('User');
@@ -40,24 +41,61 @@ export async function createUser({
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password as string, salt);
     const date = timeStamp();
-    const user = await prisma.user.create({
-      data: {
-        displayName,
-        username: username as string,
-        email: email as string,
-        password: hashedPassword,
-        createdAt: date,
-        updatedAt: date,
-        lastLoginAt: date
-      }
-    });
+    let user;
+    await prisma.$transaction(async (db) => {
+      user = await db.user.create({
+        data: {
+          displayName,
+          username: username as string,
+          email: email as string,
+          password: hashedPassword,
+          createdAt: date,
+          updatedAt: date,
+          lastLoginAt: date
+        }
+      });
 
-    await prisma.userSetting.create({
-      data: {
-        userId: user.id,
-        name: 'colorScheme',
-        value: 'auto',
-        type: 'string'
+      await db.userSetting.create({
+        data: {
+          userId: user.id,
+          name: 'colorScheme',
+          value: 'auto',
+          type: 'string'
+        }
+      });
+
+      let userRoles;
+
+      if (admins?.includes(email)) {
+        userRoles = ['admin'];
+      } else {
+        userRoles = await setting({
+          name: 'user.roles',
+          defaultValue: ['everyone', 'user']
+        });
+      }
+
+      const roles = await db.role.findMany({
+        where: {
+          name: {
+            in: userRoles
+          }
+        },
+        select: {
+          id: true
+        }
+      });
+
+      for (const role of roles) {
+        await db.roleUser.create({
+          data: {
+            active: true,
+            roleId: role.id,
+            userId: user.id,
+            createdAt: date,
+            updatedAt: date
+          }
+        });
       }
     });
 
@@ -330,7 +368,8 @@ export async function getUserAccount(id: User['id']) {
     });
 
     if (!account) {
-      throw new Error('User ID was not Found!');
+      //throw new Error('User ID was not Found!');
+      return { id: null };
     }
     // account.settings is an array, we transform it into an object
     const settings = account?.settings ?? [];
