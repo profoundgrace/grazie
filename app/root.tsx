@@ -28,9 +28,9 @@ import {
   ScrollRestoration,
   useRouteError
 } from '@remix-run/react';
-import { AbilityProvider } from './components/AbilityProvider';
+import { AbilityProvider } from '~/components/AbilityProvider';
 import { ThemeProvider } from '~/components/ThemeProvider';
-import { setting } from './lib/setting.server';
+import { setting } from '~/lib/setting.server';
 import classes from '~/styles/NotFound.module.css';
 import { getUser } from '~/utils/session.server';
 import { site, theme } from '@/grazie';
@@ -45,8 +45,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   return json({
     user,
     theme: {
-      footer: { links: await setting({ name: 'footer.links' }) },
-      navbar: { links: await setting({ name: 'navbar.links' }) }
+      footer: {
+        links: await setting({ name: 'footer.links', defaultValue: [] })
+      },
+      navbar: {
+        links: await setting({ name: 'navbar.links', defaultValue: [] })
+      }
     },
     site: await setting({ name: 'site', group: true, defaultValue: site })
   });

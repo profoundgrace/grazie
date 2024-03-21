@@ -32,7 +32,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const data = {
     posts,
-    settings: { columns: await setting({ name: 'page.home.columns' }) },
+    settings: {
+      columns: await setting({ name: 'page.home.columns', defaultValue: 3 })
+    },
     pager: pagerLoader(posts.totalCount)
   };
 
