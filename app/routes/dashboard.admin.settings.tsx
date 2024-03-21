@@ -1,4 +1,12 @@
-import { ActionIcon, Box, Button, Stack, Table, Title } from '@mantine/core';
+import {
+  ActionIcon,
+  Box,
+  Button,
+  Code,
+  Stack,
+  Table,
+  Title
+} from '@mantine/core';
 import { LoaderFunctionArgs, json } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { IconEdit, IconSquarePlus } from '@tabler/icons-react';
@@ -22,8 +30,10 @@ export default function UserAdmin() {
       <Table.Tr>
         <Table.Td>{row.id}</Table.Td>
         <Table.Td>{row.name}</Table.Td>
-        <Table.Td>{row.value}</Table.Td>
         <Table.Td>{row.type}</Table.Td>
+        <Table.Td>
+          <Code block>{row?.value ?? 'NULL'}</Code>
+        </Table.Td>
         <Table.Td>
           <Stack>
             <ActionIcon
@@ -72,8 +82,8 @@ export default function UserAdmin() {
           <Table.Tr>
             <Table.Th>ID</Table.Th>
             <Table.Th>Name</Table.Th>
-            <Table.Th>Value</Table.Th>
             <Table.Th>Type</Table.Th>
+            <Table.Th>Value</Table.Th>
             <Table.Th>Actions</Table.Th>
           </Table.Tr>
         </Table.Thead>
