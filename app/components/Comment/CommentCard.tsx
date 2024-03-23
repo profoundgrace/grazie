@@ -59,7 +59,7 @@ export function CommentCard({
       <Group>
         <Avatar
           src={`${avatarURL}md/${avatar}`}
-          alt="Jacob Warnhalter"
+          alt={displayName}
           radius="xl"
         />
         <div>
@@ -87,7 +87,7 @@ export function CommentCard({
             Reply
           </Button>
 
-          <Menu trigger="click-hover">
+          <Menu trigger="click-hover" width="100px">
             <Menu.Target>
               <ActionIcon variant="subtle" radius="md" aria-label="Role Editor">
                 <IconDotsVertical

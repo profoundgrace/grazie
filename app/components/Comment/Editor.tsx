@@ -84,15 +84,17 @@ const CommentEditor = ({
               </Alert>
             ) : null}
             <Form
-              method="POST"
+              method="post"
               action={route}
-              onSubmit={form.onSubmit((_v, e) => {
-                submit(e.currentTarget);
+              onSubmit={form.onSubmit(async (_v, e) => {
+                submit(e.currentTarget, {
+                  replace: true,
+                  unstable_flushSync: true
+                });
                 if (closeEditor) {
                   closeEditor(false);
                 }
               })}
-              reloadDocument
             >
               <Stack>
                 {id && <input type="hidden" name="id" value={id} />}

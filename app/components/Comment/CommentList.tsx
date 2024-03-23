@@ -5,7 +5,7 @@ import { Comment } from '~/types/Comment';
 import CommentEditor from './Editor';
 import { IconSquarePlus } from '@tabler/icons-react';
 import { subject, useAbility } from '~/hooks/useAbility';
-import { useFetcher } from '@remix-run/react';
+import { useFetcher, useSearchParams } from '@remix-run/react';
 import { useInViewport } from '@mantine/hooks';
 
 export function CommentList({
@@ -25,6 +25,23 @@ export function CommentList({
   const { ref, inViewport } = useInViewport();
   const pages = Math.ceil(totalCount / count);
   const commentsRef = useRef(commentNodes);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const refresh = Number(searchParams.get('refresh'));
+  useEffect(() => {
+    if (refresh) {
+      if (fetcher.state === 'idle') {
+        fetcher.load(
+          `/comments/post/${postId}?limit=${comments?.length}&offset=0`
+        );
+        const params = new URLSearchParams();
+        params.delete('refresh');
+        setSearchParams(params, {
+          preventScrollReset: true
+        });
+      }
+    }
+  });
 
   useEffect(() => {
     if (
