@@ -6,6 +6,7 @@ import { dateString, timeStamp, timeString } from '~/utils/generic.server';
 import { prisma } from '~/utils/prisma.server';
 import type { PostInput } from '~/types/Post';
 import { getCategory } from './category.server';
+import { status } from './error.server';
 
 const log = getLogger('Posts Query');
 
@@ -232,6 +233,10 @@ export async function getPost({ id, slug, select }) {
         }
       }
     });
+    if (!post) {
+      log.error(`Post id: ${id} | slug: ${slug} - Not Found`);
+      status(404);
+    }
     const viewsUpdate = await prisma.post.update({
       where,
       data: {
@@ -256,12 +261,25 @@ export async function getPosts({
   limit = 25,
   offset = 0
 }: {
-  filter?: { authorId?: number; username?: string; category?: string };
+  filter?: {
+    authorId?: number;
+    username?: string;
+    category?: string;
+    published?: boolean;
+  };
   limit?: number;
   offset?: number;
 }) {
   try {
-    const where = {} as { authorId?: number; category?: any };
+    const where = {} as {
+      authorId?: number;
+      category?: any;
+      published?: boolean;
+    };
+
+    if (filter?.published) {
+      where.published = filter.published;
+    }
 
     if (filter?.username) {
       where.authorId = await getUserByUsername(filter.username);

@@ -4,7 +4,9 @@ import {
   Avatar,
   Badge,
   Card,
+  Grid,
   Group,
+  Menu,
   Text,
   rem,
   useMantineTheme
@@ -15,12 +17,18 @@ import {
   IconBookmark,
   IconShare,
   IconMessage,
-  IconEye
+  IconEye,
+  IconDotsVertical,
+  IconEdit,
+  IconExclamationMark
 } from '@tabler/icons-react';
 import { TimeSince } from '~/components/DateTime';
 import HTMLContent from '~/components/Tiptap/HTMLContent';
 import classes from '~/components/Post/PostCard.module.css';
 import { CategoryPost } from '~/types/CategoryPost';
+import { useState } from 'react';
+import PostEditor from './Editor';
+import { unifiedStyles } from '~/utils/unify';
 
 interface ArticleCardProps {
   image?: string;
@@ -34,10 +42,14 @@ interface ArticleCardProps {
     description: string;
     image: string;
   };
+  published?: boolean;
   updatedAt?: string;
 }
 
-export default function PostCard({ data }: { data: ArticleCardProps }) {
+const actionIconStyle = unifiedStyles.icons.action.style;
+const actionIconStroke = unifiedStyles.icons.action.stroke;
+
+export default function Post({ data }: { data: ArticleCardProps }) {
   const {
     image = '',
     categories = [],
@@ -49,10 +61,11 @@ export default function PostCard({ data }: { data: ArticleCardProps }) {
     slug,
     footer = '',
     author,
-    updatedAt = ''
+    updatedAt = '',
+    published
   } = data;
   const theme = useMantineTheme();
-
+  const [openEditor, setOpenEditor] = useState(null);
   return (
     <>
       <Card withBorder mb={6} radius="md" className={classes.card}>
@@ -73,16 +86,14 @@ export default function PostCard({ data }: { data: ArticleCardProps }) {
                   )
                 )
               ) : (
-                <Anchor
+                <Text
                   className={classes.title}
-                  component={Link}
                   fw={700}
                   gradient={{ from: 'indigo', to: 'blue', deg: 90 }}
-                  to={`/post/${slug}`}
                   variant="gradient"
                 >
                   {title}
-                </Anchor>
+                </Text>
               )}
             </Group>
 
@@ -93,17 +104,15 @@ export default function PostCard({ data }: { data: ArticleCardProps }) {
         </Card.Section>
         {title && categories?.length > 0 ? (
           <Card.Section className={classes.header}>
-            <Anchor
+            <Text
               className={classes.title}
-              component={Link}
               fw={700}
               gradient={{ from: 'indigo', to: 'blue', deg: 90 }}
               pl={4}
-              to={`/post/${slug}`}
               variant="gradient"
             >
               {title}
-            </Anchor>
+            </Text>
           </Card.Section>
         ) : null}
         <Card.Section
@@ -155,6 +164,11 @@ export default function PostCard({ data }: { data: ArticleCardProps }) {
                 >
                   {viewsCount}
                 </Badge>
+                {!published && (
+                  <Badge color="yellow" variant="light">
+                    Draft
+                  </Badge>
+                )}
               </Group>
             </Group>
 
@@ -176,10 +190,41 @@ export default function PostCard({ data }: { data: ArticleCardProps }) {
                   stroke={1.5}
                 />
               </ActionIcon>
+              <Menu trigger="click-hover" width="100px">
+                <Menu.Target>
+                  <ActionIcon
+                    variant="subtle"
+                    radius="md"
+                    aria-label="Role Editor"
+                  >
+                    <IconDotsVertical
+                      style={actionIconStyle}
+                      stroke={actionIconStroke}
+                    />
+                  </ActionIcon>
+                </Menu.Target>
+
+                <Menu.Dropdown>
+                  <Menu.Label>Post</Menu.Label>
+                  <Menu.Item
+                    leftSection={
+                      <IconEdit style={{ width: rem(14), height: rem(14) }} />
+                    }
+                    onClick={() => setOpenEditor(true)}
+                  >
+                    Edit
+                  </Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
             </Group>
           </Group>
         </Card.Section>
       </Card>
+      {openEditor && (
+        <Grid.Col span={12}>
+          <PostEditor {...data} closeEditor={setOpenEditor} />
+        </Grid.Col>
+      )}
     </>
   );
 }

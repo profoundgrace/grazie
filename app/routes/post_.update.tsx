@@ -40,7 +40,7 @@ export async function action({ request }: ActionFunctionArgs) {
   await sentry(request, {
     action: 'update',
     subject: 'Post',
-    field: postCheck
+    object: postCheck
   });
 
   const post = await updatePost({

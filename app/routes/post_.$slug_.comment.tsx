@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, redirect } from '@remix-run/node';
+import { ActionFunctionArgs, json, redirect } from '@remix-run/node';
 import { createComment, updateComment } from '~/lib/comment.server';
 import { sentry } from '~/lib/sentry.server';
 import { createAbility, getSession } from '~/utils/session.server';
@@ -36,5 +36,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
     });
   }
 
-  return redirect(`/post/${params.slug}`);
+  return redirect(
+    id ? `/post/${params.slug}?refresh=1` : `/post/${params.slug}`
+  );
 }

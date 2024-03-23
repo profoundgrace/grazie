@@ -38,7 +38,7 @@ interface Editor {
   categories?: { category: { name: string } }[];
 }
 
-const ArticleEditor = ({
+const PostEditor = ({
   id = null,
   createdAt = null,
   published = false,
@@ -258,4 +258,4 @@ const ArticleEditor = ({
     </Grid>
   );
 };
-export default ArticleEditor;
+export default PostEditor;
