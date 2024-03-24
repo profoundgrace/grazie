@@ -2,6 +2,7 @@
 // All packages except `@mantine/hooks` require styles imports
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
+import '@mantine/notifications/styles.css';
 import '@mantine/tiptap/styles.css';
 import {
   Button,
@@ -12,6 +13,7 @@ import {
   Title,
   Text
 } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
 import { cssBundleHref } from '@remix-run/css-bundle';
 import {
   json,
@@ -28,6 +30,7 @@ import {
   ScrollRestoration,
   useRouteError
 } from '@remix-run/react';
+import { getToast } from 'remix-toast';
 import { AbilityProvider } from '~/components/AbilityProvider';
 import { ThemeProvider } from '~/components/ThemeProvider';
 import { setting } from '~/lib/setting.server';
@@ -41,19 +44,24 @@ export const links: LinksFunction = () => [
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await getUser(request);
+  const { toast, headers } = await getToast(request);
 
-  return json({
-    user,
-    theme: {
-      footer: {
-        links: await setting({ name: 'footer.links', defaultValue: [] })
+  return json(
+    {
+      user,
+      theme: {
+        footer: {
+          links: await setting({ name: 'footer.links', defaultValue: [] })
+        },
+        navbar: {
+          links: await setting({ name: 'navbar.links', defaultValue: [] })
+        }
       },
-      navbar: {
-        links: await setting({ name: 'navbar.links', defaultValue: [] })
-      }
+      site: await setting({ name: 'site', group: true, defaultValue: site }),
+      toast
     },
-    site: await setting({ name: 'site', group: true, defaultValue: site })
-  });
+    { headers }
+  );
 };
 
 export default function App() {
@@ -75,6 +83,7 @@ export default function App() {
               <Scripts />
               <LiveReload />
             </ThemeProvider>
+            <Notifications />
           </MantineProvider>
         </AbilityProvider>
       </body>
