@@ -1,8 +1,9 @@
 import { Title, Grid, Tabs } from '@mantine/core';
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'; // or cloudflare/deno
-import { json, redirect } from '@remix-run/node'; // or cloudflare/deno
+import { json } from '@remix-run/node'; // or cloudflare/deno
 import { useLoaderData, useNavigate } from '@remix-run/react';
 import { getUnixTime } from 'date-fns';
+import { redirectWithToast } from 'remix-toast';
 import Editor from '~/components/Editor';
 import { getCategories, postCategory } from '~/lib/category.server';
 import { createPost } from '~/lib/post.server';
@@ -62,7 +63,10 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   if (post?.slug) {
-    return redirect(`/post/${post.slug}`);
+    return redirectWithToast(`/post/${post.slug}`, {
+      message: 'Post Created!',
+      type: 'success'
+    });
   } else return post;
 }
 

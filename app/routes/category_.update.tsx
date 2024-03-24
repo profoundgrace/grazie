@@ -1,12 +1,10 @@
-import { Title, Grid, Tabs } from '@mantine/core';
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'; // or cloudflare/deno
-import { json, redirect } from '@remix-run/node'; // or cloudflare/deno
-import { useLoaderData, useNavigate } from '@remix-run/react';
-import Editor from '~/components/Editor';
+import { json } from '@remix-run/node'; // or cloudflare/deno
+import { redirectWithToast } from 'remix-toast';
 import { updateCategory, getCategories } from '~/lib/category.server';
+import { sentry } from '~/lib/sentry.server';
 import { createAbility, getSession } from '~/utils/session.server';
 import { site } from '@/grazie';
-import { sentry } from '~/lib/sentry.server';
 
 export function meta() {
   return [{ title: `Create Category${site?.separator}${site?.name}` }];
@@ -43,5 +41,8 @@ export async function action({ request }: ActionFunctionArgs) {
     parentId: parentId ? Number(parentId) : undefined
   });
 
-  return redirect(`/dashboard/admin/categories`);
+  return redirectWithToast(`/dashboard/admin/categories`, {
+    message: 'Category Updated!',
+    type: 'success'
+  });
 }

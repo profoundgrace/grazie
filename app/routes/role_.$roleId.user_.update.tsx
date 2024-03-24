@@ -1,5 +1,6 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'; // or cloudflare/deno
-import { json, redirect } from '@remix-run/node'; // or cloudflare/deno
+import { json } from '@remix-run/node'; // or cloudflare/deno
+import { redirectWithToast } from 'remix-toast';
 import { updateRoleUser } from '~/lib/roleUser.server';
 import { getSession } from '~/utils/session.server';
 import { site } from '@/grazie';
@@ -28,5 +29,8 @@ export async function action({ request }: ActionFunctionArgs) {
     active: form.get('active') === 'on' ? true : false
   });
 
-  return redirect(`/dashboard/admin/roles`);
+  return redirectWithToast(`/dashboard/admin/roles`, {
+    message: 'Role User Updated!',
+    type: 'success'
+  });
 }

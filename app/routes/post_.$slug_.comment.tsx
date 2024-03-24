@@ -1,4 +1,5 @@
-import { ActionFunctionArgs, json, redirect } from '@remix-run/node';
+import { ActionFunctionArgs } from '@remix-run/node';
+import { redirectWithToast } from 'remix-toast';
 import { createComment, updateComment } from '~/lib/comment.server';
 import { sentry } from '~/lib/sentry.server';
 import { createAbility, getSession } from '~/utils/session.server';
@@ -36,7 +37,8 @@ export async function action({ params, request }: ActionFunctionArgs) {
     });
   }
 
-  return redirect(
-    id ? `/post/${params.slug}?refresh=1` : `/post/${params.slug}`
+  return redirectWithToast(
+    id ? `/post/${params.slug}?refresh=1` : `/post/${params.slug}`,
+    { message: id ? 'Comment Updated!' : `Comment Created!`, type: 'success' }
   );
 }

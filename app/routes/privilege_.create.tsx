@@ -1,5 +1,6 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'; // or cloudflare/deno
-import { json, redirect } from '@remix-run/node'; // or cloudflare/deno
+import { json } from '@remix-run/node'; // or cloudflare/deno
+import { redirectWithToast } from 'remix-toast';
 import { createPrivilege } from '~/lib/privilege.server';
 import { getSession } from '~/utils/session.server';
 import { site } from '@/grazie';
@@ -23,5 +24,8 @@ export async function action({ request }: ActionFunctionArgs) {
     action: form.get('action') as string
   });
 
-  return redirect(`/dashboard/admin/privileges`);
+  return redirectWithToast(`/dashboard/admin/privileges`, {
+    message: 'Privilege Created!',
+    type: 'success'
+  });
 }

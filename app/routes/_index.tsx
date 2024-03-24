@@ -10,11 +10,11 @@ import Pager from '~/components/Pager/Pager';
 import PostCard from '~/components/Post/PostCard';
 import { subject, useAbility } from '~/hooks/useAbility';
 import { getPosts } from '~/lib/post.server';
+import { sentry } from '~/lib/sentry.server';
 import { setting } from '~/lib/setting.server';
 import { pagerParams } from '~/utils/searchParams.server';
 import { site, metaSettings } from '@/grazie';
 import { createAbility } from '~/utils/session.server';
-import { sentry } from '~/lib/sentry.server';
 
 export const meta: MetaFunction = () => {
   return [
@@ -56,6 +56,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   ) {
     return redirect('/login');
   }
+
   const data = {
     posts,
     settings: {

@@ -1,8 +1,9 @@
 import { Title, Grid, Tabs } from '@mantine/core';
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'; // or cloudflare/deno
-import { json, redirect } from '@remix-run/node'; // or cloudflare/deno
+import { json } from '@remix-run/node'; // or cloudflare/deno
 import { useLoaderData, useNavigate } from '@remix-run/react';
 import { getUnixTime } from 'date-fns';
+import { redirectWithToast } from 'remix-toast';
 import Editor from '~/components/Editor';
 import { createPage } from '~/lib/page.server';
 import { createAbility, getSession } from '~/utils/session.server';
@@ -51,7 +52,10 @@ export async function action({ request }: ActionFunctionArgs) {
   });
 
   if (page?.slug) {
-    return redirect(`/page/${page.slug}`);
+    return redirectWithToast(`/page/${page.slug}`, {
+      message: 'Page Created!',
+      type: 'success'
+    });
   } else return page;
 }
 

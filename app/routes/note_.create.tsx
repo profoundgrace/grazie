@@ -1,7 +1,8 @@
 import { Title, Grid, Tabs } from '@mantine/core';
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'; // or cloudflare/deno
-import { json, redirect } from '@remix-run/node'; // or cloudflare/deno
+import { json } from '@remix-run/node'; // or cloudflare/deno
 import { useNavigate } from '@remix-run/react';
+import { redirectWithToast } from 'remix-toast';
 import Editor from '~/components/Editor';
 import { getLabels, noteLabel } from '~/lib/label.server';
 import { createNote } from '~/lib/note.server';
@@ -56,7 +57,10 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   if (note?.id) {
-    return redirect(`/note/${note.id}`);
+    return redirectWithToast(`/note/${note.id}`, {
+      message: 'Note Created!',
+      type: 'success'
+    });
   } else return note;
 }
 

@@ -1,12 +1,12 @@
 import { Title, Grid, Tabs } from '@mantine/core';
-import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'; // or cloudflare/deno
-import { json, redirect } from '@remix-run/node'; // or cloudflare/deno
-import { useLoaderData, useNavigate } from '@remix-run/react';
-import { getUnixTime } from 'date-fns';
+import type { LoaderFunctionArgs } from '@remix-run/node'; // or cloudflare/deno
+import { json } from '@remix-run/node'; // or cloudflare/deno
+import { useNavigate } from '@remix-run/react';
+
 import Editor from '~/components/Editor';
-import { getCategories, postCategory } from '~/lib/category.server';
+import { getCategories } from '~/lib/category.server';
 import { getPost } from '~/lib/post.server';
-import { createAbility, getSession } from '~/utils/session.server';
+import { createAbility } from '~/utils/session.server';
 import { site } from '@/grazie';
 import { useAbility } from '~/hooks/useAbility';
 import { subject } from '@casl/ability';

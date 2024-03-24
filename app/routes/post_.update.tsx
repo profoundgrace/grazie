@@ -1,6 +1,7 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'; // or cloudflare/deno
-import { json, redirect } from '@remix-run/node'; // or cloudflare/deno
+import { json } from '@remix-run/node'; // or cloudflare/deno
 import { getUnixTime } from 'date-fns';
+import { redirectWithToast } from 'remix-toast';
 import { postCategory, purgePostCategories } from '~/lib/category.server';
 import { getPost, updatePost } from '~/lib/post.server';
 import { createAbility, getSession } from '~/utils/session.server';
@@ -68,6 +69,9 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   if (post?.slug) {
-    return redirect(`/post/${post.slug}`);
+    return redirectWithToast(`/post/${post.slug}`, {
+      message: 'Post Updated!',
+      type: 'success'
+    });
   } else return post;
 }

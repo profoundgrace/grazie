@@ -4,6 +4,7 @@ import type {
   MetaFunction
 } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
+import { redirectWithToast } from 'remix-toast';
 import { getSession, commitSession } from '~/utils/session.server';
 import { Login } from '~/components/Login';
 import { userLogin } from '~/lib/user.server';
@@ -24,7 +25,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
     return redirect('/');
   }
 
-  const data = { error: session.get('error') };
+  const data = {
+    error: session.get('error')
+  };
 
   return json(data, {
     headers: {
@@ -45,11 +48,15 @@ export async function action({ request }: ActionFunctionArgs) {
     session.flash('error', 'Invalid username/password');
 
     // Redirect back to the login page with errors.
-    return redirect('/login', {
-      headers: {
-        'Set-Cookie': await commitSession(session)
+    return redirectWithToast(
+      '/login',
+      { message: 'Loggin Error!', type: 'error' },
+      {
+        headers: {
+          'Set-Cookie': await commitSession(session)
+        }
       }
-    });
+    );
   }
 
   session.set('userId', user.id);
@@ -63,11 +70,15 @@ export async function action({ request }: ActionFunctionArgs) {
   session.set('darkMode', user?.settings?.darkMode ?? false);
 
   // Login succeeded, send them to the home page.
-  return redirect('/', {
-    headers: {
-      'Set-Cookie': await commitSession(session)
+  return redirectWithToast(
+    '/',
+    { message: 'Logged in Successfully!', type: 'success' },
+    {
+      headers: {
+        'Set-Cookie': await commitSession(session)
+      }
     }
-  });
+  );
 }
 
 export default function LoginPage() {

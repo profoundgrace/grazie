@@ -1,5 +1,5 @@
 import type { ActionFunctionArgs } from '@remix-run/node'; // or cloudflare/deno
-import { redirect } from '@remix-run/node'; // or cloudflare/deno
+import { redirectWithToast } from 'remix-toast';
 import { updateRolePrivilege } from '~/lib/rolePrivilege.server';
 import { getSession } from '~/utils/session.server';
 
@@ -14,5 +14,8 @@ export async function action({ request }: ActionFunctionArgs) {
     description: form.get('description') as string
   });
 
-  return redirect(`/dashboard/admin/roles`);
+  return redirectWithToast(`/dashboard/admin/roles`, {
+    message: 'Role Privilege Updated!',
+    type: 'success'
+  });
 }

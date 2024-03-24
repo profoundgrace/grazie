@@ -4,6 +4,7 @@ import type {
   MetaFunction
 } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
+import { redirectWithToast } from 'remix-toast';
 import { getSession, commitSession } from '~/utils/session.server';
 import { Register } from '~/components/Register';
 import { createUser } from '~/lib/user.server';
@@ -65,11 +66,15 @@ export async function action({ request }: ActionFunctionArgs) {
   session.set('darkMode', user?.settings?.darkMode ?? false);
 
   // Login succeeded, send them to the home page.
-  return redirect('/', {
-    headers: {
-      'Set-Cookie': await commitSession(session)
+  return redirectWithToast(
+    '/',
+    { message: 'Account Created!', type: 'success' },
+    {
+      headers: {
+        'Set-Cookie': await commitSession(session)
+      }
     }
-  });
+  );
 }
 
 export default function RegisterPage() {

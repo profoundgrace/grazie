@@ -1,6 +1,7 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'; // or cloudflare/deno
-import { json, redirect } from '@remix-run/node'; // or cloudflare/deno
+import { json } from '@remix-run/node'; // or cloudflare/deno
 import { getUnixTime } from 'date-fns';
+import { redirectWithToast } from 'remix-toast';
 import { updatePage } from '~/lib/page.server';
 import { createAbility, getSession } from '~/utils/session.server';
 import { site } from '@/grazie';
@@ -48,6 +49,9 @@ export async function action({ request }: ActionFunctionArgs) {
   });
 
   if (page?.slug) {
-    return redirect(`/page/${page.slug}`);
+    return redirectWithToast(`/page/${page.slug}`, {
+      message: 'Page Updated!',
+      type: 'success'
+    });
   } else return page;
 }

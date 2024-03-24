@@ -1,9 +1,10 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
-import { json, redirect } from '@remix-run/node';
+import { json } from '@remix-run/node';
 import { sentry } from '~/lib/sentry.server';
 import { updateUser } from '~/lib/user.server';
 import { createAbility, getSession } from '~/utils/session.server';
 import { site } from '@/grazie';
+import { jsonWithError, redirectWithToast } from 'remix-toast';
 
 export function meta() {
   return [{ title: `Update Account${site?.separator}${site?.name}` }];
@@ -66,7 +67,12 @@ export async function action({ request }: ActionFunctionArgs) {
     avatar.base64 = file.split(',')[1];
     updates.avatar = avatar;
   }
-  await updateUser(updates);
-
-  return redirect(`/dashboard/account`);
+  if (await updateUser(updates)) {
+    return redirectWithToast(`/dashboard/account`, {
+      message: 'Account Updated!',
+      type: 'success'
+    });
+  } else {
+    return jsonWithError({}, { message: 'An Error Occurred!' });
+  }
 }
