@@ -11,7 +11,7 @@ import {
   rem,
   useMantineTheme
 } from '@mantine/core';
-import { Link } from '@remix-run/react';
+import { Link, useSubmit } from '@remix-run/react';
 import {
   IconHeart,
   IconBookmark,
@@ -20,21 +20,28 @@ import {
   IconEye,
   IconDotsVertical,
   IconEdit,
-  IconExclamationMark
+  IconExclamationMark,
+  IconHeartFilled,
+  IconBookmarkFilled,
+  IconClipboardCheck
 } from '@tabler/icons-react';
 import { TimeSince } from '~/components/DateTime';
 import HTMLContent from '~/components/Tiptap/HTMLContent';
 import classes from '~/components/Post/PostCard.module.css';
 import { CategoryPost } from '~/types/CategoryPost';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PostEditor from './Editor';
 import { unifiedStyles } from '~/utils/unify';
+import { useClipboard, useTimeout } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 
 interface ArticleCardProps {
+  id: number;
   image?: string;
   categories?: CategoryPost[];
   createdAt?: number;
   title: string;
+  slug: string;
   body: object;
   footer?: string;
   author: {
@@ -44,6 +51,12 @@ interface ArticleCardProps {
   };
   published?: boolean;
   updatedAt?: string;
+  commentsCount?: number;
+  bookmarks?: [];
+  bookmarksCount?: number;
+  favorites?: [];
+  favoritesCount?: number;
+  viewsCount?: number;
 }
 
 const actionIconStyle = unifiedStyles.icons.action.style;
@@ -51,6 +64,7 @@ const actionIconStroke = unifiedStyles.icons.action.stroke;
 
 export default function Post({ data }: { data: ArticleCardProps }) {
   const {
+    id,
     image = '',
     categories = [],
     createdAt,
@@ -62,10 +76,34 @@ export default function Post({ data }: { data: ArticleCardProps }) {
     footer = '',
     author,
     updatedAt = '',
-    published
+    published,
+    bookmarks,
+    bookmarksCount,
+    favorites,
+    favoritesCount
   } = data;
   const theme = useMantineTheme();
   const [openEditor, setOpenEditor] = useState(null);
+  const submit = useSubmit();
+  const clipboard = useClipboard();
+  const [copied, setCopied] = useState(false);
+  const { start } = useTimeout(() => setCopied(false), 3000);
+  const [shareLink, setShareLink] = useState();
+  useEffect(() => {
+    setShareLink(
+      `${window.location.protocol}//${window.location.host}/post/${slug}`
+    );
+  }, [slug]);
+
+  useEffect(() => {
+    if (copied) {
+      start();
+      notifications.show({
+        title: 'Sharing',
+        message: 'Post Link Copied to Clipboard!'
+      });
+    }
+  }, [copied]);
   return (
     <>
       <Card withBorder mb={6} radius="md" className={classes.card}>
@@ -145,7 +183,20 @@ export default function Post({ data }: { data: ArticleCardProps }) {
                 <Badge
                   variant="default"
                   leftSection={
+                    <IconHeart
+                      color={theme.colors.red[6]}
+                      stroke={1}
+                      style={{ width: rem(20), height: rem(20) }}
+                    />
+                  }
+                >
+                  {favoritesCount}
+                </Badge>
+                <Badge
+                  variant="default"
+                  leftSection={
                     <IconMessage
+                      color={theme.colors.green[6]}
                       stroke={1}
                       style={{ width: rem(20), height: rem(20) }}
                     />
@@ -156,7 +207,20 @@ export default function Post({ data }: { data: ArticleCardProps }) {
                 <Badge
                   variant="default"
                   leftSection={
+                    <IconBookmark
+                      color={theme.colors.green[6]}
+                      stroke={1}
+                      style={{ width: rem(20), height: rem(20) }}
+                    />
+                  }
+                >
+                  {bookmarksCount}
+                </Badge>
+                <Badge
+                  variant="default"
+                  leftSection={
                     <IconEye
+                      color={theme.colors.blue[6]}
                       stroke={1}
                       style={{ width: rem(22), height: rem(22) }}
                     />
@@ -173,22 +237,81 @@ export default function Post({ data }: { data: ArticleCardProps }) {
             </Group>
 
             <Group gap={0}>
-              <ActionIcon variant="subtle" color="gray">
-                <IconHeart size={22} color={theme.colors.red[6]} stroke={1.5} />
+              <ActionIcon
+                variant="subtle"
+                color={theme.colors.red[6]}
+                onClick={() =>
+                  submit(
+                    { postId: id },
+                    {
+                      navigate: false,
+                      method: 'post',
+                      encType: 'application/json',
+                      action: `/post/favorite`
+                    }
+                  )
+                }
+              >
+                {favorites?.length > 0 ? (
+                  <IconHeartFilled size={22} color={theme.colors.red[6]} />
+                ) : (
+                  <IconHeart
+                    size={22}
+                    color={theme.colors.red[6]}
+                    stroke={1.5}
+                  />
+                )}
               </ActionIcon>
-              <ActionIcon variant="subtle" color="gray">
-                <IconBookmark
-                  size={22}
-                  color={theme.colors.yellow[6]}
-                  stroke={1.5}
-                />
+              <ActionIcon
+                variant="subtle"
+                color={theme.colors.yellow[6]}
+                onClick={() =>
+                  submit(
+                    { postId: id },
+                    {
+                      navigate: false,
+                      method: 'post',
+                      encType: 'application/json',
+                      action: `/post/bookmark`
+                    }
+                  )
+                }
+              >
+                {bookmarks?.length > 0 ? (
+                  <IconBookmarkFilled size={22} color={theme.colors.red[6]} />
+                ) : (
+                  <IconBookmark
+                    size={22}
+                    color={theme.colors.yellow[6]}
+                    stroke={1.5}
+                  />
+                )}
               </ActionIcon>
-              <ActionIcon variant="subtle" color="gray">
-                <IconShare
-                  size={22}
-                  color={theme.colors.blue[6]}
-                  stroke={1.5}
-                />
+              <ActionIcon
+                variant="subtle"
+                color={copied ? theme.colors.green[7] : theme.colors.blue[6]}
+                onClick={() => {
+                  clipboard.copy(shareLink);
+                  setCopied(true);
+                }}
+              >
+                {copied ? (
+                  <IconClipboardCheck
+                    size={22}
+                    color={
+                      copied ? theme.colors.green[7] : theme.colors.blue[6]
+                    }
+                    stroke={1.5}
+                  />
+                ) : (
+                  <IconShare
+                    size={22}
+                    color={
+                      copied ? theme.colors.green[7] : theme.colors.blue[6]
+                    }
+                    stroke={1.5}
+                  />
+                )}
               </ActionIcon>
               <Menu trigger="click-hover" width="100px">
                 <Menu.Target>

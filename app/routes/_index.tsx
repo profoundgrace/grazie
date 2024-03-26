@@ -14,7 +14,7 @@ import { sentry } from '~/lib/sentry.server';
 import { setting } from '~/lib/setting.server';
 import { pagerParams } from '~/utils/searchParams.server';
 import { site, metaSettings } from '@/grazie';
-import { createAbility } from '~/utils/session.server';
+import { createAbility, getSession } from '~/utils/session.server';
 
 export const meta: MetaFunction = () => {
   return [
@@ -35,12 +35,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const { count, page, pagerLoader } = pagerParams(request, 25);
 
+  const session = await getSession(request.headers.get('Cookie'));
+  const userId = session.get('userId') as number;
+
   const query = {
     filter: { published: true },
     limit: count,
     offset: page ? (page - 1) * count : 0
   };
-  const posts = await getPosts(query);
+  const posts = await getPosts(query, userId);
 
   if (
     !(await sentry(

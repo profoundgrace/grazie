@@ -9,7 +9,7 @@ import { getComments } from '~/lib/comment.server';
 import { CommentList } from '~/components/Comment/CommentList';
 import { useState } from 'react';
 import PostEditor from '~/components/Post/Editor';
-import { createAbility } from '~/utils/session.server';
+import { createAbility, getSession } from '~/utils/session.server';
 import { sentry } from '~/lib/sentry.server';
 import { status } from '~/lib/error.server';
 
@@ -25,7 +25,9 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   if (!request?.ability) {
     await createAbility(request);
   }
-  const post = await getPost({ slug: params?.slug });
+  const session = await getSession(request.headers.get('Cookie'));
+  const userId = session.get('userId') as number;
+  const post = await getPost({ slug: params?.slug }, userId);
 
   await sentry(request, { action: 'read', subject: 'Post', object: post });
   const data = {
