@@ -86,7 +86,7 @@ const ArticleEditor = ({
   const navigate = useNavigate();
 
   const DiscardBtn = () => (
-    <Button color="red" onClick={() => navigate('pages')} variant="light">
+    <Button color="red" onClick={() => navigate('/pages')} variant="light">
       Discard
     </Button>
   );

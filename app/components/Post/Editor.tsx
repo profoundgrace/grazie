@@ -87,7 +87,7 @@ const PostEditor = ({
   const navigate = useNavigate();
 
   const DiscardBtn = () => (
-    <Button color="red" onClick={() => navigate('posts')} variant="light">
+    <Button color="red" onClick={() => navigate('/posts')} variant="light">
       Discard
     </Button>
   );
