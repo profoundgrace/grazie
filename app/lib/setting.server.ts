@@ -1,45 +1,9 @@
-import { getUserByUsername } from '~/lib/user.server';
 import { getLogger } from '~/utils/logger.server';
 import { DataCache } from '~/utils/dataCache.server';
-import { formatSlug } from '~/utils/formatSlug';
-import { dateString, timeStamp, timeString } from '~/utils/generic.server';
 import { prisma } from '~/utils/prisma.server';
 import type { SettingInput } from '~/types/Setting';
-import { getCategory } from './category.server';
 
 const log = getLogger('Settings Query');
-
-async function slugCheck(slug: string, id = undefined) {
-  let where = { slug };
-  if (id) {
-    where = {
-      AND: [
-        { slug },
-        {
-          id: {
-            not: id
-          }
-        }
-      ]
-    };
-  }
-  const slugs = await prisma.post.count({
-    where
-  });
-
-  if (slugs > 0) {
-    const slugs = await prisma.post.count({
-      where: {
-        slug: {
-          startsWith: slug
-        }
-      }
-    });
-    slug = `${slug}-${slugs + 1}`;
-  }
-
-  return slug;
-}
 
 function findType(value: any) {
   if (typeof value === 'object') {

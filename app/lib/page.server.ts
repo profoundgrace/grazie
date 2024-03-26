@@ -1,7 +1,7 @@
 import { getUserByUsername } from '~/lib/user.server';
 import { getLogger } from '~/utils/logger.server';
 import { formatSlug } from '~/utils/formatSlug';
-import { dateString, timeStamp, timeString } from '~/utils/generic.server';
+import { dateString, timeString } from '~/utils/generic.server';
 import { prisma } from '~/utils/prisma.server';
 import type { PageInput } from '~/types/Page';
 import { avatarURL } from '~/utils/config.server';
@@ -52,7 +52,7 @@ export async function createPage({
   authorId
 }: PageInput) {
   try {
-    const date = timeStamp();
+    const date = timeString();
     if (published && !publishedAt) {
       publishedAt = date;
     }
@@ -120,7 +120,7 @@ export async function updatePage({
     if (!id && !slug) {
       throw new Error('Page Update requires either id or slug');
     }
-    const date = timeStamp();
+    const date = timeString();
     const data = {
       body: body?.type ? (JSON.stringify(body) as string) : (body as string),
       search,

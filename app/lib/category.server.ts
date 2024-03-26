@@ -1,7 +1,6 @@
-import { getUserByUsername } from '~/lib/user.server';
 import { getLogger } from '~/utils/logger.server';
 import { formatSlug } from '~/utils/formatSlug';
-import { dateString, timeStamp, timeString } from '~/utils/generic.server';
+import { timeString } from '~/utils/generic.server';
 import { prisma } from '~/utils/prisma.server';
 import type { Category, CategoryInput } from '~/types/Category';
 import { CategoryPostInput } from '~/types/CategoryPost';
@@ -204,7 +203,7 @@ export async function updateCategory({
   description
 }: CategoryInput) {
   try {
-    const date = timeStamp();
+    const date = timeString();
     const data = {
       parentId,
       name: name?.trim(),

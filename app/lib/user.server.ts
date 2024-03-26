@@ -6,9 +6,8 @@ import bcrypt from 'bcrypt';
 import { getLogger } from '~/utils/logger.server';
 import { avatarURL, admins } from '~/utils/config.server';
 import { prisma } from '~/utils/prisma.server';
-import { timeStamp } from '~/utils/generic.server';
+import { timeString } from '~/utils/generic.server';
 import type { User, UserLogin, UserSystem } from '~/types/User';
-import { getUserId } from '~/utils/session.server';
 import { setting } from '~/lib/setting.server';
 import { processAvatar } from '~/utils/image.server';
 
@@ -40,7 +39,7 @@ export async function createUser({
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password as string, salt);
-    const date = timeStamp();
+    const date = timeString();
     let user;
     await prisma.$transaction(async (db) => {
       user = await db.user.create({
@@ -122,7 +121,7 @@ export async function updateUser({
   colorScheme
 }: UserSystem) {
   try {
-    const date = timeStamp();
+    const date = timeString();
     const prevUser = await prisma.user.findUnique({
       where: {
         id
@@ -256,7 +255,7 @@ export async function userLogin({ email, password }: UserLogin) {
     if (!verification) {
       throw new Error('Incorrect Password');
     }
-    const date = timeStamp();
+    const date = timeString();
     await prisma.user.update({
       where: {
         id: login.id

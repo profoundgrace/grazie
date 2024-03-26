@@ -58,7 +58,7 @@ const PostEditor = ({
       id,
       createdAt,
       published,
-      publishedAt: publishedAt && new Date(publishedAt * 1000),
+      publishedAt: publishedAt && new Date(publishedAt),
       status,
       summary,
       body: typeof body === 'string' ? JSON.parse(body) : body,

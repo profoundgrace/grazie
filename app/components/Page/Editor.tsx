@@ -58,7 +58,7 @@ const ArticleEditor = ({
       id,
       createdAt,
       published,
-      publishedAt: publishedAt ? new Date(publishedAt * 1000) : null,
+      publishedAt: publishedAt ? new Date(publishedAt) : null,
       status,
       summary,
       body: typeof body === 'string' ? JSON.parse(body) : body,

@@ -1,6 +1,6 @@
 import { getLogger } from '~/utils/logger.server';
 import { formatSlug } from '~/utils/formatSlug';
-import { timeStamp } from '~/utils/generic.server';
+import { timeString } from '~/utils/generic.server';
 import { prisma } from '~/utils/prisma.server';
 import type { Label, LabelInput } from '~/types/Label';
 import { NoteLabelInput } from '~/types/NoteLabel';
@@ -54,7 +54,7 @@ export async function createLabel({ name }: LabelInput) {
     if (await nameCheck(name?.trim())) {
       throw new Error('Label Name Already Exists');
     }
-    const date = timeStamp();
+    const date = timeString();
     const data = {
       name: name?.trim(),
       createdAt: date,
@@ -82,7 +82,7 @@ export async function createLabel({ name }: LabelInput) {
 export async function noteLabel({ name, slug, noteId }: NoteLabelInput) {
   try {
     let label;
-    const date = timeStamp();
+    const date = timeString();
     if (!slug) {
       label = await prisma.label.findUnique({
         where: {
@@ -174,7 +174,7 @@ export async function purgeNoteLabels({ noteId }: { noteId: number }) {
 
 export async function updateLabel({ id, name, description }: LabelInput) {
   try {
-    const date = timeStamp();
+    const date = timeString();
     const data = {
       name: name?.trim(),
       updatedAt: date,

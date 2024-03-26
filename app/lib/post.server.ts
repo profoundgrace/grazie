@@ -2,7 +2,7 @@ import { getUserByUsername } from '~/lib/user.server';
 import { avatarURL } from '~/utils/config.server';
 import { getLogger } from '~/utils/logger.server';
 import { formatSlug } from '~/utils/formatSlug';
-import { dateString, timeStamp, timeString } from '~/utils/generic.server';
+import { dateString, timeString } from '~/utils/generic.server';
 import { prisma } from '~/utils/prisma.server';
 import type { PostInput } from '~/types/Post';
 import { getCategory } from './category.server';
@@ -53,7 +53,7 @@ export async function createPost({
   authorId
 }: PostInput) {
   try {
-    const date = timeStamp();
+    const date = timeString();
     if (published && !publishedAt) {
       publishedAt = date;
     }
@@ -119,7 +119,7 @@ export async function updatePost({
     if (!id && !slug) {
       throw new Error('Post Update requires either id or slug');
     }
-    const date = timeStamp();
+    const date = timeString();
     const data = {
       body: body?.type ? (JSON.stringify(body) as string) : (body as string),
       search,
@@ -188,7 +188,10 @@ export async function updatePost({
   }
 }
 
-export async function getPost({ id, slug, select }) {
+export async function getPost(
+  { id, slug, select }: { id?: number; slug: string; select: object },
+  userId?: number | null
+) {
   try {
     const where = {} as { id?: number; slug?: string };
 
@@ -199,14 +202,15 @@ export async function getPost({ id, slug, select }) {
     } else {
       throw new Error(`Either Post slug or id is required`);
     }
-    const post = await prisma.post.findUnique({
-      where,
-      select: select ?? {
+    if (!select) {
+      select = {
         id: true,
         title: true,
         body: true,
         authorId: true,
+        bookmarksCount: true,
         commentsCount: true,
+        favoritesCount: true,
         createdAt: true,
         updatedAt: true,
         viewsCount: true,
@@ -231,8 +235,33 @@ export async function getPost({ id, slug, select }) {
             }
           }
         }
-      }
+      };
+    }
+
+    if (userId) {
+      select.favorites = {
+        where: {
+          userId
+        },
+        select: {
+          createdAt: true
+        }
+      };
+      select.bookmarks = {
+        where: {
+          userId
+        },
+        select: {
+          createdAt: true
+        }
+      };
+    }
+
+    const post = await prisma.post.findUnique({
+      where,
+      select
     });
+
     if (!post) {
       log.error(`Post id: ${id} | slug: ${slug} - Not Found`);
       status(404);
@@ -256,20 +285,23 @@ export async function getPost({ id, slug, select }) {
   }
 }
 
-export async function getPosts({
-  filter = {},
-  limit = 25,
-  offset = 0
-}: {
-  filter?: {
-    authorId?: number;
-    username?: string;
-    category?: string;
-    published?: boolean;
-  };
-  limit?: number;
-  offset?: number;
-}) {
+export async function getPosts(
+  {
+    filter = {},
+    limit = 25,
+    offset = 0
+  }: {
+    filter?: {
+      authorId?: number;
+      username?: string;
+      category?: string;
+      published?: boolean;
+    };
+    limit?: number;
+    offset?: number;
+  },
+  userId?: number | null
+) {
   try {
     const where = {} as {
       authorId?: number;
@@ -304,43 +336,63 @@ export async function getPosts({
         throw new Error(`Category ${filter.category} was not found`);
       }
     }
-
-    const articles = await prisma.post.findMany({
-      where,
-      select: {
-        id: true,
-        published: true,
-        authorId: true,
-        commentsCount: true,
-        createdAt: true,
-        publishedAt: true,
-        updatedAt: true,
-        viewsCount: true,
-        title: true,
-        body: true,
-        slug: true,
-        search: true,
-        meta: true,
-        author: {
-          select: {
-            displayName: true,
-            username: true,
-            avatar: true
-          }
-        },
-        categories: {
-          select: {
-            id: true,
-            catId: true,
-            category: {
-              select: {
-                name: true,
-                slug: true
-              }
+    const select = {
+      id: true,
+      published: true,
+      authorId: true,
+      bookmarksCount: true,
+      commentsCount: true,
+      favoritesCount: true,
+      createdAt: true,
+      publishedAt: true,
+      updatedAt: true,
+      viewsCount: true,
+      title: true,
+      body: true,
+      slug: true,
+      search: true,
+      meta: true,
+      author: {
+        select: {
+          displayName: true,
+          username: true,
+          avatar: true
+        }
+      },
+      categories: {
+        select: {
+          id: true,
+          catId: true,
+          category: {
+            select: {
+              name: true,
+              slug: true
             }
           }
         }
-      },
+      }
+    };
+    if (userId) {
+      select.favorites = {
+        where: {
+          userId
+        },
+        select: {
+          createdAt: true
+        }
+      };
+      select.bookmarks = {
+        where: {
+          userId
+        },
+        select: {
+          createdAt: true
+        }
+      };
+    }
+    const articles = await prisma.post.findMany({
+      where,
+      select,
       orderBy: { createdAt: 'desc' },
       take: limit,
       skip: offset
@@ -356,5 +408,207 @@ export async function getPosts({
     log.error(error.message);
     log.error(error.stack);
     throw error;
+  }
+}
+
+export async function createOrRemoveFavorite({
+  userId,
+  postId
+}: {
+  userId: number;
+  postId: number;
+}) {
+  const favorite = await prisma.favoritePost.findUnique({
+    where: {
+      userId_postId: { userId, postId }
+    },
+    select: {
+      id: true
+    }
+  });
+  const userFavorites = await prisma.user.findUnique({
+    where: {
+      id: userId
+    },
+    select: {
+      favoritePostsCount: true
+    }
+  });
+  const favoritePostsCount = userFavorites?.favoritePostsCount ?? 0;
+
+  const postFavorites = await prisma.post.findUnique({
+    where: {
+      id: postId
+    },
+    select: {
+      favoritesCount: true
+    }
+  });
+  const favoritesCount = postFavorites?.favoritesCount ?? 0;
+  if (favorite) {
+    await prisma.$transaction(async (db) => {
+      await db.favoritePost.delete({
+        where: {
+          userId_postId: { userId, postId }
+        }
+      });
+      await db.user.update({
+        where: {
+          id: userId
+        },
+        data: {
+          favoritePostsCount:
+            favoritePostsCount > 0 ? favoritePostsCount - 1 : 0
+        }
+      });
+      await db.post.update({
+        where: {
+          id: postId
+        },
+        data: {
+          favoritesCount: favoritesCount > 0 ? favoritesCount - 1 : 0
+        }
+      });
+    });
+    return {
+      userId,
+      postId,
+      created: false,
+      removed: true
+    };
+  } else {
+    await prisma.$transaction(async (db) => {
+      const data = await db.favoritePost.create({
+        data: {
+          userId,
+          postId,
+          createdAt: timeString()
+        }
+      });
+      await db.user.update({
+        where: {
+          id: userId
+        },
+        data: {
+          favoritePostsCount:
+            favoritePostsCount > 0 ? favoritePostsCount + 1 : 1
+        }
+      });
+      await db.post.update({
+        where: {
+          id: postId
+        },
+        data: {
+          favoritesCount: favoritesCount > 0 ? favoritesCount + 1 : 1
+        }
+      });
+    });
+    return {
+      userId,
+      postId,
+      created: true,
+      removed: false
+    };
+  }
+}
+
+export async function createOrRemoveBookmark({
+  userId,
+  postId
+}: {
+  userId: number;
+  postId: number;
+}) {
+  const bookmark = await prisma.bookmarkPost.findUnique({
+    where: {
+      userId_postId: { userId, postId }
+    },
+    select: {
+      id: true
+    }
+  });
+  const userBookmarks = await prisma.user.findUnique({
+    where: {
+      id: userId
+    },
+    select: {
+      bookmarkPostsCount: true
+    }
+  });
+  const bookmarkPostsCount = userBookmarks?.bookmarkPostsCount ?? 0;
+
+  const postBookmarks = await prisma.post.findUnique({
+    where: {
+      id: postId
+    },
+    select: {
+      bookmarksCount: true
+    }
+  });
+  const bookmarksCount = postBookmarks?.bookmarksCount ?? 0;
+  if (bookmark) {
+    await prisma.$transaction(async (db) => {
+      await db.bookmarkPost.delete({
+        where: {
+          userId_postId: { userId, postId }
+        }
+      });
+      await db.user.update({
+        where: {
+          id: userId
+        },
+        data: {
+          bookmarkPostsCount:
+            bookmarkPostsCount > 0 ? bookmarkPostsCount - 1 : 0
+        }
+      });
+      await db.post.update({
+        where: {
+          id: postId
+        },
+        data: {
+          bookmarksCount: bookmarksCount > 0 ? bookmarksCount - 1 : 0
+        }
+      });
+    });
+    return {
+      userId,
+      postId,
+      created: false,
+      removed: true
+    };
+  } else {
+    await prisma.$transaction(async (db) => {
+      const data = await db.bookmarkPost.create({
+        data: {
+          userId,
+          postId,
+          createdAt: timeString()
+        }
+      });
+      await db.user.update({
+        where: {
+          id: userId
+        },
+        data: {
+          bookmarkPostsCount:
+            bookmarkPostsCount > 0 ? bookmarkPostsCount + 1 : 1
+        }
+      });
+      await db.post.update({
+        where: {
+          id: postId
+        },
+        data: {
+          bookmarksCount: bookmarksCount > 0 ? bookmarksCount + 1 : 1
+        }
+      });
+    });
+    return {
+      userId,
+      postId,
+      created: true,
+      removed: false
+    };
   }
 }

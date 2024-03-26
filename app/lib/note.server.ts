@@ -1,7 +1,7 @@
 import { getUserByUsername } from '~/lib/user.server';
 import { avatarURL } from '~/utils/config.server';
 import { getLogger } from '~/utils/logger.server';
-import { timeStamp } from '~/utils/generic.server';
+import { timeString } from '~/utils/generic.server';
 import { prisma } from '~/utils/prisma.server';
 import type { NoteInput } from '~/types/Note';
 import { getLabel } from './label.server';
@@ -17,7 +17,7 @@ export async function createNote({
   authorId
 }: NoteInput) {
   try {
-    const date = timeStamp();
+    const date = timeString();
 
     const data = {
       pinned,
@@ -53,7 +53,7 @@ export async function updateNote({
     if (!id) {
       throw new Error('Note Update requires id');
     }
-    const date = timeStamp();
+    const date = timeString();
     const data = {
       pinned,
       title,

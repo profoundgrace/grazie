@@ -1,45 +1,11 @@
 import { getUserByUsername } from '~/lib/user.server';
 import { avatarURL } from '~/utils/config.server';
 import { getLogger } from '~/utils/logger.server';
-import { formatSlug } from '~/utils/formatSlug';
-import { dateString, timeStamp, timeString } from '~/utils/generic.server';
+import { timeString } from '~/utils/generic.server';
 import { prisma } from '~/utils/prisma.server';
 import type { CommentInput } from '~/types/Comment';
-import { getCategory } from './category.server';
 
 const log = getLogger('Comments Query');
-
-async function slugCheck(slug: string, id = undefined) {
-  let where = { slug };
-  if (id) {
-    where = {
-      AND: [
-        { slug },
-        {
-          id: {
-            not: id
-          }
-        }
-      ]
-    };
-  }
-  const slugs = await prisma.comment.count({
-    where
-  });
-
-  if (slugs > 0) {
-    const slugs = await prisma.comment.count({
-      where: {
-        slug: {
-          startsWith: slug
-        }
-      }
-    });
-    slug = `${slug}-${slugs + 1}`;
-  }
-
-  return slug;
-}
 
 export async function createComment({
   locked,
@@ -50,7 +16,7 @@ export async function createComment({
   body
 }: CommentInput) {
   try {
-    const date = timeStamp();
+    const date = timeString();
     let parent, threadPath;
     if (parentId) {
       parent = await prisma.comment.findUnique({
@@ -137,7 +103,7 @@ export async function updateComment({
     if (!id) {
       throw new Error(`Comment Update requires a comment id (${id})`);
     }
-    const date = timeStamp();
+    const date = timeString();
     const data = {
       locked,
       pinned,

@@ -1,7 +1,7 @@
 import { getLogger } from '~/utils/logger.server';
 import { prisma } from '~/utils/prisma.server';
 import { RoleUserInput } from '~/types/RoleUser';
-import { timeStamp } from '~/utils/generic.server';
+import { timeString } from '~/utils/generic.server';
 
 const log = getLogger('Roles Query');
 
@@ -23,7 +23,7 @@ export async function createRoleUser({
     if (await roleUserCheck(roleId, userId)) {
       throw new Error(`Role userId ${userId} already exists`);
     }
-    const date = timeStamp();
+    const date = timeString();
 
     return await prisma.roleUser.create({
       data: {
@@ -47,7 +47,7 @@ export async function updateRoleUser({ id, active }: RoleUserInput) {
       where: { id },
       data: {
         active,
-        updatedAt: timeStamp()
+        updatedAt: timeString()
       }
     });
   } catch (error: any) {

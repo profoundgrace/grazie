@@ -20,7 +20,7 @@ export default function DateTime({
   fz = 'xs',
   ...others
 }: DateTimeProps) {
-  const str = dateFormat(new Date(timestamp * 1000), format);
+  const str = dateFormat(new Date(timestamp), format);
   return (
     <Box className={className} fz={fz} {...others}>
       {str}
@@ -35,7 +35,7 @@ export function DateString({
   fz = 'xs',
   ...others
 }: DateTimeProps) {
-  const str = dateFormat(new Date(timestamp * 1000), format);
+  const str = dateFormat(new Date(timestamp), format);
   return (
     <Box className={className} fz={fz} {...others}>
       {str}
@@ -50,7 +50,7 @@ export function Time({
   fz = 'xs',
   ...others
 }: DateTimeProps) {
-  const str = dateFormat(new Date(timestamp * 1000), format);
+  const str = dateFormat(new Date(timestamp), format);
   return (
     <Box className={className} fz={fz} {...others}>
       {str}
@@ -64,7 +64,7 @@ export function TimeSince({
   fz = 'xs',
   ...others
 }: DateTimeProps) {
-  const str = formatDistanceToNow(new Date(timestamp * 1000));
+  const str = formatDistanceToNow(new Date(timestamp));
 
   return (
     <Tooltip

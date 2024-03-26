@@ -41,7 +41,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const page = await createPage({
     published,
-    publishedAt: getUnixTime(new Date(publishedAt)),
+    publishedAt,
     body: form.get('body') as string,
     search: form.get('search') as string,
     title: form.get('title') as string,
