@@ -1,3 +1,8 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { ActionFunctionArgs } from '@remix-run/node';
 import { jsonWithToast } from 'remix-toast';
 import { createOrRemoveBookmark, getPost } from '~/lib/post.server';

@@ -1,4 +1,9 @@
 /**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
+/**
  * Based on: 
 The MIT License (MIT)
 Copyright (c) Md. Fazlul Karim <fazlulkarimrocky@gmail.com> (http://twitter.com/fazlulkarimweb)

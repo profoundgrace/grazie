@@ -1,3 +1,8 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { createCookieSessionStorage, redirect } from '@remix-run/node';
 import { session as config } from '~/utils/config.server';
 import type { User } from '~/types/User';

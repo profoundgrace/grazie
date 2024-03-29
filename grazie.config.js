@@ -1,3 +1,8 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { Theme } from 'app/themes/favorite';
 export { Theme } from 'app/themes/favorite';
 // Theme name - string

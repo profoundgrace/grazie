@@ -1,10 +1,13 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'; // or cloudflare/deno
-import { json } from '@remix-run/node'; // or cloudflare/deno
-import { getUnixTime } from 'date-fns';
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
+import type { ActionFunctionArgs } from '@remix-run/node'; // or cloudflare/deno
 import { redirectWithToast } from 'remix-toast';
 import { postCategory, purgePostCategories } from '~/lib/category.server';
 import { getPost, updatePost } from '~/lib/post.server';
-import { createAbility, getSession } from '~/utils/session.server';
+import { createAbility } from '~/utils/session.server';
 import { site } from '@/grazie';
 import { sentry } from '~/lib/sentry.server';
 
@@ -14,7 +17,6 @@ export function meta() {
 
 export async function action({ request }: ActionFunctionArgs) {
   const form = await request.formData();
-  const session = await getSession(request.headers.get('Cookie'));
   const id = Number(form.get('id') as string);
   const published = form.get('published') === 'on' ? true : false;
   const publishedAt = form.get('publishedAt') as string;

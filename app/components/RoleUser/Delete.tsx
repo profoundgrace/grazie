@@ -1,3 +1,8 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { Alert, Button, Card, Grid, Group, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import '@mantine/tiptap/styles.layer.css';

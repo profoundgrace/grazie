@@ -1,3 +1,9 @@
+/**
+ * Grazie
+ * @package Role Privilege Library
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { getLogger } from '~/utils/logger.server';
 import { prisma } from '~/utils/prisma.server';
 import { RolePrivilegeInput } from '~/types/RolePrivilege';

@@ -1,3 +1,9 @@
+/**
+ * Grazie
+ * @package Sentry Library
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { subject as Subject } from '@casl/ability';
 import { status } from './error.server';
 /**

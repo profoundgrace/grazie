@@ -1,3 +1,8 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { Group, Pagination } from '@mantine/core';
 import { useLoaderData } from '@remix-run/react';
 

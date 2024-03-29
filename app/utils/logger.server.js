@@ -1,3 +1,8 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { Container, format, transports } from 'winston';
 
 const { colorize, combine, label, prettyPrint, printf, timestamp } = format;

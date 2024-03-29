@@ -1,28 +1,13 @@
-import {
-  Alert,
-  Button,
-  Card,
-  Fieldset,
-  Grid,
-  Group,
-  JsonInput,
-  MultiSelect,
-  NumberInput,
-  rem,
-  Select,
-  Stack,
-  Switch,
-  Text,
-  Textarea,
-  TextInput,
-  Title
-} from '@mantine/core';
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
+import { Alert, Button, Card, Grid, Group, Stack, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import '@mantine/tiptap/styles.layer.css';
-import { Form, useFetcher, useSubmit } from '@remix-run/react';
-import { IconJson } from '@tabler/icons-react';
+import { Form, useSubmit } from '@remix-run/react';
 import type { Dispatch, SetStateAction } from 'react';
-import { useEffect, useState } from 'react';
 import { DebugCollapse } from '../DebugCollapse';
 import { Privilege } from '~/types/Privilege';
 

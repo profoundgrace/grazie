@@ -1,3 +1,8 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { LoaderFunctionArgs, json } from '@remix-run/node';
 import { getComments } from '~/lib/comment.server';
 import { sentry } from '~/lib/sentry.server';

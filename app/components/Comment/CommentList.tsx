@@ -1,3 +1,8 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { Box, Button, Loader, Text, Title } from '@mantine/core';
 import { useEffect, useRef, useState } from 'react';
 import { CommentCard } from '~/components/Comment/CommentCard';

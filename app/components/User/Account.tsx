@@ -1,3 +1,8 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import {
   ActionIcon,
   Alert,
@@ -5,11 +10,9 @@ import {
   Button,
   Divider,
   Group,
-  Paper,
   PasswordInput,
   Radio,
   Stack,
-  Switch,
   Text,
   TextInput,
   Title,
@@ -19,7 +22,7 @@ import {
 } from '@mantine/core';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { useForm } from '@mantine/form';
-import { Form, useLoaderData, useNavigate, useSubmit } from '@remix-run/react';
+import { Form, useSubmit } from '@remix-run/react';
 import {
   IconEdit,
   IconUpload,

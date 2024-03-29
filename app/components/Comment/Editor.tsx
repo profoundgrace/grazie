@@ -1,19 +1,18 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import {
   Alert,
   Button,
   Card,
   Grid,
   Group,
-  MultiSelect,
-  Select,
   Stack,
   Switch,
-  TagsInput,
-  TextInput,
-  Textarea,
   Title
 } from '@mantine/core';
-import { DateTimePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import '@mantine/tiptap/styles.layer.css';
 import { Form, useLoaderData, useNavigate, useSubmit } from '@remix-run/react';

@@ -1,3 +1,8 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import {
   ActionIcon,
   Anchor,
@@ -5,12 +10,11 @@ import {
   Badge,
   Card,
   Group,
-  Popover,
   Text,
   rem,
   useMantineTheme
 } from '@mantine/core';
-import { Link, useHref, useLocation, useSubmit } from '@remix-run/react';
+import { Link, useSubmit } from '@remix-run/react';
 import {
   IconHeart,
   IconBookmark,
@@ -25,7 +29,6 @@ import { TimeSince } from '~/components/DateTime';
 import HTMLContent from '~/components/Tiptap/HTMLContent';
 import classes from '~/components/Post/PostCard.module.css';
 import { CategoryPost } from '~/types/CategoryPost';
-import useUser from '~/hooks/useUser';
 import { useClipboard, useTimeout } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { notifications } from '@mantine/notifications';

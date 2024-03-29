@@ -1,3 +1,8 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import {
   ActionIcon,
   Anchor,
@@ -6,17 +11,10 @@ import {
   Card,
   Group,
   Text,
-  rem,
   useMantineTheme
 } from '@mantine/core';
 import { Link } from '@remix-run/react';
-import {
-  IconHeart,
-  IconBookmark,
-  IconShare,
-  IconMessage,
-  IconEye
-} from '@tabler/icons-react';
+import { IconHeart, IconBookmark, IconShare } from '@tabler/icons-react';
 import { TimeSince } from '~/components/DateTime';
 import HTMLContent from '~/components/Tiptap/HTMLContent';
 import classes from '~/components/Note/NoteCard.module.css';

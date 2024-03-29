@@ -1,3 +1,8 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { timeString } from '~/utils/generic.server';
 import { getLogger } from '~/utils/logger.server';
 import { sanitize } from '~/utils/stringSanitizer';

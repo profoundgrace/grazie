@@ -1,13 +1,12 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { ActionIcon, Box, Button, Group, Table, Title } from '@mantine/core';
 import { LoaderFunctionArgs, json } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
-import {
-  IconCheck,
-  IconEdit,
-  IconSquarePlus,
-  IconUserShield,
-  IconX
-} from '@tabler/icons-react';
+import { IconEdit, IconSquarePlus } from '@tabler/icons-react';
 import { Fragment, useState } from 'react';
 import classes from '~/components/Dashboard/AdminPost.module.css';
 import Pager from '~/components/Pager/Pager';

@@ -1,10 +1,14 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { ActionIcon, Box, Button, Stack, Table, Title } from '@mantine/core';
 import { LoaderFunctionArgs, json } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { IconEdit, IconSquarePlus } from '@tabler/icons-react';
 import { Fragment, useState } from 'react';
 import classes from '~/components/Dashboard/AdminPost.module.css';
-import DateTime from '~/components/DateTime';
 import CategoryEditor from '~/components/Category/Editor';
 import { getCategories } from '~/lib/category.server';
 import { Category } from '~/types/Category';

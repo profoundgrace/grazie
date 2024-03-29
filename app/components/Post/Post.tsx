@@ -1,6 +1,10 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import {
   ActionIcon,
-  Anchor,
   Avatar,
   Badge,
   Card,
@@ -20,7 +24,6 @@ import {
   IconEye,
   IconDotsVertical,
   IconEdit,
-  IconExclamationMark,
   IconHeartFilled,
   IconBookmarkFilled,
   IconClipboardCheck

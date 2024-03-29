@@ -1,3 +1,8 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import type { LoaderFunctionArgs } from '@remix-run/node';
 import { redirectWithToast } from 'remix-toast';
 import { getSession, destroySession } from '~/utils/session.server';

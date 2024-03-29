@@ -1,7 +1,12 @@
-import { Title, Grid, Tabs } from '@mantine/core';
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
+import { Grid } from '@mantine/core';
 import type { LoaderFunctionArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { useLoaderData, useNavigate } from '@remix-run/react';
+import { useLoaderData } from '@remix-run/react';
 import Post from '~/components/Post/Post';
 import { getPost } from '~/lib/post.server';
 import { site } from '@/grazie';
@@ -11,7 +16,6 @@ import { useState } from 'react';
 import PostEditor from '~/components/Post/Editor';
 import { createAbility, getSession } from '~/utils/session.server';
 import { sentry } from '~/lib/sentry.server';
-import { status } from '~/lib/error.server';
 
 export function meta({
   data: {

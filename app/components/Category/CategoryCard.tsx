@@ -1,3 +1,8 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { Card, Group, Text, useMantineTheme } from '@mantine/core';
 import classes from '~/components/Category/CategoryCard.module.css';
 import { Category } from '~/types/Category';

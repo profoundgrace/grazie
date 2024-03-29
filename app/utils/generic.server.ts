@@ -1,3 +1,8 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { randomUUID } from 'crypto';
 import { getUnixTime, format as dateFormat } from 'date-fns';
 import { getLogger } from '~/utils/logger.server';

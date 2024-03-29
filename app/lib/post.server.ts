@@ -1,3 +1,9 @@
+/**
+ * Grazie
+ * @package Post Library
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { getUserByUsername } from '~/lib/user.server';
 import { avatarURL } from '~/utils/config.server';
 import { getLogger } from '~/utils/logger.server';

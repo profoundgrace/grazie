@@ -1,3 +1,8 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import fs from 'fs';
 import { getLogger } from '~/utils/logger.server';
 import sharp from 'sharp';

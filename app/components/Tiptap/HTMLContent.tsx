@@ -1,3 +1,8 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { TypographyStylesProvider } from '@mantine/core';
 import type { JSONContent } from '@tiptap/core';
 import { Highlight } from '@tiptap/extension-highlight';

@@ -1,3 +1,8 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import {
   Alert,
   Button,
@@ -15,7 +20,6 @@ import '@mantine/tiptap/styles.layer.css';
 import { Form, useLoaderData, useSubmit } from '@remix-run/react';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
-import { Debug } from '../Debug';
 import { DebugCollapse } from '../DebugCollapse';
 
 interface Editor {

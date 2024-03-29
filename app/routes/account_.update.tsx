@@ -1,5 +1,9 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
+import type { ActionFunctionArgs } from '@remix-run/node';
 import { sentry } from '~/lib/sentry.server';
 import { updateUser } from '~/lib/user.server';
 import { createAbility, getSession } from '~/utils/session.server';

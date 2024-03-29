@@ -1,3 +1,8 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { ActionIcon, Box, Button, Table, Title } from '@mantine/core';
 import { IconEdit, IconSquarePlus, IconTrash } from '@tabler/icons-react';
 import { Fragment, useState } from 'react';

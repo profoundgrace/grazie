@@ -1,3 +1,8 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { getUserRoles } from '~/lib/user.server';
 import { RolePrivilege } from '~/types/RolePrivilege';
 import { RoleUser } from '~/types/RoleUser';

@@ -1,3 +1,9 @@
+/**
+ * Grazie
+ * @package Resource Library
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { currentLoad, mem, osInfo } from 'systeminformation';
 
 function formatToGb(value: number) {

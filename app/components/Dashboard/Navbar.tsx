@@ -1,5 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
-import { NavLink, SegmentedControl, Text } from '@mantine/core';
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
+import { useEffect, useState } from 'react';
+import { SegmentedControl, Text } from '@mantine/core';
 import {
   IconArticle,
   IconSettings,
@@ -8,7 +13,6 @@ import {
   IconCategory2,
   IconNews,
   IconDashboard,
-  IconShieldStar,
   IconStar,
   IconShield,
   IconUserCog

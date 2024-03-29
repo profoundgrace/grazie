@@ -1,3 +1,8 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { LoaderFunctionArgs, json } from '@remix-run/node';
 import RolePrivilegesLoaderWrapper from '~/components/RolePrivilege/RolePrivilegesLoaderWrapper';
 import { getRolePrivileges } from '~/lib/rolePrivilege.server';

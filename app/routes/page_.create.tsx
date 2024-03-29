@@ -1,8 +1,12 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { Title, Grid, Tabs } from '@mantine/core';
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'; // or cloudflare/deno
 import { json } from '@remix-run/node'; // or cloudflare/deno
 import { useLoaderData, useNavigate } from '@remix-run/react';
-import { getUnixTime } from 'date-fns';
 import { redirectWithToast } from 'remix-toast';
 import Editor from '~/components/Editor';
 import { createPage } from '~/lib/page.server';

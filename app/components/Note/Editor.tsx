@@ -1,3 +1,8 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import {
   ActionIcon,
   Alert,
@@ -10,35 +15,31 @@ import {
   List,
   Popover,
   SegmentedControl,
-  Select,
   Stack,
   Switch,
-  Tabs,
   TagsInput,
   Text,
   TextInput,
   Textarea,
-  Title,
-  rem
+  Title
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import '@mantine/tiptap/styles.layer.css';
 import { Form, useLoaderData, useNavigate, useSubmit } from '@remix-run/react';
 import type { JSONContent } from '@tiptap/core';
 import type { Dispatch, SetStateAction } from 'react';
-import { Fragment, memo, useEffect, useState } from 'react';
+import { Fragment, useState } from 'react';
 import MantineEditor from '~/components/Tiptap/Editor';
 import { DebugCollapse } from '../DebugCollapse';
 import {
   IconCircleCheck,
-  IconCircleCheckFilled,
   IconCircleDashed,
   IconIndentDecrease,
   IconIndentIncrease,
   IconPlus,
   IconX
 } from '@tabler/icons-react';
-import { getHotkeyHandler, useHotkeys } from '@mantine/hooks';
+import { getHotkeyHandler } from '@mantine/hooks';
 
 type Editor = {
   id?: number | null;

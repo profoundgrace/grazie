@@ -1,3 +1,8 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { Title, Grid, Tabs } from '@mantine/core';
 import { useLoaderData, useNavigate } from '@remix-run/react';
 import PostCard from '~/components/Post/PostCard';

@@ -1,4 +1,8 @@
-import { Category } from './Category';
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { CategoryPost } from './CategoryPost';
 
 export interface PostInput {

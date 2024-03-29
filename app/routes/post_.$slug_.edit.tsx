@@ -1,8 +1,12 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { Title, Grid, Tabs } from '@mantine/core';
 import type { LoaderFunctionArgs } from '@remix-run/node'; // or cloudflare/deno
 import { json } from '@remix-run/node'; // or cloudflare/deno
 import { useNavigate } from '@remix-run/react';
-
 import Editor from '~/components/Editor';
 import { getCategories } from '~/lib/category.server';
 import { getPost } from '~/lib/post.server';

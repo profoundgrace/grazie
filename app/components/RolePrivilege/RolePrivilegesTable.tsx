@@ -1,6 +1,9 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { ActionIcon, Box, Button, Code, Table, Title } from '@mantine/core';
-import { Privilege } from '~/types/Privilege';
-import DateTime from '~/components/DateTime';
 import classes from '~/components/Dashboard/AdminPost.module.css';
 import RolePrivilegeEditor from '~/components/RolePrivilege/Editor';
 import RolePrivilegeDelete from '~/components/RolePrivilege/Delete';
