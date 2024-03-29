@@ -106,7 +106,7 @@ export async function getPrivileges({
         }
       },
       orderBy: [{ subject: 'asc' }, { action: 'asc' }],
-      take: limit,
+      take: limit > 0 ? limit : undefined,
       skip: offset
     });
 
