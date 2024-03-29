@@ -1,44 +1,9 @@
 import { getUserRoles } from '~/lib/user.server';
-import { Privilege } from '~/types/Privilege';
 import { RolePrivilege } from '~/types/RolePrivilege';
 import { RoleUser } from '~/types/RoleUser';
 import { getLogger } from '~/utils/logger.server';
 
 const log = getLogger('Abilities Utility');
-
-/**
- * Apply Privilege Masks
- *
- * Matches rules assigned to Role Permissions and translates them for CASL verification
- * @param array abilities
- * @param int userId
- * @returns array abilities
- */
-export const applyMasks = (abilities, userId) => {
-  abilities.forEach((rule, key) => {
-    switch (rule?.conditions?.owner) {
-      case 'id':
-        abilities[key] = {
-          ...rule,
-          conditions: {
-            id: userId
-          }
-        };
-        break;
-      case 'userId':
-        abilities[key] = {
-          ...rule,
-          conditions: {
-            userId
-          }
-        };
-        break;
-      default:
-        break;
-    }
-  });
-  return abilities;
-};
 
 /**
  * CASL-compatible Object for defining abilities
@@ -59,9 +24,9 @@ export async function abilityBuilder({
     const abilities = [] as RoleUser[];
 
     // Builds the abilities array as { subject, action }
-    await userRoles.forEach((userRole) => {
+    await userRoles.forEach(async (userRole) => {
       if (userRole?.role?.privileges) {
-        userRole.role.privileges.forEach((priv: RolePrivilege) => {
+        await userRole.role.privileges.forEach((priv: RolePrivilege) => {
           if (!priv.conditions) {
             priv.conditions = null;
           }
@@ -74,13 +39,31 @@ export async function abilityBuilder({
                 : null,
             inverted: priv?.inverted
           };
+          if (userId) {
+            switch (rules.conditions?.owner) {
+              case 'id':
+                rules.conditions = {
+                  id: userId
+                };
+
+                break;
+              case 'userId':
+                rules.conditions = {
+                  userId
+                };
+
+                break;
+              default:
+                break;
+            }
+          }
 
           abilities.push(rules);
         });
       }
     });
     // Translate masks and return abilities
-    return applyMasks(abilities, userId);
+    return await abilities;
   } catch (err) {
     log.error(err.message);
     log.error(err.stack);
