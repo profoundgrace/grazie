@@ -10,8 +10,15 @@ import { getCategories } from '~/lib/category.server';
 import { Category } from '~/types/Category';
 import { pagerParams } from '~/utils/searchParams.server';
 import Pager from '~/components/Pager/Pager';
+import { createAbility } from '~/utils/session.server';
+import { sentry } from '~/lib/sentry.server';
 
 export async function loader({ request }: LoaderFunctionArgs) {
+  if (!request?.ability) {
+    await createAbility(request);
+  }
+
+  await sentry(request, { action: 'manage', subject: 'Category' });
   const { count, page, pagerLoader } = pagerParams(request, 25);
 
   const query = {

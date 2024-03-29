@@ -1,8 +1,15 @@
 import { LoaderFunctionArgs, json } from '@remix-run/node';
 import RolePrivilegesLoaderWrapper from '~/components/RolePrivilege/RolePrivilegesLoaderWrapper';
 import { getRolePrivileges } from '~/lib/rolePrivilege.server';
+import { sentry } from '~/lib/sentry.server';
+import { createAbility } from '~/utils/session.server';
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
+  if (!request?.ability) {
+    await createAbility(request);
+  }
+
+  await sentry(request, { action: 'manage', subject: 'RolePrivilege' });
   const privileges = await getRolePrivileges({
     roleId: Number(params.roleId)
   });

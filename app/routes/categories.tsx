@@ -6,14 +6,24 @@ import CategoryCard from '~/components/Category/CategoryCard';
 import { subject, useAbility } from '~/hooks/useAbility';
 import { getCategories } from '~/lib/category.server';
 import { site } from '@/grazie';
+import { createAbility } from '~/utils/session.server';
+import { sentry } from '~/lib/sentry.server';
 
 export function meta() {
   return [{ title: `Categories${site?.separator}${site?.name}` }];
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const categories = await getCategories({});
+  if (!request?.ability) {
+    await createAbility(request);
+  }
 
+  const categories = await getCategories({});
+  await sentry(request, {
+    action: 'read',
+    subject: 'Category',
+    items: categories
+  });
   const data = { categories };
 
   return json(data);

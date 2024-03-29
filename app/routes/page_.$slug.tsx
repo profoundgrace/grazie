@@ -24,7 +24,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
   const page = await getPage({ slug: params?.slug });
   if (page) {
-    await sentry(request, { action: 'read', subject: 'Page', object: page });
+    await sentry(request, { action: 'read', subject: 'Page', item: page });
   }
 
   const data = { page };

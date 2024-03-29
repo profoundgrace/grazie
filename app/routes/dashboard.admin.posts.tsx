@@ -20,10 +20,17 @@ import DateTime from '~/components/DateTime';
 import Pager from '~/components/Pager/Pager';
 import PostEditor from '~/components/Post/Editor';
 import { getPosts } from '~/lib/post.server';
+import { sentry } from '~/lib/sentry.server';
 import { Post } from '~/types/Post';
 import { pagerParams } from '~/utils/searchParams.server';
+import { createAbility } from '~/utils/session.server';
 
 export async function loader({ request }: LoaderFunctionArgs) {
+  if (!request?.ability) {
+    await createAbility(request);
+  }
+
+  await sentry(request, { action: 'manage', subject: 'Post' });
   const { count, page, pagerLoader } = pagerParams(request, 25);
 
   const query = {

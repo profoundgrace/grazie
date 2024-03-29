@@ -1,6 +1,6 @@
 import { ActionFunctionArgs } from '@remix-run/node';
 import { jsonWithToast } from 'remix-toast';
-import { createOrRemoveBookmark } from '~/lib/post.server';
+import { createOrRemoveBookmark, getPost } from '~/lib/post.server';
 import { sentry } from '~/lib/sentry.server';
 import { createAbility, getSession } from '~/utils/session.server';
 
@@ -9,12 +9,14 @@ export async function action({ request }: ActionFunctionArgs) {
     await createAbility(request);
   }
   const data = await request.json();
-  await sentry(request, { action: 'create', subject: 'Comment' });
-  const session = await getSession(request.headers.get('Cookie'));
   const { postId } = data;
-  const userId = session.get('userId') as number;
 
   if (postId) {
+    const post = getPost({ id: postId });
+    await sentry(request, { action: 'read', subject: 'Post', item: post });
+    const session = await getSession(request.headers.get('Cookie'));
+
+    const userId = session.get('userId') as number;
     const bookmark = await createOrRemoveBookmark({
       userId,
       postId

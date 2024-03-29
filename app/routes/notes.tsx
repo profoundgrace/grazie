@@ -8,6 +8,8 @@ import { site } from '@/grazie';
 import { pagerParams } from '~/utils/searchParams.server';
 import Pager from '~/components/Pager/Pager';
 import { subject, useAbility } from '~/hooks/useAbility';
+import { createAbility } from '~/utils/session.server';
+import { sentry } from '~/lib/sentry.server';
 
 export function meta() {
   return [{ title: `Notes${site?.separator}${site?.name}` }];
@@ -21,7 +23,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
     offset: page ? (page - 1) * count : 0
   };
   const notes = await getNotes(query);
+  if (!request?.ability) {
+    await createAbility(request);
+  }
 
+  await sentry(request, {
+    action: 'read',
+    subject: 'Note',
+    items: notes
+  });
   const data = { notes, pager: pagerLoader(notes.totalCount) };
 
   return json(data);

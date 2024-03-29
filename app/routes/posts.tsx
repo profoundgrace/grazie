@@ -31,7 +31,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       {
         action: 'read',
         subject: 'Post',
-        object: { published: true }
+        items: posts
       },
       // Prevents 404 error
       { reject: false }

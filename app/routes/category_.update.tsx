@@ -3,7 +3,7 @@ import { json } from '@remix-run/node'; // or cloudflare/deno
 import { redirectWithToast } from 'remix-toast';
 import { updateCategory, getCategories } from '~/lib/category.server';
 import { sentry } from '~/lib/sentry.server';
-import { createAbility, getSession } from '~/utils/session.server';
+import { createAbility } from '~/utils/session.server';
 import { site } from '@/grazie';
 
 export function meta() {
@@ -14,9 +14,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   if (!request?.ability) {
     await createAbility(request);
   }
-
-  await sentry(request, { action: 'update', subject: 'Category' });
   const categories = await getCategories({});
+  await sentry(request, { action: 'update', subject: 'Category' });
+
   const data = { categories };
 
   return json(data);
@@ -29,7 +29,6 @@ export async function action({ request }: ActionFunctionArgs) {
 
   await sentry(request, { action: 'update', subject: 'Category' });
   const form = await request.formData();
-  const session = await getSession(request.headers.get('Cookie'));
   const id = Number(form.get('id'));
   const name = form.get('name') as string;
   const description = form.get('description') as string;

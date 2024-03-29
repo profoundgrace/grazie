@@ -1,8 +1,15 @@
 import { LoaderFunctionArgs, json } from '@remix-run/node';
 import RoleUsersLoaderWrapper from '~/components/RoleUser/RoleUsersLoaderWrapper';
 import { getRoleUsers } from '~/lib/roleUser.server';
+import { sentry } from '~/lib/sentry.server';
+import { createAbility } from '~/utils/session.server';
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
+  if (!request?.ability) {
+    await createAbility(request);
+  }
+
+  await sentry(request, { action: 'manage', subject: 'RoleUser' });
   const users = await getRoleUsers({
     roleId: Number(params.roleId)
   });

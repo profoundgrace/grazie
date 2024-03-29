@@ -2,18 +2,29 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'; /
 import { json } from '@remix-run/node'; // or cloudflare/deno
 import { redirectWithToast } from 'remix-toast';
 import { createRolePrivilege } from '~/lib/rolePrivilege.server';
-import { getSession } from '~/utils/session.server';
+import { createAbility, getSession } from '~/utils/session.server';
 import { site } from '@/grazie';
 import { getPrivileges } from '~/lib/privilege.server';
+import { sentry } from '~/lib/sentry.server';
 
 export function meta() {
   return [{ title: `Create Role${site?.separator}${site?.name}` }];
 }
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
+  if (!request?.ability) {
+    await createAbility(request);
+  }
+
+  await sentry(request, {
+    action: 'create',
+    subject: 'RolePrivilege'
+  });
+
   const privileges = await getPrivileges({
     filter: { not: { roleId: Number(params.roleId) } },
-    select: { id: true, privilegename: true }
+    select: { id: true, privilegename: true },
+    limit: 0
   });
   const data = { privileges };
 
@@ -21,6 +32,14 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
+  if (!request?.ability) {
+    await createAbility(request);
+  }
+
+  await sentry(request, {
+    action: 'create',
+    subject: 'RolePrivilege'
+  });
   const form = await request.formData();
   const session = await getSession(request.headers.get('Cookie'));
   const inverted = form.get('inverted') === 'on' ? true : false;

@@ -16,10 +16,17 @@ import RoleEditor from '~/components/Role/Editor';
 import RolePrivilegesWrapper from '~/components/RolePrivilege/RolePrivilegesFetcherWrapper';
 import RoleUsersWrapper from '~/components/RoleUser/RoleUsersFetcherWrapper';
 import { getRoles } from '~/lib/role.server';
+import { sentry } from '~/lib/sentry.server';
 import { pagerParams } from '~/utils/searchParams.server';
+import { createAbility } from '~/utils/session.server';
 import { unifiedStyles } from '~/utils/unify';
 
 export async function loader({ request }: LoaderFunctionArgs) {
+  if (!request?.ability) {
+    await createAbility(request);
+  }
+
+  await sentry(request, { action: 'manage', subject: 'Role' });
   const { count, page, pagerLoader } = pagerParams(request, 25);
 
   const query = {

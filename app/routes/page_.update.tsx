@@ -1,9 +1,8 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'; // or cloudflare/deno
-import { json } from '@remix-run/node'; // or cloudflare/deno
-import { getUnixTime } from 'date-fns';
+import type { ActionFunctionArgs } from '@remix-run/node'; // or cloudflare/deno
+
 import { redirectWithToast } from 'remix-toast';
-import { updatePage } from '~/lib/page.server';
-import { createAbility, getSession } from '~/utils/session.server';
+import { getPage, updatePage } from '~/lib/page.server';
+import { createAbility } from '~/utils/session.server';
 import { site } from '@/grazie';
 import { sentry } from '~/lib/sentry.server';
 
@@ -11,26 +10,15 @@ export function meta() {
   return [{ title: `Update Page${site?.separator}${site?.name}` }];
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  if (!request?.ability) {
-    await createAbility(request);
-  }
-
-  await sentry(request, { action: 'update', subject: 'Page' });
-  const data = {};
-
-  return json(data);
-}
-
 export async function action({ request }: ActionFunctionArgs) {
+  const id = Number(form.get('id') as string);
   if (!request?.ability) {
     await createAbility(request);
   }
+  const pageCheck = await getPage({ id });
 
-  await sentry(request, { action: 'update', subject: 'Page' });
+  await sentry(request, { action: 'update', subject: 'Page', item: pageCheck });
   const form = await request.formData();
-  const session = await getSession(request.headers.get('Cookie'));
-  const id = Number(form.get('id') as string);
   const published = form.get('published') === 'on' ? true : false;
   const publishedAt = form.get('publishedAt') as string;
   const slugFormat = form.get('slugFormat') as string;

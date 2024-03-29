@@ -20,9 +20,10 @@ import DateTime from '~/components/DateTime';
 import Pager from '~/components/Pager/Pager';
 import PostEditor from '~/components/Post/Editor';
 import { getPosts } from '~/lib/post.server';
+import { sentry } from '~/lib/sentry.server';
 import { Post } from '~/types/Post';
 import { pagerParams } from '~/utils/searchParams.server';
-import { getUserId } from '~/utils/session.server';
+import { createAbility, getUserId } from '~/utils/session.server';
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const { count, page, pagerLoader } = pagerParams(request, 25);
@@ -33,6 +34,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
     offset: page ? (page - 1) * count : 0
   };
   const posts = await getPosts(query);
+  if (!request?.ability) {
+    await createAbility(request);
+  }
+
+  await sentry(request, {
+    action: 'update',
+    subject: 'Post',
+    items: posts
+  });
   return json({
     _page: 'dashboard',
     posts,

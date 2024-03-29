@@ -29,7 +29,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const userId = session.get('userId') as number;
   const post = await getPost({ slug: params?.slug }, userId);
 
-  await sentry(request, { action: 'read', subject: 'Post', object: post });
+  await sentry(request, { action: 'read', subject: 'Post', item: post });
   const data = {
     post,
     comments: await getComments({

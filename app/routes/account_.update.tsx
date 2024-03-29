@@ -10,26 +10,20 @@ export function meta() {
   return [{ title: `Update Account${site?.separator}${site?.name}` }];
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  if (!request?.ability) {
-    await createAbility(request);
-  }
-
-  await sentry(request, { action: 'read', subject: 'Dashboard' });
-  const data = {};
-
-  return json(data);
-}
-
 export async function action({ request }: ActionFunctionArgs) {
-  if (!request?.ability) {
-    await createAbility(request);
-  }
-
-  await sentry(request, { action: 'read', subject: 'Dashboard' });
-  const form = await request.formData();
   const session = await getSession(request.headers.get('Cookie'));
   const userId = session.get('userId') as number;
+  if (!request?.ability) {
+    await createAbility(request);
+  }
+
+  await sentry(request, {
+    action: 'update',
+    subject: 'User',
+    item: { id: userId }
+  });
+  const form = await request.formData();
+
   const updates = { id: userId };
   const username = form.get('username') as string;
 

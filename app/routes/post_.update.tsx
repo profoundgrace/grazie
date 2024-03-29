@@ -12,17 +12,6 @@ export function meta() {
   return [{ title: `Update Post${site?.separator}${site?.name}` }];
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  if (!request?.ability) {
-    await createAbility(request);
-  }
-
-  await sentry(request, { action: 'update', subject: 'Post' });
-  const data = {};
-
-  return json(data);
-}
-
 export async function action({ request }: ActionFunctionArgs) {
   const form = await request.formData();
   const session = await getSession(request.headers.get('Cookie'));
@@ -41,7 +30,7 @@ export async function action({ request }: ActionFunctionArgs) {
   await sentry(request, {
     action: 'update',
     subject: 'Post',
-    object: postCheck
+    item: postCheck
   });
 
   const post = await updatePost({

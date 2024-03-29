@@ -1,12 +1,12 @@
 import { Title, Grid, Tabs } from '@mantine/core';
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'; // or cloudflare/deno
 import { json } from '@remix-run/node'; // or cloudflare/deno
-import { useLoaderData, useNavigate } from '@remix-run/react';
+import { useNavigate } from '@remix-run/react';
 import { redirectWithToast } from 'remix-toast';
 import Editor from '~/components/Editor';
 import { createCategory, getCategories } from '~/lib/category.server';
 import { sentry } from '~/lib/sentry.server';
-import { createAbility, getSession } from '~/utils/session.server';
+import { createAbility } from '~/utils/session.server';
 import { site } from '@/grazie';
 
 export function meta() {
@@ -32,7 +32,6 @@ export async function action({ request }: ActionFunctionArgs) {
 
   await sentry(request, { action: 'create', subject: 'Category' });
   const form = await request.formData();
-  const session = await getSession(request.headers.get('Cookie'));
   const name = form.get('name') as string;
   const description = form.get('description') as string;
   const parentId = form.get('parentId') as string;
@@ -51,7 +50,6 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function CategoryCreate() {
-  const data = useLoaderData<typeof loader>();
   const navigate = useNavigate();
 
   return (

@@ -13,9 +13,16 @@ import { IconEdit, IconSquarePlus } from '@tabler/icons-react';
 import { Fragment, useState } from 'react';
 import classes from '~/components/Dashboard/AdminPost.module.css';
 import SettingEditor from '~/components/Setting/Editor';
+import { sentry } from '~/lib/sentry.server';
 import { getSettings } from '~/lib/setting.server';
+import { createAbility } from '~/utils/session.server';
 
 export async function loader({ request }: LoaderFunctionArgs) {
+  if (!request?.ability) {
+    await createAbility(request);
+  }
+
+  await sentry(request, { action: 'manage', subject: 'Setting' });
   const settings = await getSettings({});
   return json({ _page: 'dashboard', settings });
 }

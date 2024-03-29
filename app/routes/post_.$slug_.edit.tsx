@@ -30,7 +30,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     await createAbility(request);
   }
 
-  await sentry(request, { action: 'update', subject: 'Post', object: post });
+  await sentry(request, { action: 'update', subject: 'Post', item: post });
   const data = { categories, post, _page: 'post' };
   return json(data);
 }

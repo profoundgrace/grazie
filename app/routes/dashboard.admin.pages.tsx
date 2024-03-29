@@ -12,10 +12,17 @@ import DateTime from '~/components/DateTime';
 import PageEditor from '~/components/Page/Editor';
 import Pager from '~/components/Pager/Pager';
 import { getPages } from '~/lib/page.server';
+import { sentry } from '~/lib/sentry.server';
 import { Page } from '~/types/Page';
 import { pagerParams } from '~/utils/searchParams.server';
+import { createAbility } from '~/utils/session.server';
 
 export async function loader({ request }: LoaderFunctionArgs) {
+  if (!request?.ability) {
+    await createAbility(request);
+  }
+
+  await sentry(request, { action: 'manage', subject: 'Page' });
   const { count, page, pagerLoader } = pagerParams(request, 25);
 
   const query = {

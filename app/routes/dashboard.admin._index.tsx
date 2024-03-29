@@ -15,9 +15,16 @@ import { useLoaderData } from '@remix-run/react';
 import classes from '~/components/Dashboard/AdminPost.module.css';
 import DateTime from '~/components/DateTime';
 import { system } from '~/lib/resource.server';
+import { sentry } from '~/lib/sentry.server';
 import { getUsers } from '~/lib/user.server';
+import { createAbility } from '~/utils/session.server';
 
 export async function loader({ request }: LoaderFunctionArgs) {
+  if (!request?.ability) {
+    await createAbility(request);
+  }
+
+  await sentry(request, { action: 'manage', subject: 'Dashboard' });
   const systemInfo = await system();
   return json({ _page: 'dashboard', systemInfo });
 }

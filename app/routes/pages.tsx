@@ -8,6 +8,8 @@ import { site } from '@/grazie';
 import { subject, useAbility } from '~/hooks/useAbility';
 import Pager from '~/components/Pager/Pager';
 import { pagerParams } from '~/utils/searchParams.server';
+import { createAbility } from '~/utils/session.server';
+import { sentry } from '~/lib/sentry.server';
 
 export function meta() {
   return [{ title: `Pages${site?.separator}${site?.name}` }];
@@ -21,7 +23,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
     offset: page ? (page - 1) * count : 0
   };
   const pages = await getPages(query);
+  if (!request?.ability) {
+    await createAbility(request);
+  }
 
+  await sentry(request, {
+    action: 'read',
+    subject: 'Page',
+    items: pages
+  });
   const data = { pages, pager: pagerLoader(pages.totalCount) };
 
   return json(data);
