@@ -8,13 +8,15 @@ import {
   Anchor,
   Avatar,
   Badge,
+  Button,
   Card,
   Group,
   Text,
+  Tooltip,
   rem,
   useMantineTheme
 } from '@mantine/core';
-import { Link, useSubmit } from '@remix-run/react';
+import { Link, useNavigate, useSubmit } from '@remix-run/react';
 import {
   IconHeart,
   IconBookmark,
@@ -23,15 +25,17 @@ import {
   IconEye,
   IconHeartFilled,
   IconBookmarkFilled,
-  IconClipboardCheck
+  IconClipboardCheck,
+  IconArrowUpRight
 } from '@tabler/icons-react';
 import { TimeSince } from '~/components/DateTime';
 import HTMLContent from '~/components/Tiptap/HTMLContent';
 import classes from '~/components/Post/PostCard.module.css';
 import { CategoryPost } from '~/types/CategoryPost';
-import { useClipboard, useTimeout } from '@mantine/hooks';
+import { useClipboard, useElementSize, useTimeout } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { notifications } from '@mantine/notifications';
+import useUser from '~/hooks/useUser';
 
 interface ArticleCardProps {
   id: number;
@@ -79,6 +83,7 @@ export default function PostCard({ data }: { data: ArticleCardProps }) {
   const theme = useMantineTheme();
   const submit = useSubmit();
   const clipboard = useClipboard();
+  const { isLoggedIn } = useUser();
   const [copied, setCopied] = useState(false);
   const { start } = useTimeout(() => setCopied(false), 3000);
   const [shareLink, setShareLink] = useState();
@@ -97,6 +102,8 @@ export default function PostCard({ data }: { data: ArticleCardProps }) {
       });
     }
   }, [copied]);
+
+  const { ref: contentRef, height } = useElementSize();
 
   return (
     <>
@@ -154,9 +161,27 @@ export default function PostCard({ data }: { data: ArticleCardProps }) {
         <Card.Section
           className={classes.body}
           pt={categories?.length > 0 ? 10 : undefined}
+          style={{ maxHeight: '60px' }}
         >
-          <HTMLContent content={body} />
+          <div ref={contentRef}>
+            <HTMLContent content={body} />
+          </div>
         </Card.Section>
+        <Card.Section pl={4}>
+          {height > 60 && (
+            <Tooltip label="Read More">
+              <Button
+                component={Link}
+                size="compact-md"
+                variant="subtle"
+                to={`/post/${slug}`}
+              >
+                . . .
+              </Button>
+            </Tooltip>
+          )}
+        </Card.Section>
+
         {footer ? (
           <Group mt="xs">
             <Text size="xs" c="dimmed">
@@ -206,7 +231,7 @@ export default function PostCard({ data }: { data: ArticleCardProps }) {
                   variant="default"
                   leftSection={
                     <IconBookmark
-                      color={theme.colors.green[6]}
+                      color={theme.colors.yellow[6]}
                       stroke={1}
                       style={{ width: rem(20), height: rem(20) }}
                     />
@@ -214,7 +239,9 @@ export default function PostCard({ data }: { data: ArticleCardProps }) {
                 >
                   {bookmarksCount}
                 </Badge>
+
                 <Badge
+                  component={Link}
                   variant="default"
                   leftSection={
                     <IconEye
@@ -223,62 +250,71 @@ export default function PostCard({ data }: { data: ArticleCardProps }) {
                       style={{ width: rem(22), height: rem(22) }}
                     />
                   }
+                  to={`/post/${slug}`}
+                  style={{ cursor: 'pointer' }}
                 >
                   {viewsCount}
                 </Badge>
               </Group>
             </Group>
             <Group gap={0}>
-              <ActionIcon
-                variant="subtle"
-                color={theme.colors.red[6]}
-                onClick={() =>
-                  submit(
-                    { postId: id },
-                    {
-                      navigate: false,
-                      method: 'post',
-                      encType: 'application/json',
-                      action: `/post/favorite`
-                    }
-                  )
-                }
-              >
-                {favorites?.length > 0 ? (
-                  <IconHeartFilled size={22} color={theme.colors.red[6]} />
-                ) : (
-                  <IconHeart
-                    size={22}
+              {isLoggedIn && (
+                <>
+                  <ActionIcon
+                    variant="subtle"
                     color={theme.colors.red[6]}
-                    stroke={1.5}
-                  />
-                )}
-              </ActionIcon>
-              <ActionIcon
-                variant="subtle"
-                color={theme.colors.yellow[6]}
-                onClick={() =>
-                  submit(
-                    { postId: id },
-                    {
-                      navigate: false,
-                      method: 'post',
-                      encType: 'application/json',
-                      action: `/post/bookmark`
+                    onClick={() =>
+                      submit(
+                        { postId: id },
+                        {
+                          navigate: false,
+                          method: 'post',
+                          encType: 'application/json',
+                          action: `/post/favorite`
+                        }
+                      )
                     }
-                  )
-                }
-              >
-                {bookmarks?.length > 0 ? (
-                  <IconBookmarkFilled size={22} color={theme.colors.red[6]} />
-                ) : (
-                  <IconBookmark
-                    size={22}
+                  >
+                    {favorites?.length > 0 ? (
+                      <IconHeartFilled size={22} color={theme.colors.red[6]} />
+                    ) : (
+                      <IconHeart
+                        size={22}
+                        color={theme.colors.red[6]}
+                        stroke={1.5}
+                      />
+                    )}
+                  </ActionIcon>
+                  <ActionIcon
+                    variant="subtle"
                     color={theme.colors.yellow[6]}
-                    stroke={1.5}
-                  />
-                )}
-              </ActionIcon>
+                    onClick={() =>
+                      submit(
+                        { postId: id },
+                        {
+                          navigate: false,
+                          method: 'post',
+                          encType: 'application/json',
+                          action: `/post/bookmark`
+                        }
+                      )
+                    }
+                  >
+                    {bookmarks?.length > 0 ? (
+                      <IconBookmarkFilled
+                        size={22}
+                        color={theme.colors.yellow[6]}
+                      />
+                    ) : (
+                      <IconBookmark
+                        size={22}
+                        color={theme.colors.yellow[6]}
+                        stroke={1.5}
+                      />
+                    )}
+                  </ActionIcon>
+                </>
+              )}
               <ActionIcon
                 variant="subtle"
                 color={copied ? theme.colors.green[7] : theme.colors.blue[6]}
@@ -300,6 +336,18 @@ export default function PostCard({ data }: { data: ArticleCardProps }) {
                     stroke={1.5}
                   />
                 )}
+              </ActionIcon>
+              <ActionIcon
+                component={Link}
+                variant="subtle"
+                color={theme.colors.blue[3]}
+                to={`/post/${slug}`}
+              >
+                <IconArrowUpRight
+                  size={22}
+                  color={theme.colors.blue[3]}
+                  stroke={1.5}
+                />
               </ActionIcon>
             </Group>
           </Group>

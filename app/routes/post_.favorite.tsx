@@ -18,7 +18,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const { postId } = data;
 
   if (postId) {
-    const post = getPost({ id: postId });
+    const post = await getPost({ id: postId });
     await sentry(request, { action: 'read', subject: 'Post', item: post });
     const session = await getSession(request.headers.get('Cookie'));
 

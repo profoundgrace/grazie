@@ -13,10 +13,13 @@ import {
   useMantineTheme
 } from '@mantine/core';
 import { Link } from '@remix-run/react';
-import { IconHeart, IconBookmark, IconShare } from '@tabler/icons-react';
+import { IconShare, IconClipboardCheck } from '@tabler/icons-react';
 import { TimeSince } from '~/components/DateTime';
 import HTMLContent from '~/components/Tiptap/HTMLContent';
 import classes from '~/components/Page/PageCard.module.css';
+import { useEffect, useState } from 'react';
+import { useClipboard, useTimeout } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 
 interface ArticleCardProps {
   image?: string;
@@ -48,6 +51,25 @@ export default function PageCard({
   data: ArticleCardProps;
 }) {
   const theme = useMantineTheme();
+  const clipboard = useClipboard();
+  const [copied, setCopied] = useState(false);
+  const { start } = useTimeout(() => setCopied(false), 3000);
+  const [shareLink, setShareLink] = useState();
+  useEffect(() => {
+    setShareLink(
+      `${window.location.protocol}//${window.location.host}/page/${slug}`
+    );
+  }, [slug]);
+
+  useEffect(() => {
+    if (copied) {
+      start();
+      notifications.show({
+        title: 'Sharing',
+        message: 'Post Link Copied to Clipboard!'
+      });
+    }
+  }, [copied]);
 
   return (
     <Card mb={6} radius="md" className={classes.card}>
@@ -113,18 +135,27 @@ export default function PageCard({
             </div>
           </Group>
           <Group gap={0}>
-            <ActionIcon variant="subtle" color="gray">
-              <IconHeart size={22} color={theme.colors.red[6]} stroke={1.5} />
-            </ActionIcon>
-            <ActionIcon variant="subtle" color="gray">
-              <IconBookmark
-                size={22}
-                color={theme.colors.yellow[6]}
-                stroke={1.5}
-              />
-            </ActionIcon>
-            <ActionIcon variant="subtle" color="gray">
-              <IconShare size={22} color={theme.colors.blue[6]} stroke={1.5} />
+            <ActionIcon
+              variant="subtle"
+              color={copied ? theme.colors.green[7] : theme.colors.blue[6]}
+              onClick={() => {
+                clipboard.copy(shareLink);
+                setCopied(true);
+              }}
+            >
+              {copied ? (
+                <IconClipboardCheck
+                  size={22}
+                  color={theme.colors.green[7]}
+                  stroke={1.5}
+                />
+              ) : (
+                <IconShare
+                  size={22}
+                  color={theme.colors.blue[6]}
+                  stroke={1.5}
+                />
+              )}
             </ActionIcon>
           </Group>
         </Group>

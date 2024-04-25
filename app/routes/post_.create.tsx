@@ -44,6 +44,11 @@ export async function action({ request }: ActionFunctionArgs) {
   const publishedAt = form.get('publishedAt') as string;
   const slugFormat = form.get('slugFormat') as string;
   const slug = form.get('slug') as string;
+  const metaData = form.get('meta') as string;
+  let meta;
+  if (metaData) {
+    meta = JSON.parse(metaData);
+  }
 
   const post = await createPost({
     published,
@@ -53,7 +58,8 @@ export async function action({ request }: ActionFunctionArgs) {
     title: form.get('title') as string,
     authorId,
     slugFormat,
-    slug
+    slug,
+    meta: meta ? JSON.stringify(meta) : null
   });
 
   const categories = form.get('categories') as string;

@@ -13,6 +13,7 @@ import {
   Stack,
   Switch,
   TagsInput,
+  Text,
   TextInput,
   Title
 } from '@mantine/core';
@@ -25,8 +26,9 @@ import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 import MantineEditor from '~/components/Tiptap/Editor';
 import { DebugCollapse } from '../DebugCollapse';
+import { SEO } from '../SEO';
 
-interface Editor {
+type Editor = {
   id?: number | null;
   createdAt?: string | null;
   published?: boolean;
@@ -41,7 +43,8 @@ interface Editor {
   slug?: string | null;
   slugFormat?: string | null;
   categories?: { category: { name: string } }[];
-}
+  meta?: string | null;
+};
 
 const PostEditor = ({
   id = null,
@@ -56,6 +59,7 @@ const PostEditor = ({
   slug,
   slugFormat,
   categories,
+  meta,
   closeEditor
 }: Editor) => {
   const form = useForm({
@@ -74,7 +78,19 @@ const PostEditor = ({
       categories:
         categories && categories?.length > 0
           ? categories.map((cat) => cat.category.name)
-          : []
+          : [],
+      meta: meta
+        ? JSON.parse(meta)
+        : {
+            seo: {
+              keywords: '',
+              title: '',
+              description: ''
+            }
+          }
+    },
+    validate: {
+      search: (value) => (value.length === 0 ? 'Post body is requred' : null)
     }
   });
 
@@ -82,8 +98,6 @@ const PostEditor = ({
   const { categories: categoriesList } = loaderData;
 
   const [catSearchValue, setCatSearchValue] = useState('');
-
-  const [errorMsg, setErrorMsg] = useState('');
 
   const route = !id ? '/post/create' : '/post/update';
 
@@ -123,11 +137,6 @@ const PostEditor = ({
             <Title order={3}>Post Editor</Title>
           </Card.Section>
           <Card.Section p={10}>
-            {errorMsg ? (
-              <Alert title="Error" color="red">
-                {errorMsg}
-              </Alert>
-            ) : null}
             <Form
               method="POST"
               action={route}
@@ -143,6 +152,11 @@ const PostEditor = ({
                   {...form.getInputProps('title')}
                 />
                 <MantineEditor name="body" form={form} withSearch />
+                {form.errors?.search && (
+                  <Text size="xs" c="red">
+                    {form.errors.search}
+                  </Text>
+                )}
                 <input
                   type="hidden"
                   name="body"
@@ -247,6 +261,7 @@ const PostEditor = ({
                   {...form.getInputProps('categories')}
                 />
               </Stack>
+              <SEO form={form} />
               <Group align="center" mt="md">
                 <Button color="green" type="submit" variant="light">
                   {id ? 'Update' : 'Save'}

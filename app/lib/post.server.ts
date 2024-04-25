@@ -56,7 +56,8 @@ export async function createPost({
   publishedAt,
   slugFormat = 'date-title',
   slug,
-  authorId
+  authorId,
+  meta
 }: PostInput) {
   try {
     const date = timeString();
@@ -72,7 +73,8 @@ export async function createPost({
       publishedAt,
       updatedAt: date,
       authorId,
-      slug: `${timeString()}_${title}`
+      slug: `${timeString()}_${title}`,
+      meta
     };
 
     const post = await prisma.post.create({
@@ -119,7 +121,8 @@ export async function updatePost({
   search,
   title,
   slugFormat,
-  slug
+  slug,
+  meta
 }: PostInput) {
   try {
     if (!id && !slug) {
@@ -133,7 +136,8 @@ export async function updatePost({
       published,
       publishedAt,
       updatedAt: date,
-      slug: slug ?? undefined
+      slug: slug ?? undefined,
+      meta
     };
 
     const where = {} as { id?: number; slug?: string };
@@ -223,6 +227,8 @@ export async function getPost(
         published: true,
         publishedAt: true,
         slug: true,
+        search: true,
+        meta: true,
         author: {
           select: {
             displayName: true,

@@ -19,10 +19,40 @@ import { sentry } from '~/lib/sentry.server';
 
 export function meta({
   data: {
-    post: { title }
+    post: {
+      createdAt,
+      title,
+      meta,
+      publishedAt,
+      author: { displayName }
+    }
   }
 }) {
-  return [{ title: `${title}${site?.separator}${site?.name}` }];
+  if (meta && typeof meta === 'string') {
+    meta = JSON.parse(meta);
+  }
+  return [
+    {
+      title: `${meta?.seo?.title ?? title ?? ''}${site?.separator}${site?.name}`
+    },
+    {
+      name: 'description',
+      content: `${meta?.seo?.description}`
+    },
+    { keywords: meta?.seo?.keywords },
+    {
+      property: 'og:title',
+      content: meta?.seo?.title ?? title ?? 'Page'
+    },
+    { property: 'og:type', content: 'article' },
+    { name: 'author', property: 'og:author', content: displayName },
+    {
+      property: 'og:published_time',
+      content: publishedAt ?? createdAt
+    },
+    { property: 'og:image', content: meta?.seo?.image },
+    { property: 'og:description', content: meta?.seo?.description }
+  ];
 }
 
 export async function loader({ params, request }: LoaderFunctionArgs) {

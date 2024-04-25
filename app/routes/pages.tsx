@@ -24,6 +24,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const { count, page, pagerLoader } = pagerParams(request, 25);
 
   const query = {
+    filter: { published: true },
     limit: count,
     offset: page ? (page - 1) * count : 0
   };
@@ -31,12 +32,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
   if (!request?.ability) {
     await createAbility(request);
   }
+  if (pages.nodes?.length > 0) {
+    await sentry(request, {
+      action: 'read',
+      subject: 'Page',
+      items: pages?.nodes
+    });
+  }
 
-  await sentry(request, {
-    action: 'read',
-    subject: 'Page',
-    items: pages
-  });
   const data = { pages, pager: pagerLoader(pages.totalCount) };
 
   return json(data);

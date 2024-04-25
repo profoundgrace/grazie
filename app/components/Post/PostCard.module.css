@@ -28,7 +28,10 @@
 
 .body {
   min-height: 60px;
-  padding: rem(7px) rem(10px);
+  padding: rem(7px) rem(10px);display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: max-height var(--spoiler-transition-duration, 200ms) ease;
 }
 
 .action {

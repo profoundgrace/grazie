@@ -55,7 +55,8 @@ export async function createPage({
   publishedAt,
   slugFormat = 'date-title',
   slug,
-  authorId
+  authorId,
+  meta
 }: PageInput) {
   try {
     const date = timeString();
@@ -72,7 +73,8 @@ export async function createPage({
       publishedAt,
       updatedAt: date,
       authorId,
-      slug: `${timeString()}_${title}`
+      slug: `${timeString()}_${title}`,
+      meta
     };
 
     const page = await prisma.page.create({
@@ -120,7 +122,8 @@ export async function updatePage({
   title,
   summary,
   slugFormat,
-  slug
+  slug,
+  meta
 }: PageInput) {
   try {
     if (!id && !slug) {
@@ -135,7 +138,8 @@ export async function updatePage({
       published,
       publishedAt,
       updatedAt: date,
-      slug: slug ?? undefined
+      slug: slug ?? undefined,
+      meta
     };
 
     const where = {} as { id?: number; slug?: string };
@@ -220,6 +224,8 @@ export async function getPage({ id, slug, select }) {
         published: true,
         publishedAt: true,
         slug: true,
+        search: true,
+        meta: true,
         author: {
           select: {
             displayName: true,
@@ -243,12 +249,21 @@ export async function getPages({
   limit = 25,
   offset = 0
 }: {
-  filter?: { authorId?: number; username?: string; category?: string };
+  filter?: {
+    authorId?: number;
+    username?: string;
+    category?: string;
+    published?: boolean;
+  };
   imit?: number;
   offset?: number;
 }) {
   try {
-    const where = {} as { authorId?: number; category?: any };
+    const where = {} as {
+      authorId?: number;
+      category?: any;
+      published?: boolean;
+    };
 
     if (filter?.username) {
       where.authorId = await getUserByUsername(filter.username);
@@ -256,6 +271,10 @@ export async function getPages({
 
     if (filter?.authorId) {
       where.authorId = filter.authorId;
+    }
+
+    if (filter?.published) {
+      where.published = filter.published;
     }
 
     const articles = await prisma.page.findMany({

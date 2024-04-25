@@ -4,7 +4,6 @@
  * @license MIT see LICENSE
  */
 import {
-  Alert,
   Button,
   Card,
   Grid,
@@ -12,6 +11,7 @@ import {
   Select,
   Stack,
   Switch,
+  Text,
   TextInput,
   Textarea,
   Title
@@ -25,6 +25,7 @@ import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 import MantineEditor from '~/components/Tiptap/Editor';
 import { DebugCollapse } from '../DebugCollapse';
+import { SEO } from '../SEO';
 
 interface Editor {
   id?: number | null;
@@ -41,6 +42,7 @@ interface Editor {
   slug?: string | null;
   slugFormat?: string | null;
   categories?: { category: { name: string } }[];
+  meta?: string | null;
 }
 
 const ArticleEditor = ({
@@ -56,6 +58,7 @@ const ArticleEditor = ({
   slug,
   slugFormat,
   categories,
+  meta,
   closeEditor
 }: Editor) => {
   const form = useForm({
@@ -74,15 +77,25 @@ const ArticleEditor = ({
       categories:
         categories && categories?.length > 0
           ? categories.map((cat) => cat.category.name)
-          : []
+          : [],
+      meta: meta
+        ? JSON.parse(meta)
+        : {
+            seo: {
+              keywords: '',
+              title: '',
+              description: ''
+            }
+          }
+    },
+    validate: {
+      search: (value) => (value.length === 0 ? 'Post body is requred' : null)
     }
   });
 
   const loaderData = useLoaderData();
 
   const [catSearchValue, setCatSearchValue] = useState('');
-
-  const [errorMsg, setErrorMsg] = useState('');
 
   const route = !id ? '/page/create' : '/page/update';
 
@@ -122,11 +135,6 @@ const ArticleEditor = ({
             <Title order={3}>Page Editor</Title>
           </Card.Section>
           <Card.Section p={10}>
-            {errorMsg ? (
-              <Alert title="Error" color="red">
-                {errorMsg}
-              </Alert>
-            ) : null}
             <Form
               method="POST"
               action={route}
@@ -148,6 +156,11 @@ const ArticleEditor = ({
                   {...form.getInputProps('summary')}
                 />
                 <MantineEditor name="body" form={form} withSearch />
+                {form.errors?.search && (
+                  <Text size="xs" c="red">
+                    {form.errors.search}
+                  </Text>
+                )}
                 <input
                   type="hidden"
                   name="body"
@@ -230,6 +243,7 @@ const ArticleEditor = ({
                   {...form.getInputProps('slug')}
                 />
               </Stack>
+              <SEO form={form} />
               <Group align="center" mt="md">
                 <Button color="green" type="submit" variant="light">
                   {id ? 'Update' : 'Save'}

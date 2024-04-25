@@ -15,6 +15,7 @@ export function meta() {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
+  const form = await request.formData();
   const id = Number(form.get('id') as string);
   if (!request?.ability) {
     await createAbility(request);
@@ -22,11 +23,16 @@ export async function action({ request }: ActionFunctionArgs) {
   const pageCheck = await getPage({ id });
 
   await sentry(request, { action: 'update', subject: 'Page', item: pageCheck });
-  const form = await request.formData();
+
   const published = form.get('published') === 'on' ? true : false;
   const publishedAt = form.get('publishedAt') as string;
   const slugFormat = form.get('slugFormat') as string;
   const slug = form.get('slug') as string;
+  const metaData = form.get('meta') as string;
+  let meta;
+  if (metaData) {
+    meta = JSON.parse(metaData);
+  }
 
   const page = await updatePage({
     id,
@@ -37,7 +43,8 @@ export async function action({ request }: ActionFunctionArgs) {
     title: form.get('title') as string,
     summary: form.get('summary') as string,
     slugFormat,
-    slug
+    slug,
+    meta: meta ? JSON.stringify(meta) : null
   });
 
   if (page?.slug) {
