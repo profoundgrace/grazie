@@ -3,34 +3,36 @@
  * @copyright Copyright (c) 2024 David Dyess II
  * @license MIT see LICENSE
  */
+import Joi from 'joi';
 import { CategoryPost } from './CategoryPost';
+import { joiResolver } from 'mantine-form-joi-resolver';
 
-export interface PostInput {
+export type PostInput = {
   id?: number;
   authorId: number;
   published?: boolean;
-  createdAt?: number;
-  publishedAt: number;
-  updatedAt?: number;
+  createdAt?: string;
+  publishedAt: string;
+  updatedAt?: string;
   title: string;
   slug?: string;
   slugFormat?: string;
   search?: string;
   body: object | string;
   meta?: object;
-}
+};
 
-export interface Post {
+export type Post = {
   id: string;
   authorId: number;
   published: boolean;
-  createdAt: number;
-  publishedAt: number;
-  updatedAt: number;
+  createdAt: string;
+  publishedAt: string;
+  updatedAt: string;
   title: string;
   slug: string;
   search?: string;
   body: object;
   author: { displayName: string };
   categories?: CategoryPost[];
-}
+};

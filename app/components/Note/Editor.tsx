@@ -67,7 +67,6 @@ const SubItemList = ({ focus, form, data, path, parent }) => {
 
   const addItem = (path: string | undefined, at: number | undefined) => {
     if (path && typeof at === 'number') {
-      console.log(at);
       form.insertListItem(path, defaultList, at + 1);
     } else {
       form.setFieldValue(
@@ -292,7 +291,6 @@ const ListEditor = ({ form }: { form: any }) => {
 
   const addItem = (path: string | undefined, at: number | undefined) => {
     if (path && typeof at === 'number') {
-      console.log(at);
       form.insertListItem(path, defaultList, at + 1);
     } else {
       form.setFieldValue(

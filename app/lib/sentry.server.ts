@@ -6,6 +6,7 @@
  */
 import { subject as Subject } from '@casl/ability';
 import { status } from './error.server';
+import { getSession } from '~/utils/session.server';
 /**
  * Sentry Access Control
  * @param request
@@ -25,6 +26,10 @@ export async function sentry(
 ) {
   if (Array.isArray(items)) {
     for (const item of items) {
+      if (item?.owner) {
+        const session = await getSession(request.headers.get('Cookie'));
+        item[item.owner] = session.get('userId') as number;
+      }
       if (!request.ability.can(action, Subject(subject, item))) {
         if (reject) {
           return status(404);
@@ -35,13 +40,19 @@ export async function sentry(
         return true;
       }
     }
-  } else if (!request.ability.can(action, Subject(subject, item))) {
-    if (reject) {
-      return status(404);
-    } else {
-      return false;
-    }
   } else {
-    return true;
+    if (item?.owner) {
+      const session = await getSession(request.headers.get('Cookie'));
+      item[item.owner] = session.get('userId') as number;
+    }
+    if (!request.ability.can(action, Subject(subject, item))) {
+      if (reject) {
+        return status(404);
+      } else {
+        return false;
+      }
+    } else {
+      return true;
+    }
   }
 }

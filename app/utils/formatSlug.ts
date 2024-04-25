@@ -23,7 +23,7 @@ export const formatSlug = ({
   id,
   lowerCase = true,
   space = 'addUnderscore',
-  title = sanitize[space]('no title'),
+  title,
   slug
 }: {
   format?: string;
@@ -46,6 +46,10 @@ export const formatSlug = ({
       dateDate = dateObject.getDate();
       mmDate = monthDate >= 10 ? monthDate : `0${monthDate}`;
       ddDate = dateDate >= 10 ? dateDate : `0${dateDate}`;
+    }
+    // Prevent an empty string title
+    if (!title) {
+      title = 'no title';
     }
 
     switch (format) {

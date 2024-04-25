@@ -16,25 +16,29 @@ import {
   Button
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { Form, useLoaderData, useNavigate, useSubmit } from '@remix-run/react';
+import { Form, useActionData, useNavigate, useSubmit } from '@remix-run/react';
 import classes from './Login.module.css';
+import { validateLogin } from '~/types/User';
 
 export function Login() {
   const navigate = useNavigate();
-  const { error } = useLoaderData();
-
+  const actionData = useActionData();
   const submit = useSubmit();
 
   const form = useForm({
-    initialValues: {
+    validateInputOnBlur: true,
+    validateInputOnChange: true,
+    initialValues: actionData?.data ?? {
       email: '',
       password: ''
     },
-
-    validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email')
-    }
+    validate: validateLogin
   });
+
+  if (actionData?.errors && !(Object.keys(form?.errors).length > 0)) {
+    form.setErrors(actionData.errors);
+  }
+
   return (
     <Container size={420}>
       <Title ta="center" className={classes.title}>
@@ -54,7 +58,13 @@ export function Login() {
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
         <Form
           method="POST"
-          onSubmit={form.onSubmit((_v, e) => submit(e.currentTarget))}
+          onSubmit={form.onSubmit((_v, e) => {
+            if (actionData?.errors) {
+              delete actionData?.errors;
+              form.clearErrors();
+            }
+            submit(e.currentTarget);
+          })}
         >
           <TextInput
             required

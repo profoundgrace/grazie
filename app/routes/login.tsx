@@ -14,6 +14,8 @@ import { getSession, commitSession } from '~/utils/session.server';
 import { Login } from '~/components/Login';
 import { userLogin } from '~/lib/user.server';
 import { site } from '@/grazie';
+import { loginSchema } from '~/types/User';
+import { validateSchema } from '~/utils/validation';
 
 export const meta: MetaFunction = () => {
   return [
@@ -28,17 +30,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   if (session.has('userId')) {
     // Redirect to the home page if they are already signed in.
     return redirect('/');
+  } else {
+    return null;
   }
-
-  const data = {
-    error: session.get('error')
-  };
-
-  return json(data, {
-    headers: {
-      'Set-Cookie': await commitSession(session)
-    }
-  });
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -46,22 +40,18 @@ export async function action({ request }: ActionFunctionArgs) {
   const form = await request.formData();
   const email = form.get('email') as string;
   const password = form.get('password') as string;
+  const data = { email, password };
 
-  const user = await userLogin({ email, password });
+  const errors = validateSchema(loginSchema, data);
 
-  if (user?.id === null) {
-    session.flash('error', 'Invalid username/password');
+  if (errors) {
+    return json({ errors, data });
+  }
 
-    // Redirect back to the login page with errors.
-    return redirectWithToast(
-      '/login',
-      { message: 'Loggin Error!', type: 'error' },
-      {
-        headers: {
-          'Set-Cookie': await commitSession(session)
-        }
-      }
-    );
+  const user = await userLogin(data);
+
+  if (user?.errors) {
+    return json({ errors: user.errors, data });
   }
 
   session.set('userId', user.id);

@@ -22,7 +22,7 @@ import {
 } from '@mantine/core';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { useForm } from '@mantine/form';
-import { Form, useSubmit } from '@remix-run/react';
+import { Form, useActionData, useSubmit } from '@remix-run/react';
 import {
   IconEdit,
   IconUpload,
@@ -32,6 +32,7 @@ import {
 } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { DebugCollapse } from '~/components/DebugCollapse';
+import { validateAccount } from '~/types/User';
 
 const CancelActionIcon = ({ action }) => {
   return (
@@ -56,6 +57,7 @@ const EditActionIcon = ({ action }) => {
 };
 
 const Account = ({ account }) => {
+  const actionData = useActionData();
   const [errorMsg, setError] = useState('');
   const theme = useMantineTheme();
   const { colorScheme, setColorScheme } = useMantineColorScheme();
@@ -63,32 +65,23 @@ const Account = ({ account }) => {
   const [image, setImage] = useState();
   const [file, setFile] = useState('');
   const [fields, setFields] = useState(0);
-  const [edit, setEdit] = useState({ settings: {} });
-
-  const route = '/account/update';
-
+  const [edit, setEdit] = useState({ colorScheme: true });
+  const [initialValues, setInitialValues] = useState({
+    colorSchema: account?.settings?.colorScheme ?? 'auto'
+  });
   const submit = useSubmit();
 
   const form = useForm({
-    /* initialValues: {
-      
-      file
-    }*/
-    initialValues: {
-      username: account?.username,
-      displayName: account?.displayName,
-      email: account?.email,
-      cpassword: '',
-      npassword: '',
-      file,
-      fileType: '',
+    validateInputOnBlur: true,
+    initialValues: actionData?.data ?? {
       colorScheme: account?.settings?.colorScheme ?? 'auto'
-    }
-
-    /* validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email')
-    }*/
+    },
+    validate: validateAccount(edit)
   });
+
+  if (actionData?.errors && !(Object.keys(form?.errors).length > 0)) {
+    form.setErrors(actionData.errors);
+  }
 
   useEffect(() => {
     let fileReader,
@@ -119,23 +112,6 @@ const Account = ({ account }) => {
     };
   }, [image]);
 
-  const updateAccount = async (values) => {
-    const avatar = image
-      ? {
-          mime: image[0].type,
-          base64: file.split(',')[1]
-        }
-      : null;
-    /*const { error } = await updateAccountMutation({
-      variables: { ...values, file: avatar }
-    });*/
-
-    if (error) {
-      setError(JSON.stringify(error, null, 2));
-    }
-    refetch();
-  };
-
   useEffect(() => {
     if (
       form?.values?.colorScheme !== undefined &&
@@ -163,6 +139,12 @@ const Account = ({ account }) => {
       setEdit({ ...edit, [field]: true });
       form.setFieldValue(field, value);
     }
+    setInitialValues({ ...initialValues, [field]: value, ...actionData?.data });
+    form.setInitialValues({
+      ...initialValues,
+      [field]: value,
+      ...actionData?.data
+    });
     setFields(fields + 1);
   };
   const remove = (field) => {
@@ -174,6 +156,10 @@ const Account = ({ account }) => {
       setEdit({ ...edit, [field]: false });
       form.setFieldValue(field, null);
     }
+    const values = initialValues;
+    delete values[field];
+    setInitialValues(values);
+    form.setInitialValues(values);
     setFields(fields - 1);
   };
 
@@ -183,8 +169,13 @@ const Account = ({ account }) => {
       {errorMsg ? <Alert color="red">{errorMsg}</Alert> : null}
       <Form
         method="POST"
-        action={route}
-        onSubmit={form.onSubmit((_v, e) => submit(e.currentTarget))}
+        onSubmit={form.onSubmit((_v, e) => {
+          if (actionData?.errors) {
+            delete actionData?.errors;
+            form.clearErrors();
+          }
+          submit(e.currentTarget);
+        })}
       >
         <Stack>
           {edit?.file ? (
@@ -197,12 +188,10 @@ const Account = ({ account }) => {
               </Group>
               <Dropzone
                 onDrop={setImage}
-                //onReject={(files) => console.log('rejected files', files)}
                 maxSize={3 * 1024 ** 2}
                 accept={IMAGE_MIME_TYPE}
                 multiple={false}
                 maxFiles={1}
-                //useFsAccessApi={false}
               >
                 <Group
                   justify="center"
@@ -325,7 +314,7 @@ const Account = ({ account }) => {
               label="Display Name"
               name="displayName"
               type="text"
-              placeholder="Enter a Display"
+              placeholder="Enter a Display Name"
               rightSection={
                 <CancelActionIcon action={() => remove('displayName')} />
               }
@@ -370,13 +359,13 @@ const Account = ({ account }) => {
               </Group>
               <PasswordInput
                 label="Current Password"
-                name="cpassword"
+                name="currentPassword"
                 placeholder="Current Password"
                 {...form.getInputProps('cpassword')}
               />
               <PasswordInput
                 label="New Password"
-                name="npassword"
+                name="newPassword"
                 placeholder="New Password"
                 {...form.getInputProps('npassword')}
               />

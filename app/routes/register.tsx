@@ -13,7 +13,9 @@ import { redirectWithToast } from 'remix-toast';
 import { getSession, commitSession } from '~/utils/session.server';
 import { Register } from '~/components/Register';
 import { createUser } from '~/lib/user.server';
+import { registerSchema } from '~/types/User';
 import { site } from '@/grazie';
+import { validateSchema } from '~/utils/validation';
 
 export const meta: MetaFunction = () => {
   return [
@@ -28,15 +30,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   if (session.has('userId')) {
     // Redirect to the home page if they are already signed in.
     return redirect('/');
+  } else {
+    return null;
   }
-
-  const data = { error: session.get('error') };
-
-  return json(data, {
-    headers: {
-      'Set-Cookie': await commitSession(session)
-    }
-  });
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -46,18 +42,17 @@ export async function action({ request }: ActionFunctionArgs) {
   const username = form.get('username') as string;
   const email = form.get('email') as string;
   const password = form.get('password') as string;
+  const data = { username, displayName, email, password };
+  const errors = validateSchema(registerSchema, data);
 
-  const user = await createUser({ username, displayName, email, password });
+  if (errors) {
+    return json({ errors, data });
+  }
 
-  if (user?.id === null) {
-    session.flash('error', 'Invalid username/password');
+  const user = await createUser(data);
 
-    // Redirect back to the login page with errors.
-    return redirect('/login', {
-      headers: {
-        'Set-Cookie': await commitSession(session)
-      }
-    });
+  if (user?.errors) {
+    return json({ errors: user.errors, data });
   }
 
   session.set('userId', user.id);
