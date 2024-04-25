@@ -46,7 +46,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   await sentry(request, {
     action: 'update',
     subject: 'Post',
-    items: posts
+    items: posts?.nodes
   });
   return json({
     _page: 'dashboard',

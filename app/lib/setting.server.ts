@@ -85,7 +85,6 @@ export async function setting({
     if (name && !value) {
       const cache = DataCache.get(`setting.${name}`);
       if (cache) {
-        log.info(`Using cached setting ${name}`);
         return cache;
       }
     }

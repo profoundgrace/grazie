@@ -35,7 +35,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
     offset: page ? (page - 1) * count : 0
   };
   const pages = await getPages(query);
-  await sentry(request, { action: 'update', subject: 'Page', items: pages });
+  await sentry(request, {
+    action: 'update',
+    subject: 'Page',
+    items: pages?.nodes
+  });
   return json({
     _page: 'dashboard',
     pages,

@@ -36,7 +36,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       {
         action: 'read',
         subject: 'Post',
-        items: posts
+        items: posts?.nodes ?? [{}]
       },
       // Prevents 404 error
       { reject: false }

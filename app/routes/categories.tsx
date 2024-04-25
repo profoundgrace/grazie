@@ -27,7 +27,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   await sentry(request, {
     action: 'read',
     subject: 'Category',
-    items: categories
+    items: categories?.nodes
   });
   const data = { categories };
 

@@ -13,7 +13,7 @@ import { site } from '@/grazie';
 import { pagerParams } from '~/utils/searchParams.server';
 import Pager from '~/components/Pager/Pager';
 import { subject, useAbility } from '~/hooks/useAbility';
-import { createAbility } from '~/utils/session.server';
+import { createAbility, getSession } from '~/utils/session.server';
 import { sentry } from '~/lib/sentry.server';
 
 export function meta() {
@@ -22,8 +22,12 @@ export function meta() {
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const { count, page, pagerLoader } = pagerParams(request, 25);
+  const session = await getSession(request.headers.get('Cookie'));
 
   const query = {
+    filter: {
+      authorId: session.get('userId') as number
+    },
     limit: count,
     offset: page ? (page - 1) * count : 0
   };
@@ -35,7 +39,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   await sentry(request, {
     action: 'read',
     subject: 'Note',
-    items: notes
+    items: notes.nodes
   });
   const data = { notes, pager: pagerLoader(notes.totalCount) };
 

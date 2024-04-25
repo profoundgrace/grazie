@@ -33,6 +33,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
   useRouteError
 } from '@remix-run/react';
 import { getToast } from 'remix-toast';
@@ -70,11 +71,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 export default function App() {
+  const data = useLoaderData();
   return (
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <meta property="og:site_name" content={data?.site?.name} />
         <Meta />
         <Links />
         <ColorSchemeScript defaultColorScheme="auto" />
