@@ -29,12 +29,28 @@ export async function createUser({
     const userCheck = await prisma.user.findMany({
       where: {
         OR: [{ username }, { email }]
+      },
+      select: {
+        username: true,
+        email: true
       }
     });
 
     if (userCheck.length > 0) {
-      throw new Error('Username or Email already taken');
+      const errors = {} as { username?: string; email?: string };
+
+      userCheck.forEach((u) => {
+        if (u?.username === username) {
+          errors.username = `${username} is already registered`;
+        }
+        if (u?.email === email) {
+          errors.email = `${email} is already registered`;
+        }
+      });
+
+      return { errors };
     }
+
     if (!displayName) {
       displayName = username as string;
     }
@@ -134,6 +150,7 @@ export async function updateUser({
       updatedAt: date,
       avatar: avatar ? '' : undefined
     };
+    const errors = {};
     if (username) {
       const usernameCheck = await prisma.user.findMany({
         where: {
@@ -151,7 +168,7 @@ export async function updateUser({
         }
       });
       if (usernameCheck.length > 0) {
-        throw new Error('Username is already in use');
+        errors.username = 'Username is already in use';
       }
       data.username = username;
     }
@@ -178,7 +195,7 @@ export async function updateUser({
         }
       });
       if (emailCheck.length > 0) {
-        throw new Error('Email address is already in use');
+        errors.email = 'Email address is already in use';
       }
       // Add email verification
       data.email = email;
@@ -190,10 +207,13 @@ export async function updateUser({
       );
 
       if (!verification) {
-        throw new Error('Incorrect Password');
+        error.currentPassword = 'Incorrect Password';
       }
 
       data.password = newPassword;
+    }
+    if (Object.keys(errors).length > 0) {
+      return { errors };
     }
 
     const user = await prisma.user.update({
@@ -250,14 +270,17 @@ export async function userLogin({ email, password }: UserLogin) {
     });
 
     if (!login) {
-      throw new Error('Incorrect Username or Email');
+      return { errors: { email: 'Email Address is not registered' } };
     }
+
     const verification = await bcrypt.compare(password, login.password);
 
     if (!verification) {
-      throw new Error('Incorrect Password');
+      return { errors: { password: 'Incorrect Password' } };
     }
+
     const date = timeString();
+
     await prisma.user.update({
       where: {
         id: login.id
