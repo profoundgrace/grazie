@@ -1,4 +1,4 @@
-import { Anchor, Group, ActionIcon, rem, Text } from '@mantine/core';
+import { Group, ActionIcon, rem, Text } from '@mantine/core';
 import {
   IconBrandTwitter,
   IconBrandYoutube,
@@ -6,29 +6,18 @@ import {
 } from '@tabler/icons-react';
 import { site } from '@/grazie';
 import classes from '~/themes/favorite/styles/Footer.module.css';
-import { useTheme } from '~/hooks/useTheme';
+import { FooterLinks } from '~/components/FooterLinks';
 
 export function Footer() {
-  const {
-    data: {
-      footer: { links },
-      site
-    }
-  } = useTheme();
-
-  const items = links.map((link) => (
-    <Anchor c="dimmed" key={link.label} href={link.to} lh={1} size="sm">
-      {link.label}
-    </Anchor>
-  ));
-
   return (
     <div className={classes.footer}>
       <div className={classes.inner}>
         <Text fw={500} size="md">
           {site?.name ?? 'Site Name'}
         </Text>
-        <Group className={classes.links}>{items}</Group>
+        <Group className={classes.links}>
+          <FooterLinks />
+        </Group>
         <Group gap="xs" justify="flex-end" wrap="nowrap">
           <ActionIcon size="lg" variant="default" radius="xl">
             <IconBrandTwitter
