@@ -32,11 +32,13 @@ import { TimeSince } from '~/components/DateTime';
 import HTMLContent from '~/components/Tiptap/HTMLContent';
 import classes from '~/components/Post/PostCard.module.css';
 import { CategoryPost } from '~/types/CategoryPost';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import PostEditor from './Editor';
 import { unifiedStyles } from '~/utils/unify';
 import { useClipboard, useTimeout } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
+import { subject, useAbility } from '~/hooks/useAbility';
+import useUser from '~/hooks/useUser';
 
 interface ArticleCardProps {
   id: number;
@@ -86,6 +88,12 @@ export default function Post({ data }: { data: ArticleCardProps }) {
     favoritesCount
   } = data;
   const theme = useMantineTheme();
+  const ability = useAbility();
+  const canEditPost = useMemo(
+    () => ability?.can('edit', subject('post', data)),
+    [ability]
+  );
+  const { isLoggedIn } = useUser();
   const [openEditor, setOpenEditor] = useState(null);
   const submit = useSubmit();
   const clipboard = useClipboard();
@@ -240,56 +248,63 @@ export default function Post({ data }: { data: ArticleCardProps }) {
             </Group>
 
             <Group gap={0}>
-              <ActionIcon
-                variant="subtle"
-                color={theme.colors.red[6]}
-                onClick={() =>
-                  submit(
-                    { postId: id },
-                    {
-                      navigate: false,
-                      method: 'post',
-                      encType: 'application/json',
-                      action: `/post/favorite`
-                    }
-                  )
-                }
-              >
-                {favorites?.length > 0 ? (
-                  <IconHeartFilled size={22} color={theme.colors.red[6]} />
-                ) : (
-                  <IconHeart
-                    size={22}
+              {isLoggedIn && (
+                <>
+                  <ActionIcon
+                    variant="subtle"
                     color={theme.colors.red[6]}
-                    stroke={1.5}
-                  />
-                )}
-              </ActionIcon>
-              <ActionIcon
-                variant="subtle"
-                color={theme.colors.yellow[6]}
-                onClick={() =>
-                  submit(
-                    { postId: id },
-                    {
-                      navigate: false,
-                      method: 'post',
-                      encType: 'application/json',
-                      action: `/post/bookmark`
+                    onClick={() =>
+                      submit(
+                        { postId: id },
+                        {
+                          navigate: false,
+                          method: 'post',
+                          encType: 'application/json',
+                          action: `/post/favorite`
+                        }
+                      )
                     }
-                  )
-                }
-              >
-                {bookmarks?.length > 0 ? (
-                  <IconBookmarkFilled size={22} color={theme.colors.red[6]} />
-                ) : (
-                  <IconBookmark
-                    size={22}
+                  >
+                    {favorites?.length > 0 ? (
+                      <IconHeartFilled size={22} color={theme.colors.red[6]} />
+                    ) : (
+                      <IconHeart
+                        size={22}
+                        color={theme.colors.red[6]}
+                        stroke={1.5}
+                      />
+                    )}
+                  </ActionIcon>
+                  <ActionIcon
+                    variant="subtle"
                     color={theme.colors.yellow[6]}
-                    stroke={1.5}
-                  />
-                )}
-              </ActionIcon>
+                    onClick={() =>
+                      submit(
+                        { postId: id },
+                        {
+                          navigate: false,
+                          method: 'post',
+                          encType: 'application/json',
+                          action: `/post/bookmark`
+                        }
+                      )
+                    }
+                  >
+                    {bookmarks?.length > 0 ? (
+                      <IconBookmarkFilled
+                        size={22}
+                        color={theme.colors.red[6]}
+                      />
+                    ) : (
+                      <IconBookmark
+                        size={22}
+                        color={theme.colors.yellow[6]}
+                        stroke={1.5}
+                      />
+                    )}
+                  </ActionIcon>
+                </>
+              )}
               <ActionIcon
                 variant="subtle"
                 color={copied ? theme.colors.green[7] : theme.colors.blue[6]}
@@ -316,37 +331,38 @@ export default function Post({ data }: { data: ArticleCardProps }) {
                   />
                 )}
               </ActionIcon>
-              <Menu trigger="click-hover" width="100px">
-                <Menu.Target>
-                  <ActionIcon
-                    variant="subtle"
-                    radius="md"
-                    aria-label="Role Editor"
-                  >
-                    <IconDotsVertical
-                      style={actionIconStyle}
-                      stroke={actionIconStroke}
-                    />
-                  </ActionIcon>
-                </Menu.Target>
-
-                <Menu.Dropdown>
-                  <Menu.Label>Post</Menu.Label>
-                  <Menu.Item
-                    leftSection={
-                      <IconEdit style={{ width: rem(14), height: rem(14) }} />
-                    }
-                    onClick={() => setOpenEditor(true)}
-                  >
-                    Edit
-                  </Menu.Item>
-                </Menu.Dropdown>
-              </Menu>
+              {canEditPost && (
+                <Menu trigger="click-hover" width="100px">
+                  <Menu.Target>
+                    <ActionIcon
+                      variant="subtle"
+                      radius="md"
+                      aria-label="Role Editor"
+                    >
+                      <IconDotsVertical
+                        style={actionIconStyle}
+                        stroke={actionIconStroke}
+                      />
+                    </ActionIcon>
+                  </Menu.Target>
+                  <Menu.Dropdown>
+                    <Menu.Label>Post</Menu.Label>
+                    <Menu.Item
+                      leftSection={
+                        <IconEdit style={{ width: rem(14), height: rem(14) }} />
+                      }
+                      onClick={() => setOpenEditor(true)}
+                    >
+                      Edit
+                    </Menu.Item>
+                  </Menu.Dropdown>
+                </Menu>
+              )}
             </Group>
           </Group>
         </Card.Section>
       </Card>
-      {openEditor && (
+      {canEditPost && openEditor && (
         <Grid.Col span={12}>
           <PostEditor {...data} closeEditor={setOpenEditor} />
         </Grid.Col>
