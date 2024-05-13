@@ -90,7 +90,8 @@ export const accountSchema = ({
   newPassword,
   password,
   colorScheme,
-  file
+  file,
+  avatar
 }) => {
   const schema = {};
   if (id) {
@@ -139,6 +140,14 @@ export const accountSchema = ({
   if (file) {
     schema.file = Joi.string();
     schema.fileType = Joi.string();
+  }
+
+  if (avatar) {
+    schema.avatar = Joi.object({
+      mime: Joi.string(),
+      base64: Joi.string(),
+      name: Joi.string()
+    });
   }
   return Joi.object(schema);
 };

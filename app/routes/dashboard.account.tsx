@@ -70,7 +70,7 @@ export async function action({ request }: ActionFunctionArgs) {
     avatar.mime = fileType;
     avatar.base64 = file.split(',')[1];
     updates.avatar = avatar;
-    schema.file = true;
+    schema.avatar = true;
   }
   const errors = validateSchema(accountSchema(updates), updates);
   if (errors) {
