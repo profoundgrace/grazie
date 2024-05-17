@@ -12,6 +12,7 @@ import { Superscript } from '@tiptap/extension-superscript';
 import { TextAlign } from '@tiptap/extension-text-align';
 import { Underline } from '@tiptap/extension-underline';
 import { generateHTML } from '@tiptap/html';
+import YouTube from '@tiptap/extension-youtube';
 
 export default function HTMLContent({
   content,
@@ -35,7 +36,8 @@ export default function HTMLContent({
             Subscript,
             Superscript,
             TextAlign,
-            Underline
+            Underline,
+            YouTube
           ])
         }}
       />

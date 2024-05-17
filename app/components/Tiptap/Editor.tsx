@@ -27,6 +27,8 @@ import { Underline } from '@tiptap/extension-underline';
 import { TextAlign } from '@tiptap/extension-text-align';
 import { Superscript } from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
+import YouTube from '@tiptap/extension-youtube';
+import YouTubeEmbed from './Extensions/YouTube';
 import classes from './Tiptap.module.css';
 
 const iconStroke = 1.7;
@@ -72,7 +74,8 @@ export default function Default({
       Superscript,
       SubScript,
       Highlight,
-      TextAlign.configure({ types: ['heading', 'paragraph'] })
+      TextAlign.configure({ types: ['heading', 'paragraph'] }),
+      YouTube.configure({ width: 280, height: 158 })
     ],
     content: form.values[name],
     onUpdate({ editor }) {
@@ -132,6 +135,10 @@ export default function Default({
           <RichTextEditor.AlignCenter />
           <RichTextEditor.AlignJustify />
           <RichTextEditor.AlignRight />
+        </RichTextEditor.ControlsGroup>
+
+        <RichTextEditor.ControlsGroup>
+          <YouTubeEmbed />
         </RichTextEditor.ControlsGroup>
       </RichTextEditor.Toolbar>
 

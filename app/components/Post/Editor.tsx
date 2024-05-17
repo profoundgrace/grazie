@@ -4,7 +4,6 @@
  * @license MIT see LICENSE
  */
 import {
-  Alert,
   Button,
   Card,
   Grid,
@@ -90,7 +89,8 @@ const PostEditor = ({
           }
     },
     validate: {
-      search: (value) => (value.length === 0 ? 'Post body is requred' : null)
+      // We want this to be required, but need a workaround if only a video is in the body
+      //search: (value) => (value.length === 0 ? 'Post body is required' : null)
     }
   });
 
@@ -263,7 +263,12 @@ const PostEditor = ({
               </Stack>
               <SEO form={form} />
               <Group align="center" mt="md">
-                <Button color="green" type="submit" variant="light">
+                <Button
+                  color="green"
+                  type="submit"
+                  variant="light"
+                  disabled={!(Number(form.values.body?.content?.length) > 0)}
+                >
                   {id ? 'Update' : 'Save'}
                 </Button>
                 {closeEditor && <CloseBtn />}
