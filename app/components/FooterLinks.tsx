@@ -6,45 +6,49 @@ import { Anchor } from '@mantine/core';
 
 export function FooterLinks() {
   const {
-    data: { navbar }
+    data: { footer, navbar }
   } = useTheme();
   const ability = useAbility();
+  const { links } = footer ?? navbar ?? { links: [] };
   return (
-    <>
-      {navbar?.links?.map((link, index) => (
-        <Fragment key={`footer-link-${index}`}>
-          {link?.ability ? (
-            <>
-              {ability.can(
-                link.ability.action,
-                subject(link.ability.subject, link?.ability?.item ?? {})
-              ) && (
-                <Anchor
-                  component={Link}
-                  c="dimmed"
-                  key={link.label}
-                  to={link.to}
-                  lh={1}
-                  size="sm"
-                >
-                  {link.label}
-                </Anchor>
-              )}
-            </>
-          ) : (
-            <Anchor
-              component={Link}
-              c="dimmed"
-              key={link.label}
-              to={link.to}
-              lh={1}
-              size="sm"
-            >
-              {link.label}
-            </Anchor>
-          )}
-        </Fragment>
-      ))}
-    </>
+    Array.isArray(links) &&
+    links?.length > 0 && (
+      <>
+        {links?.map((link, index) => (
+          <Fragment key={`footer-link-${index}`}>
+            {link?.ability ? (
+              <>
+                {ability.can(
+                  link.ability.action,
+                  subject(link.ability.subject, link?.ability?.item ?? {})
+                ) && (
+                  <Anchor
+                    component={Link}
+                    c="dimmed"
+                    key={link.label}
+                    to={link.to}
+                    lh={1}
+                    size="sm"
+                  >
+                    {link.label}
+                  </Anchor>
+                )}
+              </>
+            ) : (
+              <Anchor
+                component={Link}
+                c="dimmed"
+                key={link.label}
+                to={link.to}
+                lh={1}
+                size="sm"
+              >
+                {link.label}
+              </Anchor>
+            )}
+          </Fragment>
+        ))}
+      </>
+    )
   );
 }
