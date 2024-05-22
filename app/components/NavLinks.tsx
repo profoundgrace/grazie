@@ -8,32 +8,36 @@ export function NavLinks({ className = undefined }: { className?: string }) {
     data: { navbar }
   } = useTheme();
   const ability = useAbility();
+  const { links } = navbar ?? { links: [] };
   return (
-    <>
-      {navbar?.links?.map((navlink, index) => (
-        <Fragment key={`navlink-${index}`}>
-          {navlink?.ability ? (
-            <>
-              {ability.can(
-                navlink.ability.action,
-                subject(navlink.ability.subject, navlink?.ability?.item ?? {})
-              ) && (
-                <Link to={navlink.to} className={className}>
-                  {navlink.label}
-                </Link>
-              )}
-            </>
-          ) : (
-            <Link
-              key={`navlink-${index}`}
-              to={navlink.to}
-              className={className}
-            >
-              {navlink.label}
-            </Link>
-          )}
-        </Fragment>
-      ))}
-    </>
+    Array.isArray(links) &&
+    links?.length > 0 && (
+      <>
+        {links?.map((navlink, index) => (
+          <Fragment key={`navlink-${index}`}>
+            {navlink?.ability ? (
+              <>
+                {ability.can(
+                  navlink.ability.action,
+                  subject(navlink.ability.subject, navlink?.ability?.item ?? {})
+                ) && (
+                  <Link to={navlink.to} className={className}>
+                    {navlink.label}
+                  </Link>
+                )}
+              </>
+            ) : (
+              <Link
+                key={`navlink-${index}`}
+                to={navlink.to}
+                className={className}
+              >
+                {navlink.label}
+              </Link>
+            )}
+          </Fragment>
+        ))}
+      </>
+    )
   );
 }
