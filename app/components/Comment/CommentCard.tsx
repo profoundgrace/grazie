@@ -14,10 +14,11 @@ import {
   rem,
   ActionIcon
 } from '@mantine/core';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import classes from '~/components/Comment/CommentCard.module.css';
 import { TimeSince } from '~/components/DateTime';
 import HTMLContent from '~/components/Tiptap/HTMLContent';
+import { subject, useAbility } from '~/hooks/useAbility';
 import CommentEditor from './Editor';
 import { IconArrowBack, IconDotsVertical, IconEdit } from '@tabler/icons-react';
 import { unifiedStyles } from '~/utils/unify';
@@ -30,6 +31,7 @@ export function CommentCard({
     id,
     postId,
     parentId,
+    authorId,
     author: { displayName, avatar },
     body,
     createdAt,
@@ -40,6 +42,16 @@ export function CommentCard({
   const [replyEditor, setReplyEditor] = useState(false);
   const [commentEditor, setCommentEditor] = useState(false);
   const [actions, setActions] = useState(false);
+  const ability = useAbility();
+  const canCreateComment = useMemo(
+    () => ability.can('create', subject('Comment', {})),
+    [ability]
+  );
+  const canUpdateComment = useMemo(
+    () => ability.can('update', subject('Comment', { authorId })),
+    [ability, authorId, id]
+  );
+  console.log(canCreateComment, canUpdateComment);
   const depth = parentId ? path.split('/').length - 1 : 0;
   useEffect(() => {
     if (replyEditor || commentEditor) {
@@ -82,48 +94,54 @@ export function CommentCard({
       </Box>
       {!actions && (
         <Group>
-          <Button
-            leftSection={<IconArrowBack size="20" />}
-            onClick={() => setReplyEditor(true)}
-            radius="xl"
-            size="compact-sm"
-            variant="light"
-          >
-            Reply
-          </Button>
-
-          <Menu trigger="click-hover" width="100px">
-            <Menu.Target>
-              <ActionIcon variant="subtle" radius="md" aria-label="Role Editor">
-                <IconDotsVertical
-                  style={actionIconStyle}
-                  stroke={actionIconStroke}
-                />
-              </ActionIcon>
-            </Menu.Target>
-
-            <Menu.Dropdown>
-              <Menu.Label>Comment</Menu.Label>
-              <Menu.Item
-                leftSection={
-                  <IconEdit style={{ width: rem(14), height: rem(14) }} />
-                }
-                onClick={() => setCommentEditor(true)}
-              >
-                Edit
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
+          {canCreateComment && (
+            <Button
+              leftSection={<IconArrowBack size="20" />}
+              onClick={() => setReplyEditor(true)}
+              radius="xl"
+              size="compact-sm"
+              variant="light"
+            >
+              Reply
+            </Button>
+          )}
+          {canUpdateComment && (
+            <Menu trigger="click-hover" width="100px">
+              <Menu.Target>
+                <ActionIcon
+                  variant="subtle"
+                  radius="md"
+                  aria-label="Role Editor"
+                >
+                  <IconDotsVertical
+                    style={actionIconStyle}
+                    stroke={actionIconStroke}
+                  />
+                </ActionIcon>
+              </Menu.Target>
+              <Menu.Dropdown>
+                <Menu.Label>Comment</Menu.Label>
+                <Menu.Item
+                  leftSection={
+                    <IconEdit style={{ width: rem(14), height: rem(14) }} />
+                  }
+                  onClick={() => setCommentEditor(true)}
+                >
+                  Edit
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
+          )}
         </Group>
       )}
-      {replyEditor && (
+      {replyEditor && canCreateComment && (
         <CommentEditor
           postId={postId}
           parentId={id}
           closeEditor={setReplyEditor}
         />
       )}
-      {commentEditor && (
+      {commentEditor && canUpdateComment && (
         <CommentEditor
           id={id}
           postId={postId}

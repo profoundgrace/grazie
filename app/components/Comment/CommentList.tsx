@@ -4,7 +4,7 @@
  * @license MIT see LICENSE
  */
 import { Box, Button, Loader, Text, Title } from '@mantine/core';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { CommentCard } from '~/components/Comment/CommentCard';
 import { Comment } from '~/types/Comment';
 import CommentEditor from './Editor';
@@ -26,6 +26,10 @@ export function CommentList({
   const [limit] = useState(count);
   const [offset] = useState(count);
   const ability = useAbility();
+  const canCreateComment = useMemo(
+    () => ability.can('create', subject('Comment', {})),
+    [ability]
+  );
   const fetcher = useFetcher();
   const { ref, inViewport } = useInViewport();
   const pages = Math.ceil(totalCount / count);
@@ -82,7 +86,7 @@ export function CommentList({
   return (
     <>
       <Title order={2}>Comments</Title>
-      {ability.can('create', subject('Comment', {})) && !openEditor && (
+      {canCreateComment && !openEditor && (
         <Box my={10}>
           <Button
             leftSection={<IconSquarePlus size={14} />}
@@ -93,7 +97,7 @@ export function CommentList({
           </Button>
         </Box>
       )}
-      {ability.can('create', subject('Comment', {})) && openEditor && (
+      {canCreateComment && openEditor && (
         <Box my={10}>
           <CommentEditor postId={postId} closeEditor={setOpenEditor} />
         </Box>
