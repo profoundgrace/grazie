@@ -8,7 +8,7 @@ import { format as dateFormat, formatDistanceToNow } from 'date-fns';
 
 interface DateTimeProps {
   format?: string;
-  timestamp: number;
+  timestamp: string | number;
   className?: string;
   fz?: string;
   pl?: number;
