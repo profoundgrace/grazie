@@ -7,7 +7,7 @@ import { Alert, Button, Card, Grid, Group, Stack, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import '@mantine/tiptap/styles.layer.css';
 import { Form, useSubmit } from '@remix-run/react';
-import type { Dispatch, SetStateAction } from 'react';
+import { useState, type Dispatch, type SetStateAction } from 'react';
 import { DebugCollapse } from '../DebugCollapse';
 import { Privilege } from '~/types/Privilege';
 
