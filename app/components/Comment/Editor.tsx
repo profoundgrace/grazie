@@ -18,9 +18,10 @@ import '@mantine/tiptap/styles.layer.css';
 import { Form, useLoaderData, useNavigate, useSubmit } from '@remix-run/react';
 import type { JSONContent } from '@tiptap/core';
 import type { Dispatch, SetStateAction } from 'react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import MantineEditor from '~/components/Tiptap/Editor';
 import { DebugCollapse } from '../DebugCollapse';
+import { useAbility } from '~/hooks/useAbility';
 
 interface Editor {
   id?: number | null;
@@ -52,17 +53,15 @@ const CommentEditor = ({
     }
   });
 
-  const loaderData = useLoaderData();
-
-  const [catSearchValue, setCatSearchValue] = useState('');
-
   const [errorMsg, setErrorMsg] = useState('');
 
   const route = 'comment';
 
   const submit = useSubmit();
 
-  const navigate = useNavigate();
+  const ability = useAbility();
+
+  const isAdmin = useMemo(() => ability.can('manage', 'Comment'), [ability]);
 
   const CloseBtn = () => {
     return closeEditor ? (
@@ -111,26 +110,36 @@ const CommentEditor = ({
                   name="body"
                   value={JSON.stringify(form.values.body)}
                 />
-                <Switch
-                  name="locked"
-                  checked={form?.values?.locked}
-                  size="lg"
-                  onLabel="Locked"
-                  offLabel="Unlocked"
-                  onChange={(event) =>
-                    form.setFieldValue('locked', event.currentTarget.checked)
-                  }
-                />
-                <Switch
-                  name="pinned"
-                  checked={form?.values?.pinned}
-                  size="lg"
-                  onLabel="Pinned"
-                  offLabel="Unpinned"
-                  onChange={(event) =>
-                    form.setFieldValue('pinned', event.currentTarget.checked)
-                  }
-                />
+                {isAdmin && (
+                  <>
+                    <Switch
+                      name="locked"
+                      checked={form?.values?.locked}
+                      size="lg"
+                      onLabel="Locked"
+                      offLabel="Unlocked"
+                      onChange={(event) =>
+                        form.setFieldValue(
+                          'locked',
+                          event.currentTarget.checked
+                        )
+                      }
+                    />
+                    <Switch
+                      name="pinned"
+                      checked={form?.values?.pinned}
+                      size="lg"
+                      onLabel="Pinned"
+                      offLabel="Unpinned"
+                      onChange={(event) =>
+                        form.setFieldValue(
+                          'pinned',
+                          event.currentTarget.checked
+                        )
+                      }
+                    />
+                  </>
+                )}
               </Stack>
               <Group align="center" mt="md">
                 <Button color="green" type="submit" variant="light">
