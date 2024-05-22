@@ -4,6 +4,7 @@
  * @license MIT see LICENSE
  */
 import { TypographyStylesProvider } from '@mantine/core';
+import { Link } from '@mantine/tiptap';
 import type { JSONContent } from '@tiptap/core';
 import { Highlight } from '@tiptap/extension-highlight';
 import { StarterKit } from '@tiptap/starter-kit';
@@ -37,7 +38,8 @@ export default function HTMLContent({
             Superscript,
             TextAlign,
             Underline,
-            YouTube
+            YouTube,
+            Link
           ])
         }}
       />
