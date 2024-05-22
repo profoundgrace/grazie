@@ -31,12 +31,18 @@ npm run dev
 
 This starts your app in development mode, rebuilding assets on file changes.
 
-### Generate Database Migration
+### Generate a Database Migration
 
 Replace "setup" below with a name for the migration:
 
 ```sh
 npx prisma migrate dev --name setup
+```
+
+### Generate an Empty Migration
+
+```sh
+npx prisma migrate dev --create-only
 ```
 
 ### Migrate Database
