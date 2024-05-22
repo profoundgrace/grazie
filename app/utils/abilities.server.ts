@@ -52,11 +52,16 @@ export async function abilityBuilder({
                 };
 
                 break;
+              case 'authorId':
+                rules.conditions = {
+                  authorId: userId
+                };
+
+                break;
               case 'userId':
                 rules.conditions = {
                   userId
                 };
-
                 break;
               default:
                 break;
