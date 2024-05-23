@@ -15,7 +15,6 @@ import {
 import { Link } from '@remix-run/react';
 import { IconShare, IconClipboardCheck } from '@tabler/icons-react';
 import { TimeSince } from '~/components/DateTime';
-import HTMLContent from '~/components/Tiptap/HTMLContent';
 import classes from '~/components/Page/PageCard.module.css';
 import { useEffect, useState } from 'react';
 import { useClipboard, useTimeout } from '@mantine/hooks';
@@ -23,26 +22,27 @@ import { notifications } from '@mantine/notifications';
 
 interface ArticleCardProps {
   image?: string;
-  createdAt?: number;
+  createdAt: number;
   title: string;
   body: object;
   footer?: string;
+  slug: string;
+  summary?: string;
   author: {
     name: string;
     description: string;
     image: string;
   };
-  updatedAt?: string;
+  updatedAt: string;
 }
 
 export default function PageCard({
   data: {
-    image = '',
     categories = [],
     createdAt,
-    body = {},
     title = '',
     slug,
+    summary,
     footer = '',
     author,
     updatedAt = ''
@@ -75,6 +75,17 @@ export default function PageCard({
     <Card mb={6} radius="md" className={classes.card}>
       <Card.Section className={classes.header}>
         <Group justify="space-between">
+          {title ? (
+            <Text
+              fw={700}
+              className={classes.title}
+              component={Link}
+              ml={4}
+              to={`/page/${slug}`}
+            >
+              {title}
+            </Text>
+          ) : null}
           <Group gap={0} p={4}>
             {categories?.length > 0 &&
               categories.map(
@@ -100,18 +111,12 @@ export default function PageCard({
           </Group>
         </Group>
       </Card.Section>
-      {title ? (
-        <Text
-          fw={700}
-          className={classes.title}
-          component={Link}
-          to={`/page/${slug}`}
-        >
-          {title}
-        </Text>
-      ) : null}
 
-      <HTMLContent content={body} />
+      {summary && (
+        <Text size="md" my={8}>
+          {summary}
+        </Text>
+      )}
 
       {footer ? (
         <Group mt="xs">
@@ -129,10 +134,10 @@ export default function PageCard({
               <Text size="sm" fw={500} pl={3}>
                 {author.name}
               </Text>
-              <Text size="xs" c="dimmed" pl={3}>
-                {author.description}
-              </Text>
             </div>
+            <Text size="xs" c="dimmed" pl={3}>
+              Last Update: <TimeSince timestamp={updatedAt} />
+            </Text>
           </Group>
           <Group gap={0}>
             <ActionIcon
