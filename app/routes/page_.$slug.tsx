@@ -7,8 +7,7 @@ import { Grid } from '@mantine/core';
 import type { LoaderFunctionArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { useLoaderData, useNavigate } from '@remix-run/react';
-import type { Page } from '~/types/Page';
-import PageCard from '~/components/Page/PageCard';
+import Page from '~/components/Page/Page';
 import { getPage } from '~/lib/page.server';
 import { site } from '@/grazie';
 import { createAbility } from '~/utils/session.server';
@@ -66,7 +65,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   return json(data);
 }
 
-export default function Page() {
+export default function PageView() {
   const data = useLoaderData<typeof loader>();
   const navigate = useNavigate();
   const { page } = data;
@@ -74,7 +73,7 @@ export default function Page() {
   return (
     <Grid>
       <Grid.Col span={12}>
-        <PageCard
+        <Page
           key={page.id}
           data={{
             ...page,
