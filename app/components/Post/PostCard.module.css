@@ -27,7 +27,7 @@
 }
 
 .body {
-  min-height: 60px;
+  min-height: 80px;
   padding: rem(7px) rem(10px);display: flex;
   flex-direction: column;
   overflow: hidden;
