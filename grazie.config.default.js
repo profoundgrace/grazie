@@ -13,13 +13,17 @@ export const pageName = 'Page';
 export const theme = Theme.theme;
 export const site = {
   name: 'Grazie!',
-  slogan: 'I love this shit',
+  slogan: 'Powered by Grazie!',
   description: 'My Grazie! Site',
   copyright: 2024,
   separator: ' | '
 };
 
-export const metaSettings = {};
+export const metaSettings = {
+  home: {
+    title: 'Home'
+  }
+};
 
 export const Pages = {
   root: 'Page',
