@@ -51,8 +51,14 @@ function outputSetting({ value, type }: { value: any; type?: string }) {
   }
 
   switch (type) {
-    case 'array' || 'object':
-      if (typeof value === 'object' || Array.isArray(value)) {
+    case 'array':
+      if (Array.isArray(value)) {
+        return value;
+      } else {
+        return JSON.parse(value);
+      }
+    case 'object':
+      if (typeof value === 'object') {
         return value;
       } else {
         return JSON.parse(value);
