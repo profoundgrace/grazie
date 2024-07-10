@@ -5,5 +5,8 @@ node_modules
 /public/build
 .env
 
-/prisma/*.db
-/prisma-sqlite/*.db
+/prisma/*
+
+**/*.db
+
+grazie.config.js
