@@ -77,7 +77,7 @@ export default function Default({
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       YouTube.configure({ width: 280, height: 158 })
     ],
-    content: form.values[name],
+    content: form?.values?.[name] ?? '',
     onUpdate({ editor }) {
       form.setFieldValue(name, editor?.getJSON());
       if (withSearch) {

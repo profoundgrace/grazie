@@ -99,7 +99,7 @@ export default function App() {
   );
 }
 
-function ErrorPage({ children }) {
+const ErrorPage: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <html lang="en">
       <head>
@@ -122,7 +122,7 @@ function ErrorPage({ children }) {
       </body>
     </html>
   );
-}
+};
 
 export function ErrorBoundary() {
   const error = useRouteError();
