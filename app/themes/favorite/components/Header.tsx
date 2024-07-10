@@ -39,6 +39,7 @@ import classes from '~/themes/favorite/styles/Header.module.css';
 import { useTheme } from '~/hooks/useTheme';
 import { NavLinks } from '~/components/NavLinks';
 import { To } from 'react-router';
+import { site as defaultSite } from '@/grazie';
 
 const userMenuData = [
   {
@@ -132,7 +133,7 @@ export function Header() {
               size="xl"
               variant="gradient"
             >
-              {site?.name ?? 'Site Name'}
+              {site?.name ?? defaultSite?.name ?? 'Site Name'}
             </Text>
           </Anchor>
 
@@ -262,7 +263,7 @@ export function Header() {
         onClose={closeDrawer}
         size="100%"
         padding="md"
-        title={site?.name ?? 'Site Name'}
+        title={site?.name ?? defaultSite?.name ?? 'Site Name'}
         hiddenFrom="sm"
         zIndex={1000000}
       >
