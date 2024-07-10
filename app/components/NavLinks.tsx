@@ -1,3 +1,8 @@
+/**
+ * Grazie
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { subject, useAbility } from '~/hooks/useAbility';
 import { Link } from '@remix-run/react';
 import { useTheme } from '~/hooks/useTheme';

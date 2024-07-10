@@ -1,3 +1,9 @@
+/**
+ * Grazie
+ * @package Meta Utils
+ * @copyright Copyright (c) 2024 David Dyess II
+ * @license MIT see LICENSE
+ */
 import { site } from '@/grazie';
 import { empty } from './generic';
 
