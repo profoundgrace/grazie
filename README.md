@@ -10,7 +10,7 @@ Grazie! is a themeable, standalone, and general purpose publishing platform buil
 Grazie! supports SQLite and has experimental PostgreSQL support (more database supported is planned). To select the database:
 
 1. Set .env `DATABASE_URL` variable:
-   - SQLite: `DATABASE_URL="file:./data.db"`
+   - SQLite: `DATABASE_URL="file:../data/data.db"`
    - PostgreSQL: `DATABASE_URL="postgresql://username:password@host:5432/database?schema=public"`
 
 Note: Replace `username`, `password`, `host`, `database` (and potentially schema=public) above with appropriate values
@@ -20,6 +20,31 @@ Note: Replace `username`, `password`, `host`, `database` (and potentially schema
    - PostgreSQL: `/prisma-pg` as `/prisma`
 
 The primary limitation of PostgreSQL is it is currently limited to `string` columns when `json` columns would be more efficient. In the future I plan to add database adapters to mitigate this limitation and enable the possibility of NoSQL databases.
+
+Use of the `/data` folder for SQLite databases is optional, but recommended. If the `/data` folder is used for other purposes, internally, the name will be configurable, so you can obfuscate the folder name if you wish.
+
+## Environment Variables
+
+- DATABASE_URL - The database connection string or path to the SQLite database file, relative to the `/prisma` folder
+- AWS_ACCESS_KEY_ID - AWS access key ID
+- AWS_SECRET_ACCESS_KEY - AWS secret access key
+- AWS_DEFAULT_REGION - AWS default region
+- AWS_S3_BUCKET - AWS S3 bucket name
+- S3_PROVIDER - "linode" or "aws"
+- MAIL_NO_REPLY - Email address to use for the "no reply" email address
+- MAIL_SUPPORT - Email address to use for support emails
+- SMTP_HOST - SMTP host
+- SMTP_PORT - SMTP port
+- SMTP_USER - SMTP user
+- SMTP_PASSWORD - SMTP password
+- SMTP_SECURE - SMTP secure ("true"/"false")
+- SESSION_NAME - Session name for the cookie
+- SESSION_DOMAIN - Session domain for the cookie
+- SESSION_SECURE - Session secure for the cookie ("true"/"false")
+- SESSION_SECRET - Session secret for the cookie
+- SESSION_TTL - Session TTL in seconds
+- THEME - Theme name
+- ADMINS - Comma separated list of email addresses to auto assign as admins
 
 ## Development
 
