@@ -1,4 +1,4 @@
-import { Divider, Fieldset, Stack, TextInput, Textarea } from '@mantine/core';
+import { Fieldset, TextInput, Textarea } from '@mantine/core';
 
 export function SEO({ form }) {
   return (

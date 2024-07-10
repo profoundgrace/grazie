@@ -51,7 +51,6 @@ export function CommentCard({
     () => ability.can('update', subject('Comment', { authorId })),
     [ability, authorId, id]
   );
-  console.log(canCreateComment, canUpdateComment);
   const depth = parentId ? path.split('/').length - 1 : 0;
   useEffect(() => {
     if (replyEditor || commentEditor) {

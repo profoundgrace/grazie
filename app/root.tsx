@@ -57,7 +57,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       user,
       theme: {
         footer: {
-          links: await setting({ name: 'footer.links', defaultValue: [] })
+          links: await setting({ name: 'footer.links', defaultValue: [] }),
+          social: await setting({ name: 'footer.social', defaultValue: {} })
         },
         navbar: {
           links: await setting({ name: 'navbar.links', defaultValue: [] })
