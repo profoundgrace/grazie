@@ -35,4 +35,12 @@ export type Post = {
   body: object;
   author: { displayName: string };
   categories?: CategoryPost[];
+  meta?: {
+    seo?: {
+      title?: string;
+      description?: string;
+      keywords?: string;
+      image?: string;
+    };
+  };
 };

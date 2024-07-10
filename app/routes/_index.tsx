@@ -20,17 +20,18 @@ import { setting } from '~/lib/setting.server';
 import { pagerParams } from '~/utils/searchParams.server';
 import { site, metaSettings } from '@/grazie';
 import { createAbility, getSession } from '~/utils/session.server';
+import { SEO } from '~/utils/meta';
 
 export const meta: MetaFunction = () => {
-  return [
-    {
-      title: metaSettings?.home?.title ?? site?.name ?? 'New Remix App'
+  return SEO({
+    meta: {
+      seo: {
+        title: metaSettings?.home?.title ?? '',
+        description: site?.description
+      }
     },
-    {
-      name: 'description',
-      content: site?.description ?? 'Welcome to Remix!'
-    }
-  ];
+    contentPage: false
+  });
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {

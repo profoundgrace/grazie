@@ -16,6 +16,9 @@ import { useState } from 'react';
 import PostEditor from '~/components/Post/Editor';
 import { createAbility, getSession } from '~/utils/session.server';
 import { sentry } from '~/lib/sentry.server';
+import { empty } from '~/utils/generic';
+import { SEO } from '~/utils/meta';
+import type { Post as PostType } from '~/types/Post';
 
 export function meta({
   data: {
@@ -27,32 +30,16 @@ export function meta({
       author: { displayName }
     }
   }
+}: {
+  data: { post: PostType };
 }) {
-  if (meta && typeof meta === 'string') {
-    meta = JSON.parse(meta);
-  }
-  return [
-    {
-      title: `${meta?.seo?.title ?? title ?? ''}${site?.separator}${site?.name}`
-    },
-    {
-      name: 'description',
-      content: `${meta?.seo?.description}`
-    },
-    { keywords: meta?.seo?.keywords },
-    {
-      property: 'og:title',
-      content: meta?.seo?.title ?? title ?? 'Page'
-    },
-    { property: 'og:type', content: 'article' },
-    { name: 'author', property: 'og:author', content: displayName },
-    {
-      property: 'og:published_time',
-      content: publishedAt ?? createdAt
-    },
-    { property: 'og:image', content: meta?.seo?.image },
-    { property: 'og:description', content: meta?.seo?.description }
-  ];
+  return SEO({
+    createdAt,
+    title,
+    meta,
+    publishedAt,
+    author: displayName
+  });
 }
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
@@ -67,7 +54,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const data = {
     post,
     comments: await getComments({
-      filter: { postId: post.id },
+      filter: { postId: post?.id },
       sort: { field: 'path', order: 'asc' },
       limit: 10
     })
