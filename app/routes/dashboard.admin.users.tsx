@@ -46,7 +46,7 @@ export default function UserAdmin() {
   const { users } = useLoaderData();
 
   const rows = users.nodes.map((row) => (
-    <Table.Tr key={row.slug}>
+    <Table.Tr key={`user-${row.id}-${row.username}`}>
       <Table.Td>{row.id}</Table.Td>
       <Table.Td>{row.username}</Table.Td>
       <Table.Td>{row.displayName}</Table.Td>
