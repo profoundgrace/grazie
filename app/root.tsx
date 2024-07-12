@@ -27,6 +27,7 @@ import {
 } from '@remix-run/node';
 import {
   isRouteErrorResponse,
+  Link,
   Links,
   LiveReload,
   Meta,
@@ -34,7 +35,8 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
-  useRouteError
+  useRouteError,
+  useRouteLoaderData
 } from '@remix-run/react';
 import { getToast } from 'remix-toast';
 import { AbilityProvider } from '~/components/AbilityProvider';
@@ -79,6 +81,7 @@ export default function App() {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <meta property="og:site_name" content={data?.site?.name} />
+        <title>{data.site.name}</title>
         <Meta />
         <Links />
         <ColorSchemeScript defaultColorScheme="auto" />
@@ -100,26 +103,38 @@ export default function App() {
   );
 }
 
-const ErrorPage: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const ErrorPage: React.FC<{
+  children: React.ReactNode;
+  status?: number | string;
+}> = ({ children, status }) => {
+  const data = useRouteLoaderData('root');
   return (
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <meta title="Error" />
+        <meta property="og:site_name" content={data?.site?.name} />
+        <title>
+          {data.site.name}
+          {site?.separator ?? ' | '}
+          {status}
+        </title>
         <Meta />
         <Links />
         <ColorSchemeScript />
       </head>
       <body>
-        <MantineProvider defaultColorScheme="auto">
-          <ThemeProvider>
-            {children}
-            <ScrollRestoration />
-            <Scripts />
-            <LiveReload />
-          </ThemeProvider>
-        </MantineProvider>
+        <AbilityProvider>
+          <MantineProvider defaultColorScheme="dark" theme={theme}>
+            <ThemeProvider>
+              {children}
+              <ScrollRestoration />
+              <Scripts />
+              <LiveReload />
+            </ThemeProvider>
+            <Notifications />
+          </MantineProvider>
+        </AbilityProvider>
       </body>
     </html>
   );
@@ -132,7 +147,7 @@ export function ErrorBoundary() {
     switch (error.status) {
       case 404:
         return (
-          <ErrorPage>
+          <ErrorPage status="Page Not Found">
             <Container className={classes.root}>
               <div className={classes.label}>404</div>
               <Title className={classes.title}>
@@ -147,7 +162,7 @@ export function ErrorBoundary() {
                 Please check the URL, and failing that, report the issue to us.
               </Text>
               <Group justify="center">
-                <Button variant="subtle" size="md">
+                <Button variant="subtle" size="md" component={Link} to="/">
                   Take me back to home page
                 </Button>
               </Group>
@@ -156,7 +171,7 @@ export function ErrorBoundary() {
         );
       default:
         return (
-          <ErrorPage>
+          <ErrorPage status="Error">
             <Container className={classes.root}>
               <div className={classes.label}>{error.status}</div>
               <Text
