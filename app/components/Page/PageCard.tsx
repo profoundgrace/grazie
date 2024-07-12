@@ -5,6 +5,7 @@
  */
 import {
   ActionIcon,
+  Anchor,
   Avatar,
   Badge,
   Card,
@@ -76,15 +77,13 @@ export default function PageCard({
       <Card.Section className={classes.header}>
         <Group justify="space-between">
           {title ? (
-            <Text
-              fw={700}
+            <Anchor
               className={classes.title}
               component={Link}
-              ml={4}
               to={`/page/${slug}`}
             >
               {title}
-            </Text>
+            </Anchor>
           ) : null}
           <Group gap={0} p={4}>
             {categories?.length > 0 &&

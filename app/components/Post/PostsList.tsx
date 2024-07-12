@@ -10,7 +10,7 @@ import Pager from '~/components/Pager/Pager';
 import { subject, useAbility } from '~/hooks/useAbility';
 import { loader } from '~/routes/posts';
 
-export default function Articles() {
+export default function PostsList() {
   const data = useLoaderData<typeof loader>();
   const navigate = useNavigate();
   const ability = useAbility();

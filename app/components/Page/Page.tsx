@@ -10,6 +10,7 @@ import {
   Card,
   Group,
   Text,
+  Title,
   useMantineTheme
 } from '@mantine/core';
 import { Link } from '@remix-run/react';
@@ -77,14 +78,9 @@ export default function PageCard({
       <Card.Section className={classes.header}>
         <Group justify="space-between">
           {title ? (
-            <Text
-              fw={700}
-              className={classes.title}
-              component={Link}
-              to={`/page/${slug}`}
-            >
+            <Title order={1} className={classes.title}>
               {title}
-            </Text>
+            </Title>
           ) : null}
           <Group gap={0} p={4}>
             {categories?.length > 0 &&

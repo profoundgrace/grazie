@@ -128,10 +128,7 @@ export default function PostCard({ data }: { data: ArticleCardProps }) {
                 <Anchor
                   className={classes.title}
                   component={Link}
-                  fw={700}
-                  gradient={{ from: 'indigo', to: 'blue', deg: 90 }}
                   to={`/post/${slug}`}
-                  variant="gradient"
                 >
                   {title}
                 </Anchor>
@@ -148,11 +145,7 @@ export default function PostCard({ data }: { data: ArticleCardProps }) {
             <Anchor
               className={classes.title}
               component={Link}
-              fw={700}
-              gradient={{ from: 'indigo', to: 'blue', deg: 90 }}
-              pl={4}
               to={`/post/${slug}`}
-              variant="gradient"
             >
               {title}
             </Anchor>

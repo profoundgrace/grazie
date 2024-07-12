@@ -12,6 +12,7 @@ import {
   Group,
   Menu,
   Text,
+  Title,
   rem,
   useMantineTheme
 } from '@mantine/core';
@@ -135,14 +136,9 @@ export default function Post({ data }: { data: ArticleCardProps }) {
                   )
                 )
               ) : (
-                <Text
-                  className={classes.title}
-                  fw={700}
-                  gradient={{ from: 'indigo', to: 'blue', deg: 90 }}
-                  variant="gradient"
-                >
+                <Title order={1} className={classes.title}>
                   {title}
-                </Text>
+                </Title>
               )}
             </Group>
 
@@ -153,15 +149,9 @@ export default function Post({ data }: { data: ArticleCardProps }) {
         </Card.Section>
         {title && categories?.length > 0 ? (
           <Card.Section className={classes.header}>
-            <Text
-              className={classes.title}
-              fw={700}
-              gradient={{ from: 'indigo', to: 'blue', deg: 90 }}
-              pl={4}
-              variant="gradient"
-            >
+            <Title order={1} className={classes.title}>
               {title}
-            </Text>
+            </Title>
           </Card.Section>
         ) : null}
         <Card.Section

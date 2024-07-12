@@ -3,7 +3,7 @@
  * @copyright Copyright (c) 2024 David Dyess II
  * @license MIT see LICENSE
  */
-import { Card, Group, Text, useMantineTheme } from '@mantine/core';
+import { Card, Group, Text, Title, useMantineTheme } from '@mantine/core';
 import classes from '~/components/Category/CategoryCard.module.css';
 import { Category } from '~/types/Category';
 
@@ -25,9 +25,9 @@ export default function PostCard({
 
   return (
     <Card withBorder mb={6} radius="md" className={classes.card}>
-      <Text fw={700} className={classes.title}>
+      <Title order={3} className={classes.title}>
         {name}
-      </Text>
+      </Title>
 
       {description}
 

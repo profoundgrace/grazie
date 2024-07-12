@@ -14,6 +14,7 @@ import {
   ScrollArea,
   Text,
   ThemeIcon,
+  Title,
   UnstyledButton,
   useMantineTheme
 } from '@mantine/core';
@@ -127,14 +128,9 @@ export function Header() {
       <header className={classes.header}>
         <Group justify="space-between" h="100%">
           <Anchor component={Link} to="/" underline="never">
-            <Text
-              gradient={{ from: 'indigo', to: 'blue', deg: 90 }}
-              fw={500}
-              size="xl"
-              variant="gradient"
-            >
+            <Title order={1} size="1.50rem">
               {site?.name ?? defaultSite?.name ?? 'Site Name'}
-            </Text>
+            </Title>
           </Anchor>
 
           <Group h="100%" gap={0} visibleFrom="sm">
