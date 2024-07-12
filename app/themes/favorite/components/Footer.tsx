@@ -25,17 +25,12 @@ export function Footer() {
             {site?.copyright ?? defaultSite?.copyright ?? 'Copyright'}
           </Text>
         </Text>
-
         <Group className={classes.links}>
           <FooterLinks />
         </Group>
         <Group gap="xs" justify="flex-end" wrap="nowrap">
           <SocialIcons />{' '}
-          <ColorSchemeToggle
-            duration={2000}
-            fadeOutDuration={6000}
-            transition
-          />
+          <ColorSchemeToggle duration={2000} fadeOutDuration={6000} />
         </Group>
       </div>
     </div>
