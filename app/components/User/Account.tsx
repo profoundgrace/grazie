@@ -61,7 +61,9 @@ const Account = ({ account }) => {
   const [errorMsg, setError] = useState('');
   const theme = useMantineTheme();
   const { colorScheme, setColorScheme } = useMantineColorScheme();
-  const computedColorScheme = useComputedColorScheme('light');
+  const computedColorScheme = useComputedColorScheme('light', {
+    getInitialValueInEffect: true
+  });
   const [image, setImage] = useState();
   const [file, setFile] = useState('');
   const [fields, setFields] = useState(0);
@@ -120,15 +122,7 @@ const Account = ({ account }) => {
       setColorScheme(form?.values?.colorScheme);
       setFields(fields + 1);
     }
-  }, [
-    form.values.colorScheme,
-    colorScheme,
-    setColorScheme,
-    setFields,
-    fields,
-    computedColorScheme,
-    form.setFieldValue
-  ]);
+  }, [fields, colorScheme, form?.values?.colorScheme]);
 
   const add = (field, value = '') => {
     if (field === 'password') {
