@@ -1,12 +1,11 @@
 .card {
   position: relative;
-  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-8));
   border: rem(1px) solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-6));
 }
 
 .header {
   padding: rem(1px) rem(4px);
-  
+
 }
 
 .rating {
@@ -16,19 +15,26 @@
   pointer-events: none;
 }
 
+.title:link {
+  font-size: var(--mantine-font-size-xl);
+  font-weight: 700;
+  margin-top: rem(3px);
+}
+
+.title:hover {
+  text-decoration: none;
+  color: darken(var(--mantine-color-anchor), 0.2)
+}
+
 .title {
-  font-family: Greycliff CF, var(--mantine-font-family);
-  font-weight: 900;
-  line-height: 1.2;
-  font-size: rem(20px);
   margin-top: rem(3px);
   margin-bottom: rem(5px);
-  
 }
 
 .body {
   min-height: 80px;
-  padding: rem(7px) rem(10px);display: flex;
+  padding: rem(7px) rem(10px);
+  display: flex;
   flex-direction: column;
   overflow: hidden;
   transition: max-height var(--spoiler-transition-duration, 200ms) ease;

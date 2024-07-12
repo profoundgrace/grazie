@@ -1,12 +1,11 @@
 .card {
   position: relative;
-  background-color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-8));
-  border: rem(1px) solid light-dark(var(--mantine-color-gray-5), var(--mantine-color-dark-6));
+  border: rem(1px) solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-6));
 }
 
 .header {
   padding: rem(4px) rem(4px);
-  border-bottom: rem(1px) solid light-dark(var(--mantine-color-gray-5), var(--mantine-color-dark-6));
+  border: rem(1px) solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-6));
 }
 
 .rating {
@@ -17,12 +16,16 @@
 }
 
 .title {
-  font-family: Greycliff CF, var(--mantine-font-family);
   font-weight: 900;
   line-height: 1.2;
   font-size: rem(20px);
   margin-top: var(--mantine-spacing-xs);
   margin-bottom: rem(5px);
+}
+
+.title:hover {
+  text-decoration: none;
+  color: darken(var(--mantine-color-anchor), 0.2)
 }
 
 .action {

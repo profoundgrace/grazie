@@ -21,7 +21,7 @@ export async function sentry(
     subject,
     item = {},
     items
-  }: { action: string; subject: string; item?: object; items?: [] },
+  }: { action: string; subject: string; item?: object; items?: any[] },
   { reject = true } = {}
 ) {
   if (Array.isArray(items)) {
