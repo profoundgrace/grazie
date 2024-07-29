@@ -33,9 +33,13 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   await sentry(request, {
     action: 'read',
     subject: 'Post',
-    items: posts
+    items: posts?.nodes ?? [{}]
   });
-  const data = { posts, pager: pagerLoader(posts.totalCount) };
+  const data = {
+    posts,
+    pager: pagerLoader(posts.totalCount),
+    category: params.category
+  };
 
   return json(data);
 }
