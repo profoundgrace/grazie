@@ -38,7 +38,9 @@ export default function PostsList() {
   return (
     <Grid>
       <Grid.Col span={12}>
-        <Title order={2}>Posts</Title>
+        <Title order={2}>
+          {data?.category ? `${data?.category?.toUpperCase()} ` : ''}Posts
+        </Title>
         <Tabs defaultValue="browse" keepMounted={false}>
           <Tabs.List>
             {ability.can('create', subject('Post', {})) && (
