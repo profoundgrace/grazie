@@ -11,9 +11,13 @@ import { pagerParams } from '~/utils/searchParams.server';
 import { createAbility } from '~/utils/session.server';
 import { sentry } from '~/lib/sentry.server';
 import PagesList from '~/components/Page/PagesList';
+import { SEO } from '~/utils/meta';
 
-export function meta() {
-  return [{ title: `Pages${site?.separator}${site?.name}` }];
+export function meta({ matches }: { matches: typeof loader }) {
+  return SEO({
+    title: `Pages`,
+    matches
+  });
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {

@@ -4,7 +4,7 @@
  * @copyright Copyright (c) 2024 David Dyess II
  * @license MIT see LICENSE
  */
-import { site } from '@/grazie';
+import { site as siteDefault } from '@/grazie';
 import { empty } from './generic';
 
 export const SEO = ({
@@ -13,12 +13,14 @@ export const SEO = ({
   meta,
   publishedAt,
   author,
-  contentPage = true
+  contentPage = true,
+  matches
 }: any) => {
   if (meta && typeof meta === 'string') {
     meta = JSON.parse(meta);
   }
   let metaTitle = '';
+  const site = { ...siteDefault, ...matches?.[0]?.data?.site };
 
   if (contentPage) {
     metaTitle = !empty(meta?.seo?.title)

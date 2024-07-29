@@ -10,10 +10,6 @@ import { createAbility } from '~/utils/session.server';
 import { site } from '@/grazie';
 import { sentry } from '~/lib/sentry.server';
 
-export function meta() {
-  return [{ title: `Update Page${site?.separator}${site?.name}` }];
-}
-
 export async function action({ request }: ActionFunctionArgs) {
   const form = await request.formData();
   const id = Number(form.get('id') as string);

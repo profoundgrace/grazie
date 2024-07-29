@@ -15,15 +15,21 @@ import { site } from '@/grazie';
 import { useAbility } from '~/hooks/useAbility';
 import { subject } from '@casl/ability';
 import { sentry } from '~/lib/sentry.server';
+import { SEO } from '~/utils/meta';
 
 export function meta({
   data: {
     post: { title }
-  }
+  },
+  matches
+}: {
+  data: { post: { title: string } };
+  matches: typeof loader;
 }) {
-  return [
-    { title: `${title}${site?.separator}Edit${site?.separator}${site?.name}` }
-  ];
+  return SEO({
+    title: `${title}${site?.separator}Edit`,
+    matches
+  });
 }
 
 export async function loader({ params, request }: LoaderFunctionArgs) {

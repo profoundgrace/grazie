@@ -8,9 +8,10 @@ import { Outlet } from '@remix-run/react';
 import { site } from '@/grazie';
 import { sentry } from '~/lib/sentry.server';
 import { createAbility } from '~/utils/session.server';
+import { SEO } from '~/utils/meta';
 
-export function meta() {
-  return [{ title: `Dashboard${site?.separator}${site?.name}` }];
+export function meta({ matches }: { matches: typeof loader }) {
+  return SEO({ title: `Dashboard`, matches });
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {

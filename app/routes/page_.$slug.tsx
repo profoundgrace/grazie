@@ -23,16 +23,19 @@ export function meta({
       publishedAt,
       author: { displayName }
     }
-  }
+  },
+  matches
 }: {
   data: { page: PageType };
+  matches: typeof loader;
 }) {
   return SEO({
     createdAt,
     title,
     meta,
     publishedAt,
-    author: displayName
+    author: displayName,
+    matches
   });
 }
 

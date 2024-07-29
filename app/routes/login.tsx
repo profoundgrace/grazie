@@ -16,13 +16,14 @@ import { userLogin } from '~/lib/user.server';
 import { site } from '@/grazie';
 import { loginSchema } from '~/types/User';
 import { validateSchema } from '~/utils/validation';
+import { SEO } from '~/utils/meta';
 
-export const meta: MetaFunction = () => {
-  return [
-    { title: `Login${site?.separator}${site?.name}` },
-    { name: 'description', content: 'Welcome!' }
-  ];
-};
+export function meta({ matches }: { matches: typeof loader }) {
+  return SEO({
+    title: `Login`,
+    matches
+  });
+}
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const session = await getSession(request.headers.get('Cookie'));

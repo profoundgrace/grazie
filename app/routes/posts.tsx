@@ -11,9 +11,13 @@ import { pagerParams } from '~/utils/searchParams.server';
 import PostsList from '~/components/Post/PostsList';
 import { createAbility, getSession } from '~/utils/session.server';
 import { sentry } from '~/lib/sentry.server';
+import { SEO } from '~/utils/meta';
 
-export function meta() {
-  return [{ title: `Posts${site?.separator}${site?.name}` }];
+export function meta({ matches }: { matches: typeof loader }) {
+  return SEO({
+    title: `Posts`,
+    matches
+  });
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {

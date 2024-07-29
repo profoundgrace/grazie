@@ -15,9 +15,13 @@ import Pager from '~/components/Pager/Pager';
 import { subject, useAbility } from '~/hooks/useAbility';
 import { createAbility, getSession } from '~/utils/session.server';
 import { sentry } from '~/lib/sentry.server';
+import { SEO } from '~/utils/meta';
 
-export function meta() {
-  return [{ title: `Notes${site?.separator}${site?.name}` }];
+export function meta({ matches }: { matches: typeof loader }) {
+  return SEO({
+    title: `Notes`,
+    matches
+  });
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {

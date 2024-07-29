@@ -13,9 +13,13 @@ import { createCategory, getCategories } from '~/lib/category.server';
 import { sentry } from '~/lib/sentry.server';
 import { createAbility } from '~/utils/session.server';
 import { site } from '@/grazie';
+import { SEO } from '~/utils/meta';
 
-export function meta() {
-  return [{ title: `Create Category${site?.separator}${site?.name}` }];
+export function meta({ matches }: { matches: typeof loader }) {
+  return SEO({
+    title: `Create Category`,
+    matches
+  });
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {

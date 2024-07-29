@@ -16,13 +16,14 @@ import { createUser } from '~/lib/user.server';
 import { registerSchema } from '~/types/User';
 import { site } from '@/grazie';
 import { validateSchema } from '~/utils/validation';
+import { SEO } from '~/utils/meta';
 
-export const meta: MetaFunction = () => {
-  return [
-    { title: `Create an Account${site?.separator}${site?.name}` },
-    { name: 'description', content: 'Welcome!' }
-  ];
-};
+export function meta({ matches }: { matches: typeof loader }) {
+  return SEO({
+    title: `Create an Account`,
+    matches
+  });
+}
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const session = await getSession(request.headers.get('Cookie'));
