@@ -22,7 +22,7 @@ import { site, metaSettings } from '@/grazie';
 import { createAbility, getSession } from '~/utils/session.server';
 import { SEO } from '~/utils/meta';
 
-export const meta: MetaFunction = () => {
+export const meta: MetaFunction = ({ matches }) => {
   return SEO({
     meta: {
       seo: {
@@ -30,7 +30,8 @@ export const meta: MetaFunction = () => {
         description: site?.description
       }
     },
-    contentPage: false
+    contentPage: false,
+    matches
   });
 };
 
@@ -39,7 +40,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
     await createAbility(request);
   }
 
-  const { count, page, pagerLoader } = pagerParams(request, 25);
+  const columns = await setting({ name: 'page.home.columns', defaultValue: 3 });
+
+  const { count, page, pagerLoader } = pagerParams(request, 24);
 
   const session = await getSession(request.headers.get('Cookie'));
   const userId = session.get('userId') as number;
@@ -69,7 +72,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const data = {
     posts,
     settings: {
-      columns: await setting({ name: 'page.home.columns', defaultValue: 3 })
+      columns
     },
     pager: pagerLoader(posts.totalCount)
   };
