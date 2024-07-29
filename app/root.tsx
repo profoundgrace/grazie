@@ -81,7 +81,7 @@ export default function App() {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <meta property="og:site_name" content={data?.site?.name} />
-        <title>{data.site.name}</title>
+
         <Meta />
         <Links />
         <ColorSchemeScript defaultColorScheme="auto" />
