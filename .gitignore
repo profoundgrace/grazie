@@ -8,5 +8,6 @@ node_modules
 /prisma/*
 
 **/*.db
+**/*.db-journal
 
 grazie.config.js
