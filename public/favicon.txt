@@ -1,6 +1,6 @@
 This favicon was generated using the following font:
 
-- Font Title: Gideon Roman
-- Font Author: Copyright 2009-2021 The Gideon Roman Project Authors (https://github.com/googlefonts/gideon)
-- Font Source: http://fonts.gstatic.com/s/gideonroman/v11/e3tmeuGrVOys8sxzZgWlmXoge0PWovdU4w.ttf
-- Font License: SIL Open Font License, 1.1 (http://scripts.sil.org/OFL))
+- Font Title: Noto Sans
+- Font Author: undefined
+- Font Source: https://fonts.gstatic.com/s/notosans/v38/o-0mIpQlx3QUlC5A4PNB6Ryti20_6n1iPHjcz6L1SoM-jCpoiyBUBN9d41P6zHtY.ttf
+- Font License: undefined)
