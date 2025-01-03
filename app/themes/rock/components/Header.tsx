@@ -18,7 +18,7 @@ import {
   UnstyledButton,
   useMantineTheme
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { useColorScheme, useDisclosure } from '@mantine/hooks';
 import { Link, useLocation, useNavigate } from '@remix-run/react';
 import {
   IconChevronDown,
@@ -31,7 +31,8 @@ import {
   IconStar,
   IconSwitchHorizontal,
   IconUserPlus,
-  IconDashboard
+  IconDashboard,
+  IconBook
 } from '@tabler/icons-react';
 import cx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
@@ -85,6 +86,7 @@ export function Header() {
   const isLoggedIn = user?.isLoggedIn ?? false;
   const username = user?.username ?? 'Guest';
   const theme = useMantineTheme();
+  const colorScheme = useColorScheme();
   const {
     data: { navbar, site }
   } = useTheme();
@@ -127,10 +129,20 @@ export function Header() {
     <Box pb={10}>
       <header className={classes.header}>
         <Group justify="space-between" h="100%">
-          <Anchor component={Link} to="/" underline="never">
-            <Title order={1} size="1.50rem">
-              {site?.name ?? defaultSite?.name ?? 'Site Name'}
-            </Title>
+          <Anchor
+            component={Link}
+            to="/"
+            underline="never"
+            fw={700}
+            fz="1.75rem"
+            variant="gradient"
+            gradient={{
+              from: 'light-dark(var(--mantine-color-dark-3), white)',
+              to: 'silver',
+              deg: 360
+            }}
+          >
+            {site?.name ?? defaultSite?.name ?? 'Site Name'}
           </Anchor>
 
           <Group h="100%" gap={0} visibleFrom="sm">
