@@ -35,6 +35,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const posts = await getPosts(query, userId);
 
   if (
+    posts.nodes?.length > 0 &&
     !(await sentry(
       request,
       {
