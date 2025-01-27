@@ -1,12 +1,12 @@
 /**
  * Grazie
- * @copyright Copyright (c) 2024 David Dyess II
+ * @copyright Copyright (c) 2024-2025 David Dyess II
  * @license MIT see LICENSE
  */
 import { Group, Pagination } from '@mantine/core';
-import { useLoaderData } from '@remix-run/react';
+import { useLoaderData, useSearchParams } from '@remix-run/react';
 
-export default function Pager() {
+export default function Pager({ showEmpty = false }: { showEmpty?: boolean }) {
   const {
     pager: { count, page, total }
   } = useLoaderData();
@@ -16,46 +16,49 @@ export default function Pager() {
   const first = 1;
   const last = total;
 
-  let queries = '';
-  if (count) {
-    queries = queries + `&count=${count}`;
-  }
+  const [searchParams] = useSearchParams();
+
+  const pagerPageURL = (page: string) => {
+    searchParams.set('page', page);
+    if (count) {
+      searchParams.set('count', count);
+    }
+    return `?${searchParams.toString()}`;
+  };
 
   return (
-    <Pagination.Root
-      total={total}
-      value={page}
-      getItemProps={(page) => ({
-        component: 'a',
-        href: `?page=${page}${queries}`
-      })}
-    >
-      <Group gap={7} justify="center" mt="sm">
-        {page !== 1 && (
-          <>
-            {total > 2 && (
-              <Pagination.First
-                component="a"
-                href={`?page=${first}${queries}`}
-              />
-            )}
+    <>
+      {(total > 1 || showEmpty) && (
+        <Pagination.Root
+          total={total}
+          value={page}
+          getItemProps={(page) => ({
+            component: 'a',
+            href: pagerPageURL(page)
+          })}
+        >
+          <Group gap={7} justify="center" my="sm">
+            {page !== 1 && (
+              <>
+                {total > 2 && (
+                  <Pagination.First component="a" href={pagerPageURL(first)} />
+                )}
 
-            <Pagination.Previous
-              component="a"
-              href={`?page=${prev}${queries}`}
-            />
-          </>
-        )}
-        <Pagination.Items />
-        {page !== total && (
-          <>
-            <Pagination.Next component="a" href={`?page=${next}${queries}`} />
-            {page !== total - 1 && (
-              <Pagination.Last component="a" href={`?page=${last}${queries}`} />
+                <Pagination.Previous component="a" href={pagerPageURL(prev)} />
+              </>
             )}
-          </>
-        )}
-      </Group>
-    </Pagination.Root>
+            <Pagination.Items />
+            {page !== total && (
+              <>
+                <Pagination.Next component="a" href={pagerPageURL(next)} />
+                {page !== total - 1 && (
+                  <Pagination.Last component="a" href={pagerPageURL(last)} />
+                )}
+              </>
+            )}
+          </Group>
+        </Pagination.Root>
+      )}
+    </>
   );
 }

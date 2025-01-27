@@ -8,9 +8,11 @@ import {
   Anchor,
   Avatar,
   Badge,
+  Button,
   Card,
   Group,
   Text,
+  Tooltip,
   useMantineTheme
 } from '@mantine/core';
 import { Link } from '@remix-run/react';
@@ -19,6 +21,8 @@ import { TimeSince } from '~/components/DateTime';
 import HTMLContent from '~/components/Tiptap/HTMLContent';
 import classes from '~/components/Note/NoteCard.module.css';
 import { NoteLabel } from '~/types/NoteLabel';
+import { ListViewer } from './ListViewer';
+import { useElementSize } from '@mantine/hooks';
 
 interface NoteCardProps {
   id: number;
@@ -47,15 +51,18 @@ export default function NoteCard({
     title = '',
     footer = '',
     author,
-    updatedAt = ''
-  }
+    updatedAt = '',
+    type
+  },
+  ...others
 }: {
   data: NoteCardProps;
 }) {
   const theme = useMantineTheme();
+  const { ref: contentRef, height } = useElementSize();
 
   return (
-    <Card withBorder mb={6} radius="md" className={classes.card}>
+    <Card withBorder mb={6} radius="md" className={classes.card} {...others}>
       <Card.Section className={classes.header}>
         <Group justify="space-between">
           <Group gap={0} p={4}>
@@ -77,9 +84,7 @@ export default function NoteCard({
                 className={classes.title}
                 component={Link}
                 fw={700}
-                gradient={{ from: 'indigo', to: 'blue', deg: 90 }}
                 to={`/note/${id}`}
-                variant="gradient"
               >
                 {title}
               </Anchor>
@@ -109,8 +114,26 @@ export default function NoteCard({
       <Card.Section
         className={classes.body}
         pt={labels?.length > 0 ? 10 : undefined}
+        style={{ maxHeight: '60px' }}
       >
-        <HTMLContent content={body} />
+        <div ref={contentRef}>
+          {type === 'text' && <HTMLContent content={body} />}
+          {type === 'list' && <ListViewer data={body} />}
+        </div>
+      </Card.Section>
+      <Card.Section pl={4}>
+        {height > 60 && (
+          <Tooltip label="View Note">
+            <Button
+              component={Link}
+              size="compact-md"
+              variant="subtle"
+              to={`/note/${id}`}
+            >
+              . . .
+            </Button>
+          </Tooltip>
+        )}
       </Card.Section>
       {footer ? (
         <Group mt="xs">
@@ -119,37 +142,6 @@ export default function NoteCard({
           </Text>
         </Group>
       ) : null}
-
-      <Card.Section className={classes.footer}>
-        <Group gap={0} justify="space-between">
-          <Group gap={0}>
-            <Avatar src={author.image} radius="sm" />
-            <div>
-              <Text size="sm" fw={500} pl="xs">
-                {author.name}
-              </Text>
-              <Text size="xs" c="dimmed" pl="sm">
-                {author.description}
-              </Text>
-            </div>
-          </Group>
-          <Group gap={0}>
-            <ActionIcon variant="subtle" color="gray">
-              <IconHeart size={22} color={theme.colors.red[6]} stroke={1.5} />
-            </ActionIcon>
-            <ActionIcon variant="subtle" color="gray">
-              <IconBookmark
-                size={22}
-                color={theme.colors.yellow[6]}
-                stroke={1.5}
-              />
-            </ActionIcon>
-            <ActionIcon variant="subtle" color="gray">
-              <IconShare size={22} color={theme.colors.blue[6]} stroke={1.5} />
-            </ActionIcon>
-          </Group>
-        </Group>
-      </Card.Section>
     </Card>
   );
 }
