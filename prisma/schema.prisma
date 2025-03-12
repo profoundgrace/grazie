@@ -399,3 +399,32 @@ model BlockGroupBlock {
   @@index([groupId, status], map: "idx_block_group_block_group_status")
   @@index([order], map: "idx_block_group_block_order")
 }
+
+model KJVBook {
+  id     Int    @id @default(autoincrement())
+  chs    Int
+  book   String
+  abbr   String
+  slug   String
+  verses KJVVerse[]
+
+  @@unique([abbr], map: "unq_kjv_abbr")
+  @@unique([book], map: "unq_kjv_book")
+  @@unique([slug], map: "unq_kjv_slug")
+}
+
+model KJVVerse {
+  id     Int      @id @default(autoincrement())
+  bid    Int    
+  ch     Int
+  ver    Int
+  txt    String
+  coding String
+  book   KJVBook @relation(fields: [bid], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([bid], map: "idx_kjv_verse_book")
+  @@index([ch], map: "idx_kjv_verse_chapter")
+  @@index([bid, ch], map: "idx_kjv_verse_book_chapter")
+  @@index([txt], map: "idx_kjv_verse_text")
+  @@index([coding], map: "idx_kjv_verse_coding")
+}

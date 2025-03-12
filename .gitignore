@@ -8,6 +8,7 @@
 .env
 
 **/*.db
+**/*.db-journal
 
 grazie.config.ts
 
