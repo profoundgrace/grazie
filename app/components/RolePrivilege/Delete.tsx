@@ -6,10 +6,10 @@
 import { Alert, Button, Card, Grid, Group, Stack, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import '@mantine/tiptap/styles.layer.css';
-import { Form, useSubmit } from '@remix-run/react';
+import { Form, useSubmit } from 'react-router';
 import { useState, type Dispatch, type SetStateAction } from 'react';
 import { DebugCollapse } from '../DebugCollapse';
-import { Privilege } from '~/types/Privilege';
+import { type Privilege } from '~/types/Privilege';
 
 interface Editor {
   id?: number | null;

@@ -1,7 +1,7 @@
 /**
  * Grazie
  * @package Post Library
- * @copyright Copyright (c) 2024 David Dyess II
+ * @copyright Copyright (c) 2024-2025 David Dyess II
  * @license MIT see LICENSE
  */
 import { getUserByUsername } from '~/lib/user.server';
@@ -198,6 +198,18 @@ export async function updatePost({
   }
 }
 
+export async function deletePost({ id }: { id: number }) {
+  try {
+    if (await prisma.post.delete({ where: { id } })) {
+      return true;
+    }
+  } catch (error: any) {
+    log.error(error.message);
+    log.error(error.stack);
+    throw error;
+  }
+}
+
 export async function getPost(
   { id, slug, select }: { id?: number; slug: string; select: object },
   userId?: number | null
@@ -308,6 +320,8 @@ export async function getPosts(
       username?: string;
       category?: string;
       published?: boolean;
+      favorites?: boolean;
+      bookmarks?: boolean;
     };
     limit?: number;
     offset?: number;
@@ -317,26 +331,48 @@ export async function getPosts(
   try {
     const where = {} as {
       authorId?: number;
-      category?: any;
+      categories?: any;
       published?: boolean;
+      favorites?: { some: { userId: number } };
+      bookmarks?: { some: { userId: number } };
     };
 
-    if (filter?.published) {
+    if (typeof filter?.published === 'boolean') {
       where.published = filter.published;
     }
 
     if (filter?.username) {
-      where.authorId = await getUserByUsername(filter.username);
+      where.authorId = (await getUserByUsername(filter.username)).id;
     }
 
     if (filter?.authorId) {
       where.authorId = filter.authorId;
     }
 
+    if (typeof filter?.favorites === 'boolean') {
+      if (filter?.favorites && userId)
+        where.favorites = {
+          some: {
+            userId
+          }
+        };
+    }
+
+    if (typeof filter?.bookmarks === 'boolean') {
+      if (filter?.bookmarks && userId)
+        where.bookmarks = {
+          some: {
+            userId
+          }
+        };
+    }
+
+    let category;
+
     if (filter?.category) {
-      const category = await getCategory({
+      category = await getCategory({
         slug: filter.category,
-        select: { id: true }
+        select: { id: true, name: true }
       });
       if (category) {
         where.categories = {
@@ -414,7 +450,10 @@ export async function getPosts(
       avatarURL,
       count: articles.length,
       totalCount: await prisma.post.count({ where }),
-      nodes: articles
+      nodes: articles,
+      category,
+      favorites: filter?.favorites,
+      bookmarks: filter?.bookmarks
     };
   } catch (error: any) {
     log.error(error.message);

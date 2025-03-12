@@ -4,15 +4,14 @@
  * @license MIT see LICENSE
  */
 import { Grid } from '@mantine/core';
-import type { LoaderFunctionArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
-import { useLoaderData, useNavigate } from '@remix-run/react';
+import type { LoaderFunctionArgs } from 'react-router';
+import { useLoaderData, useNavigate } from 'react-router';
 import Page from '~/components/Page/Page';
 import { getPage } from '~/lib/page.server';
 import { SEO } from '~/utils/meta';
 import { createAbility } from '~/utils/session.server';
 import { sentry } from '~/lib/sentry.server';
-import { Page as PageType } from '~/types/Page';
+import type { Page as PageType } from '~/types/Page';
 
 export function meta({
   data: {
@@ -47,10 +46,10 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const page = await getPage({ slug: params?.slug });
   if (page) {
     await sentry(request, { action: 'read', subject: 'Page', item: page });
+    page.body = JSON.parse(page.body);
   }
 
-  const data = { page };
-  return json(data);
+  return { page };
 }
 
 export default function PageView() {
@@ -61,18 +60,7 @@ export default function PageView() {
   return (
     <Grid>
       <Grid.Col span={12}>
-        <Page
-          key={page.id}
-          data={{
-            ...page,
-            body: JSON.parse(page.body),
-            author: {
-              name: page?.author?.displayName,
-              description: '',
-              image: `${page?.avatarURL}sm/${page?.author?.avatar}`
-            }
-          }}
-        />
+        <Page key={page.id} page={page} />
       </Grid.Col>
     </Grid>
   );
