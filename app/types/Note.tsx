@@ -3,7 +3,7 @@
  * @copyright Copyright (c) 2024 David Dyess II
  * @license MIT see LICENSE
  */
-import { NoteLabel } from './NoteLabel';
+import { type NoteLabel } from './NoteLabel';
 
 export type NoteInput = {
   id?: number;
@@ -16,6 +16,17 @@ export type NoteInput = {
   body: object | string;
   meta?: object;
   type: string;
+};
+
+export type NoteUpdate = {
+  id?: number;
+  pinned?: boolean;
+  createdAt?: number;
+  updatedAt?: number;
+  search?: string;
+  title?: string;
+  body: object | string;
+  meta?: object;
 };
 
 export type Note = {

@@ -1,12 +1,11 @@
 /**
  * Grazie
- * @copyright Copyright (c) 2024 David Dyess II
+ * @copyright Copyright (c) 2024-2025 David Dyess II
  * @license MIT see LICENSE
  */
-import type { LoaderFunctionArgs } from '@remix-run/node';
-import { json, redirect } from '@remix-run/node';
+import type { LoaderFunctionArgs } from 'react-router';
+import { redirect } from 'react-router';
 import { getPosts } from '~/lib/post.server';
-import { site } from '@/grazie';
 import { pagerParams } from '~/utils/searchParams.server';
 import PostsList from '~/components/Post/PostsList';
 import { createAbility, getSession } from '~/utils/session.server';
@@ -25,6 +24,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     await createAbility(request);
   }
   const { count, page, pagerLoader } = pagerParams(request, 25);
+
   const session = await getSession(request.headers.get('Cookie'));
   const userId = session.get('userId') as number;
   const query = {
@@ -52,7 +52,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const data = { posts, pager: pagerLoader(posts.totalCount) };
 
-  return json(data);
+  return data;
 }
 
 export default PostsList;
