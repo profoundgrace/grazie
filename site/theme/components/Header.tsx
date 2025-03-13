@@ -14,12 +14,11 @@ import {
   ScrollArea,
   Text,
   ThemeIcon,
-  Title,
   UnstyledButton,
   useMantineTheme
 } from '@mantine/core';
 import { useColorScheme, useDisclosure } from '@mantine/hooks';
-import { Link, useLocation, useNavigate } from '@remix-run/react';
+import { Link, useLocation, useNavigate } from 'react-router';
 import {
   IconChevronDown,
   IconFriends,
@@ -29,18 +28,16 @@ import {
   IconMessage,
   IconSettings,
   IconStar,
-  IconSwitchHorizontal,
   IconUserPlus,
-  IconDashboard,
-  IconBook
+  IconDashboard
 } from '@tabler/icons-react';
 import cx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import useUser from '~/hooks/useUser';
-import classes from '~/themes/rock/styles/Header.module.css';
+import classes from '!~/theme/styles/Header.module.css';
 import { useTheme } from '~/hooks/useTheme';
 import { NavLinks } from '~/components/NavLinks';
-import { To } from 'react-router';
+import { type To } from 'react-router';
 import { site as defaultSite } from '@/grazie';
 
 const userMenuData = [

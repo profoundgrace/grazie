@@ -1,6 +1,6 @@
 import { Anchor, AppShell, Burger, Group, Text, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { Link } from '@remix-run/react';
+import { Link } from 'react-router';
 import type { ReactNode } from 'react';
 import Navbar from '~/components/Dashboard/Navbar';
 import { useTheme } from '~/hooks/useTheme';

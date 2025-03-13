@@ -1,7 +1,7 @@
 import { createTheme } from '@mantine/core';
-import { Page } from '~/themes/rock/pages/Page';
-import { Dashboard } from '~/themes/rock/pages/Dashboard';
-import './styles/Styles.css';
+import { Page } from '!~/theme/pages/Page';
+import { Dashboard } from '!~/theme/pages/Dashboard';
+import '!~/theme/styles/Styles.css';
 
 export const Theme = {
   Page,

@@ -1,11 +1,6 @@
-import { Group, ActionIcon, rem, Text } from '@mantine/core';
-import {
-  IconBrandTwitter,
-  IconBrandYoutube,
-  IconBrandInstagram
-} from '@tabler/icons-react';
+import { Group, Text } from '@mantine/core';
 import { site as defaultSite } from '@/grazie';
-import classes from '~/themes/rock/styles/Footer.module.css';
+import classes from '!~/theme/styles/Footer.module.css';
 import { FooterLinks } from '~/components/FooterLinks';
 import { SocialIcons } from '~/components/SocialIcons';
 import { useTheme } from '~/hooks/useTheme';
