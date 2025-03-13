@@ -16,9 +16,12 @@ import {
   Tooltip
 } from '@mantine/core';
 import { useLocalStorage, useViewportSize } from '@mantine/hooks';
-import type { LoaderFunctionArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
-import { Link, useLoaderData, useSearchParams } from '@remix-run/react';
+import {
+  Link,
+  type LoaderFunctionArgs,
+  useLoaderData,
+  useSearchParams
+} from 'react-router';
 import {
   IconChevronLeft,
   IconChevronRight,
@@ -67,9 +70,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
   chapter.book.chapter = chapterId;
 
-  const data = { chapter };
-
-  return json(data);
+  return { chapter };
 }
 
 export default function BibleBookChapter() {

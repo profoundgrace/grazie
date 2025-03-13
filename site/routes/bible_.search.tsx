@@ -4,25 +4,22 @@ import {
   Button,
   Card,
   Grid,
-  Group,
   Highlight,
   SegmentedControl,
-  Tabs,
   Text,
   TextInput,
   Title
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import type { LoaderFunctionArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
 import {
   Form,
   Link,
+  type LoaderFunctionArgs,
   useLoaderData,
   useNavigate,
   useSearchParams,
   useSubmit
-} from '@remix-run/react';
+} from 'react-router';
 import Pager from '~/components/Pager/Pager';
 import { getVerses } from '~/lib/kjv.server';
 import { SEO } from '~/utils/meta';
@@ -77,9 +74,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       })
     : null;
 
-  const data = { verses, pager: pagerLoader(verses?.totalCount) };
-
-  return json(data);
+  return { verses, pager: pagerLoader(verses?.totalCount) };
 }
 
 export default function Bible() {

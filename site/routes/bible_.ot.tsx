@@ -7,9 +7,12 @@ import {
   TextInput,
   Title
 } from '@mantine/core';
-import type { LoaderFunctionArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
-import { Form, useLoaderData, useNavigate } from '@remix-run/react';
+import {
+  Form,
+  type LoaderFunctionArgs,
+  useLoaderData,
+  useNavigate
+} from 'react-router';
 import { IconSearch } from '@tabler/icons-react';
 import { getBooks } from '~/lib/kjv.server';
 import { SEO } from '~/utils/meta';
@@ -17,7 +20,7 @@ import { createAbility } from '~/utils/session.server';
 
 export function meta({ matches }: { matches: typeof loader }) {
   return SEO({
-    title: `Holy Bible - New Testament`,
+    title: `Holy Bible - Old Testament`,
     matches
   });
 }
@@ -27,14 +30,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
     await createAbility(request);
   }
 
-  const books = await getBooks({ filter: { testament: 'nt' } });
+  const books = await getBooks({ filter: { testament: 'ot' } });
 
-  const data = { books };
-
-  return json(data);
+  return { books };
 }
 
-export default function BibleNT() {
+export default function BibleOT() {
   const data = useLoaderData<typeof loader>();
   const navigate = useNavigate();
   const books = data?.books?.nodes;
@@ -48,9 +49,10 @@ export default function BibleNT() {
         <Grid my={10}>
           <Grid.Col span={{ base: 12, md: 4, lg: 3 }}>
             <Form method="GET" action="/bible/search">
+              <input type="hidden" name="testament" value="old" />
               <TextInput
                 name="q"
-                placeholder="Search New Testament"
+                placeholder="Search Old Testament"
                 rightSection={
                   <ActionIcon type="submit">
                     <IconSearch color="white" />
@@ -61,7 +63,7 @@ export default function BibleNT() {
           </Grid.Col>
         </Grid>
         <Tabs
-          value="nt"
+          value="ot"
           keepMounted={false}
           onChange={(value) =>
             navigate(`/bible${value === 'all' ? '' : `/${value}`}`)
@@ -72,7 +74,7 @@ export default function BibleNT() {
             <Tabs.Tab value="ot">Old Testament</Tabs.Tab>
             <Tabs.Tab value="nt">New Testament</Tabs.Tab>
           </Tabs.List>
-          <Tabs.Panel value="nt">
+          <Tabs.Panel value="ot">
             <Group my={10}>
               {books?.map((book) => (
                 <Button

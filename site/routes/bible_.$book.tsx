@@ -1,7 +1,5 @@
 import { Anchor, Breadcrumbs, Button, Grid, Group, Title } from '@mantine/core';
-import type { LoaderFunctionArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
-import { Link, useLoaderData } from '@remix-run/react';
+import { Link, type LoaderFunctionArgs, useLoaderData } from 'react-router';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { getBook } from '~/lib/kjv.server';
 import { SEO } from '~/utils/meta';
@@ -26,9 +24,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     include: { prevBook: true, nextBook: true }
   });
 
-  const data = { book };
-
-  return json(data);
+  return { book };
 }
 
 function Chapters({ book, count }: { book: object; count: number }) {
