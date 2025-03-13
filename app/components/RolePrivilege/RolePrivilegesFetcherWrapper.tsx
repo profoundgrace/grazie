@@ -3,10 +3,10 @@
  * @copyright Copyright (c) 2024 David Dyess II
  * @license MIT see LICENSE
  */
-import { useFetcher } from '@remix-run/react';
+import { useFetcher } from 'react-router';
 import RolePrivilegesTable from './RolePrivilegesTable';
 import { useEffect } from 'react';
-import { Role } from '~/types/Role';
+import { type Role } from '~/types/Role';
 
 export default function RoleUserAdmin({ role }: Role) {
   const fetcher = useFetcher();

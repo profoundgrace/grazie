@@ -12,7 +12,7 @@ export type UserInput = {
 };
 
 export type User = {
-  id?: number | null | undefined;
+  id?: number | null;
   createdAt?: string;
   updatedAt?: string;
   username?: string;
@@ -80,6 +80,35 @@ export const loginSchema = Joi.object({
 });
 
 export const validateLogin = joiResolver(loginSchema);
+
+export const resetRequestSchema = Joi.object({
+  email: Joi.string()
+    .email({ tlds: { allow: false } })
+    .messages({
+      'string.email': 'Invalid Email Address',
+      'string.empty': 'Email Address is required'
+    })
+});
+
+export const validateResetRequest = joiResolver(resetRequestSchema);
+
+export const resetSchema = Joi.object({
+  email: Joi.string()
+    .email({ tlds: { allow: false } })
+    .messages({
+      'string.email': 'Invalid Email Address',
+      'string.empty': 'Email Address is required'
+    }),
+  resetKey: Joi.string().messages({
+    'string.empty': 'Reset Key is required'
+  }),
+  password: Joi.string().min(8).messages({
+    'string.min': 'Password must be at least 8 characters',
+    'string.empty': 'Password is required'
+  })
+});
+
+export const validateReset = joiResolver(resetSchema);
 
 export const accountSchema = ({
   id,
