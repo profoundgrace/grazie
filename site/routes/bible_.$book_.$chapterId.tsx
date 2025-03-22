@@ -1,3 +1,4 @@
+import { getChapter } from '!~/lib/kjv.server';
 import {
   ActionIcon,
   Anchor,
@@ -17,12 +18,6 @@ import {
 } from '@mantine/core';
 import { useLocalStorage, useViewportSize } from '@mantine/hooks';
 import {
-  Link,
-  type LoaderFunctionArgs,
-  useLoaderData,
-  useSearchParams
-} from 'react-router';
-import {
   IconChevronLeft,
   IconChevronRight,
   IconChevronsLeft,
@@ -37,8 +32,13 @@ import {
   IconViewportWide
 } from '@tabler/icons-react';
 import { useState } from 'react';
+import {
+  Link,
+  type LoaderFunctionArgs,
+  useLoaderData,
+  useSearchParams
+} from 'react-router';
 import { Fragment } from 'react/jsx-runtime';
-import { getChapter } from '~/lib/kjv.server';
 import { SEO } from '~/utils/meta';
 import { createAbility } from '~/utils/session.server';
 

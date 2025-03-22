@@ -1,3 +1,4 @@
+import { getBooks } from '!~/lib/kjv.server';
 import {
   ActionIcon,
   Button,
@@ -7,14 +8,13 @@ import {
   TextInput,
   Title
 } from '@mantine/core';
+import { IconSearch } from '@tabler/icons-react';
 import {
   Form,
   type LoaderFunctionArgs,
   useLoaderData,
   useNavigate
 } from 'react-router';
-import { IconSearch } from '@tabler/icons-react';
-import { getBooks } from '~/lib/kjv.server';
 import { SEO } from '~/utils/meta';
 import { createAbility } from '~/utils/session.server';
 

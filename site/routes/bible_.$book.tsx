@@ -1,7 +1,7 @@
+import { getBook } from '!~/lib/kjv.server';
 import { Anchor, Breadcrumbs, Button, Grid, Group, Title } from '@mantine/core';
-import { Link, type LoaderFunctionArgs, useLoaderData } from 'react-router';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
-import { getBook } from '~/lib/kjv.server';
+import { Link, type LoaderFunctionArgs, useLoaderData } from 'react-router';
 import { SEO } from '~/utils/meta';
 import { createAbility } from '~/utils/session.server';
 

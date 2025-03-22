@@ -14,7 +14,7 @@ import {
   useNavigate
 } from 'react-router';
 import { IconSearch } from '@tabler/icons-react';
-import { getBooks } from '~/lib/kjv.server';
+import { getBooks } from '!~/lib/kjv.server';
 import { SEO } from '~/utils/meta';
 import { createAbility } from '~/utils/session.server';
 

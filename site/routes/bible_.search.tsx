@@ -1,3 +1,4 @@
+import { getVerses } from '!~/lib/kjv.server';
 import {
   Anchor,
   Box,
@@ -21,7 +22,6 @@ import {
   useSubmit
 } from 'react-router';
 import Pager from '~/components/Pager/Pager';
-import { getVerses } from '~/lib/kjv.server';
 import { SEO } from '~/utils/meta';
 import { pagerParams } from '~/utils/searchParams.server';
 import { createAbility } from '~/utils/session.server';
